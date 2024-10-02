@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: hairbookingapp
+  datasource:
+    url: "jdbc:mysql://localhost:3306/hairsalonapp"
+    username: root
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+server:
+  port: 8080
