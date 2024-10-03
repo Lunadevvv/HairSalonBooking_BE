@@ -2,6 +2,7 @@ package com.datvm.hairbookingapp.controller;
 
 import com.datvm.hairbookingapp.dto.request.AuthenticationRequest;
 import com.datvm.hairbookingapp.dto.response.ApiResponse;
+import com.datvm.hairbookingapp.dto.response.AuthenticationResponse;
 import com.datvm.hairbookingapp.entity.Account;
 import com.datvm.hairbookingapp.service.AuthenticationService;
 import jakarta.validation.Valid;
@@ -18,8 +19,8 @@ public class AuthenticationController {
     private AuthenticationService authenticationService;
 
     @PostMapping("/register")
-    ApiResponse<Account> createAccount(@RequestBody @Valid AuthenticationRequest request){
-        return ApiResponse.<Account>builder()
+    ApiResponse<AuthenticationResponse> createAccount(@RequestBody @Valid AuthenticationRequest request){
+        return ApiResponse.<AuthenticationResponse>builder()
                 .result(authenticationService.createAccount(request))
                 .build();
     }
