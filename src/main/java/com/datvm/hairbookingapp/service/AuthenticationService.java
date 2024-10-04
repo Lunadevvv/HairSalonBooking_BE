@@ -33,6 +33,9 @@ public class AuthenticationService implements UserDetailsService {
     @Autowired
     AuthenticationManager authenticationManager;
 
+    @Autowired
+    TokenProvider tokenProvider;
+
     public RegisterResponse createAccount(RegisterRequest request){
         Account account = accountMapper.toAccount(request);
         try{
@@ -60,6 +63,7 @@ public class AuthenticationService implements UserDetailsService {
             //Nếu account exists
             Account account = (Account) authentication.getPrincipal();//tra ve acount tu db
             LoginResponse loginResponse = accountMapper.toLoginRes(account);
+            loginResponse.setToken(tokenProvider.generateToken(account));
             return loginResponse;
         } catch (Exception e) {
             throw new RuntimeException(e);
