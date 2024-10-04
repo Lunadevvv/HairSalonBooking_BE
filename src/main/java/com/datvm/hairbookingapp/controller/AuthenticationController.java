@@ -1,9 +1,10 @@
 package com.datvm.hairbookingapp.controller;
 
-import com.datvm.hairbookingapp.dto.request.AuthenticationRequest;
+import com.datvm.hairbookingapp.dto.request.RegisterRequest;
+import com.datvm.hairbookingapp.dto.request.LoginRequest;
 import com.datvm.hairbookingapp.dto.response.ApiResponse;
-import com.datvm.hairbookingapp.dto.response.AuthenticationResponse;
-import com.datvm.hairbookingapp.entity.Account;
+import com.datvm.hairbookingapp.dto.response.LoginResponse;
+import com.datvm.hairbookingapp.dto.response.RegisterResponse;
 import com.datvm.hairbookingapp.service.AuthenticationService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +20,19 @@ public class AuthenticationController {
     private AuthenticationService authenticationService;
 
     @PostMapping("/register")
-    ApiResponse<AuthenticationResponse> createAccount(@RequestBody @Valid AuthenticationRequest request){
-        return ApiResponse.<AuthenticationResponse>builder()
+    ApiResponse<RegisterResponse> createAccount(@RequestBody @Valid RegisterRequest request){
+        return ApiResponse.<RegisterResponse>builder()
+                .code(201)
                 .result(authenticationService.createAccount(request))
+                .build();
+    }
+
+    @PostMapping("/login")
+    ApiResponse<LoginResponse> loginAccount(@RequestBody LoginRequest request){
+        LoginResponse response = authenticationService.login(request);
+        return ApiResponse.<LoginResponse>builder()
+                .code(200)
+                .result(response)
                 .build();
     }
 
