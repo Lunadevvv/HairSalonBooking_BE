@@ -1,5 +1,6 @@
 package com.datvm.hairbookingapp.dto.request;
 
+import com.datvm.hairbookingapp.entity.Role;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -34,4 +35,6 @@ public class RegisterRequest {
 
     @Size(min = 6 , message = "Password must be exceed 6 characters ")
     String password;
+
+    Role role;
 }

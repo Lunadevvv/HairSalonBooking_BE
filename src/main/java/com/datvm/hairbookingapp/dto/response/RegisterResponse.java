@@ -1,5 +1,6 @@
 package com.datvm.hairbookingapp.dto.response;
 
+import com.datvm.hairbookingapp.entity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,4 +16,5 @@ public class RegisterResponse {
     private String lastName;
     private String email;
     private String phone;
+    Role role;
 }
