@@ -1,6 +1,6 @@
 package com.datvm.hairbookingapp.controller;
 
-import com.datvm.hairbookingapp.dto.request.AuthenticationRequest;
+import com.datvm.hairbookingapp.dto.request.RegisterRequest;
 import com.datvm.hairbookingapp.entity.Account;
 import com.datvm.hairbookingapp.service.AuthenticationService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,7 +32,7 @@ public class AccountControllerTest {
     @MockBean
     AuthenticationService authenticationService;
 
-    private AuthenticationRequest request;
+    private RegisterRequest request;
     private Account account;
     private LocalDate dob;
 
@@ -40,7 +40,7 @@ public class AccountControllerTest {
     public void initData(){
         dob = LocalDate.of(1999, 1,1);
 
-        request = AuthenticationRequest.builder()
+        request = RegisterRequest.builder()
                 .username("john")
                 .firstName("John")
                 .lastName("Doe")
