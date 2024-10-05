@@ -47,7 +47,7 @@ public class Account implements UserDetails {
     String password;
 
     @Enumerated(EnumType.STRING) //Luu xuong database se theo kieu string
-    Role role = Role.MEMBER;
+    Role role;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

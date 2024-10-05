@@ -5,6 +5,7 @@ import com.datvm.hairbookingapp.dto.request.RegisterRequest;
 import com.datvm.hairbookingapp.dto.response.LoginResponse;
 import com.datvm.hairbookingapp.dto.response.RegisterResponse;
 import com.datvm.hairbookingapp.entity.Account;
+import com.datvm.hairbookingapp.entity.Role;
 import com.datvm.hairbookingapp.exception.AppException;
 import com.datvm.hairbookingapp.exception.ErrorCode;
 import com.datvm.hairbookingapp.mapper.AccountMapper;
@@ -39,6 +40,10 @@ public class AuthenticationService implements UserDetailsService {
     public RegisterResponse createAccount(RegisterRequest request){
         Account account = accountMapper.toAccount(request);
         try{
+            if(request.getRole() == null)
+                account.setRole(Role.MEMBER);
+            else
+                account.setRole(request.getRole());
             account.setPassword(passwordEncoder.encode(request.getPassword()));
             return accountMapper.toAuthRes(accountRepository.save(account));
         }catch(Exception e){
