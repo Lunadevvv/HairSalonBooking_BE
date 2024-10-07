@@ -2,6 +2,8 @@ package com.datvm.hairbookingapp.service;
 
 import com.datvm.hairbookingapp.dto.request.LoginRequest;
 import com.datvm.hairbookingapp.dto.request.RegisterRequest;
+import com.datvm.hairbookingapp.dto.request.ResetPasswordRequest;
+import com.datvm.hairbookingapp.dto.response.EmailDetail;
 import com.datvm.hairbookingapp.dto.response.LoginResponse;
 import com.datvm.hairbookingapp.dto.response.RegisterResponse;
 import com.datvm.hairbookingapp.entity.Account;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -36,6 +39,9 @@ public class AuthenticationService implements UserDetailsService {
 
     @Autowired
     TokenProvider tokenProvider;
+
+    @Autowired
+    EmailService emailService;
 
     public RegisterResponse createAccount(RegisterRequest request){
         Account account = accountMapper.toAccount(request);
@@ -73,6 +79,39 @@ public class AuthenticationService implements UserDetailsService {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void forgotPassword(String phone){
+        Account account = accountRepository.findAccountByPhone(phone);
+        if(account == null) {
+            throw new AppException(ErrorCode.ACCOUNT_NOT_FOUND);
+        }
+        String token = tokenProvider.generateToken(account);
+        EmailDetail emailDetail = new EmailDetail();
+        emailDetail.setAccount(account);//set receiver
+        emailDetail.setSubject("Reset password");
+        emailDetail.setLink("https://www.google.com?token=" + token);
+        emailService.sendEmail(emailDetail);
+    }
+
+    public boolean resetPassword(ResetPasswordRequest request){
+        boolean status = false;
+        Account account = getCurrentAccount();
+        account.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        try{
+            accountRepository.save(account);
+            status = true;
+        }catch (AppException e){
+            throw new AppException(ErrorCode.PROCESS_FAILED);
+
+        }
+        return status;
+    }
+
+
+    public Account getCurrentAccount(){
+        Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return accountRepository.findAccountByPhone(account.getPhone());
     }
 
     @Override

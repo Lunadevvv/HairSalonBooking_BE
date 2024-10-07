@@ -1,7 +1,8 @@
 package com.datvm.hairbookingapp.exception;
 
 public enum ErrorCode {
-    UNCATEGORIZE_EXCEPTION(9999, "Uncategorize exception"),
+    PROCESS_FAILED(9998, "Process failed!"),
+    ACCOUNT_NOT_FOUND(9999, "Account not Found!"),
     TOKEN_WRONG(1001, "Token is wrong"),
     TOKEN_EXPIRED(1003, "Token is expired"),
     DUPLICATE_EMAIL(1000,"Duplicate Email"),

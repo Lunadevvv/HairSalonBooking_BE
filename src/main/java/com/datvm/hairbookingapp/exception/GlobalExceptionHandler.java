@@ -40,7 +40,7 @@ public class GlobalExceptionHandler {
         String msg = "";
         for(FieldError fieldError :exception.getBindingResult().getFieldErrors()){
             //loop qua từng field của dữ liệu , nếu cái nào có lỗi thì thêm vào msg
-            msg += fieldError.getDefaultMessage()+"\n";
+            msg += fieldError.getDefaultMessage()+" ";
 
         }
 
