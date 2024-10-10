@@ -1,5 +1,9 @@
 package com.datvm.hairbookingapp.controller;
 
+import com.datvm.hairbookingapp.dto.request.ServicesCreationRequest;
+import com.datvm.hairbookingapp.dto.request.ServicesUpdateRequest;
+import com.datvm.hairbookingapp.dto.response.ApiResponse;
+import com.datvm.hairbookingapp.dto.response.ServicesResponse;
 import com.datvm.hairbookingapp.entity.Category;
 import com.datvm.hairbookingapp.entity.Services;
 import com.datvm.hairbookingapp.service.ServicesService;
@@ -15,24 +19,40 @@ import java.util.List;
 public class ServicesController {
     @Autowired
     private ServicesService servicesService;
-    @GetMapping("/get")
-    public List<Services> getAllServices() {
-        return servicesService.getAllServices();
+
+    @PostMapping("/{categoryId}")
+    public ApiResponse<ServicesResponse> createService(@RequestBody ServicesCreationRequest service , @PathVariable("categoryId") Long categoryId) {
+        return ApiResponse.<ServicesResponse>builder()
+                .result(servicesService.createService(service, categoryId))
+                .build();
     }
-    @GetMapping("/find")
-    public Services findServicesById(@RequestParam("id") Long id) {
-        return servicesService.findServicesByServiceId(id);
+
+    @GetMapping("/{id}")
+    public ApiResponse<ServicesResponse> findServicesById(@PathVariable("id") Long id) {
+        return ApiResponse.<ServicesResponse>builder()
+                .result(servicesService.findByServiceId(id))
+                .build();
     }
-    @PutMapping("/update")
-    public int updateServiceById(@RequestBody Services service,@RequestParam("categoryId") Long categoryId, Long serviceId) {
-        return servicesService.updateServicesByServiceId(service, categoryId, serviceId);
+
+    @GetMapping()
+    public ApiResponse<List<ServicesResponse>> getAllServices() {
+        return ApiResponse.<List<ServicesResponse>>builder()
+                .result(servicesService.findAllServices())
+                .build();
     }
-    @PostMapping("/create")
-    public Services createService(@RequestBody Services service ,@RequestParam("categoryId") Long categoryId) {
-        return servicesService.createService(service, categoryId);
+
+    @PutMapping("/{id}/category/{categoryId}")
+    public ApiResponse<ServicesResponse> updateServiceById(@RequestBody ServicesUpdateRequest service, @PathVariable("categoryId") Long categoryId, @PathVariable("id") Long serviceId) {
+        return ApiResponse.<ServicesResponse>builder()
+                .result(servicesService.updateByServiceId(service,serviceId,categoryId))
+                .build();
     }
-    @DeleteMapping("/delete")
-    public void deleteServiceById(@RequestParam("id") Long serviceId) {
-        servicesService.deleteServicesByServiceId(serviceId);
+
+    @DeleteMapping("/{id}")
+    public ApiResponse<String> deleteServiceById(@PathVariable("id") Long id) {
+        servicesService.deleteByServiceId(id);
+        return ApiResponse.<String>builder()
+                .result("Services has been deleted")
+                .build();
     }
 }
