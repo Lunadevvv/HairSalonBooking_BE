@@ -8,7 +8,12 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface StaffRepository extends JpaRepository<Staff, Long> {
-    @Query("SELECT TOP 1 s.id FROM Staff s ORDER BY s.id DESC")
+    @Query(value = "SELECT code " +
+            "FROM staff " +
+            "ORDER BY code DESC " +
+            "LIMIT 1", nativeQuery = true)
     @Transactional
     String findTheLatestStaffCode();
+
+    Staff findStaffById(Long id);
 }
