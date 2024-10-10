@@ -3,6 +3,7 @@ package com.datvm.hairbookingapp.exception;
 import com.datvm.hairbookingapp.dto.response.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -56,17 +57,22 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = SQLIntegrityConstraintViolationException.class)
     ResponseEntity<ApiResponse> handlingSQLIntegrityConstraintViolationException(SQLIntegrityConstraintViolationException exception){
-//        String msg = "";
-//        for(FieldError fieldError : exception.getMessage().getFieldErrors()){
-//            //loop qua từng field của dữ liệu , nếu cái nào có lỗi thì thêm vào msg
-//            msg += fieldError.getDefaultMessage()+" ";
-//
-//        }
 
         ApiResponse apiResponse = new ApiResponse();
 
         apiResponse.setCode(400);
         apiResponse.setMessage("Email hoặc Sđt của bạn đã bị trùng");
+
+        return ResponseEntity.badRequest().body(apiResponse);
+    }
+
+    @ExceptionHandler(value = HttpMessageNotReadableException.class)
+    ResponseEntity<ApiResponse> handlingHttpMessageNotReadableException(HttpMessageNotReadableException exception){
+
+        ApiResponse apiResponse = new ApiResponse();
+
+        apiResponse.setCode(400);
+        apiResponse.setMessage("Wrong format. Please follow: yyyy-MM-dd");
 
         return ResponseEntity.badRequest().body(apiResponse);
     }
