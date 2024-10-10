@@ -38,7 +38,7 @@ public class SalonController {
                 .build();
     }
     @PutMapping("/{id}")
-    public ApiResponse<SalonResponse> updateSalonById(@RequestBody SalonUpdateRequest request, @PathVariable("id") Long id) {
+    public ApiResponse<SalonResponse> updateSalonById(@RequestBody @Valid SalonUpdateRequest request, @PathVariable("id") Long id) {
         return ApiResponse.<SalonResponse>builder()
                 .result(salonService.updateSalonById(id,request))
                 .build();
