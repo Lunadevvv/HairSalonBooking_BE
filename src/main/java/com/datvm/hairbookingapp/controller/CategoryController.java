@@ -1,7 +1,11 @@
 package com.datvm.hairbookingapp.controller;
 
-import com.datvm.hairbookingapp.entity.Category;
+import com.datvm.hairbookingapp.dto.request.CategoryCreationRequest;
+import com.datvm.hairbookingapp.dto.request.CategoryUpdateRequest;
+import com.datvm.hairbookingapp.dto.response.ApiResponse;
+import com.datvm.hairbookingapp.dto.response.CategoryResponse;
 import com.datvm.hairbookingapp.service.CategoryService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,30 +14,42 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/category")
 public class CategoryController {
+
     @Autowired
-    CategoryService categoryService;
-    @PostMapping("/create")
-    public Category createCategory(@RequestBody Category category){
-        return categoryService.createCategory(category);
+    private CategoryService categoryService;
+
+    @PostMapping()
+    public ApiResponse<CategoryResponse> createCategory(@RequestBody @Valid CategoryCreationRequest request) {
+        return ApiResponse.<CategoryResponse>builder()
+                .result(categoryService.createCategory(request))
+                .build();
     }
-    @GetMapping("/get")
-    public List<Category> getAllCategories(){
-        return categoryService.getAllCategories();
+
+    @GetMapping("/{id}")
+    public ApiResponse<CategoryResponse> getCategoryById(@PathVariable("id") Long id) {
+        return ApiResponse.<CategoryResponse>builder()
+                .result(categoryService.findCategoryById(id))
+                .build();
     }
-    @GetMapping(value = "/find",params = "id")
-    public Category getCategoryById(@RequestParam("id") Long id){
-        return categoryService.getCategoryById(id);
+
+    @GetMapping()
+    public ApiResponse<List<CategoryResponse>> getAllCategories(){
+        return ApiResponse.<List<CategoryResponse>>builder()
+                .result(categoryService.findAllCategory())
+                .build();
     }
-    @GetMapping(value = "/find", params = "name")
-    public List<Category> getCategoryByName(@RequestParam("name") String name){
-        return categoryService.getCategoryByName(name);
+
+    @PutMapping("/{id}")
+    public ApiResponse<CategoryResponse> updateCategoryById(@PathVariable("id") Long id,@RequestBody @Valid CategoryUpdateRequest request){
+        return ApiResponse.<CategoryResponse>builder()
+                .result(categoryService.updateCategoryById(id,request))
+                .build();
     }
-    @PutMapping("/update")
-    public int updateCategoryById(@RequestParam("id") Long id,@RequestBody Category category){
-        return categoryService.updateCategoryById(id, category);
-    }
-    @DeleteMapping("/delete")
-    public void deleteCategoryById(@RequestParam("id") Long id){
+    @DeleteMapping("/{id}")
+    public ApiResponse<String> deleteCategoryById(@PathVariable("id") Long id){
         categoryService.deleteCategoryById(id);
+        return ApiResponse.<String>builder()
+                .result("Category has been deleted")
+                .build();
     }
 }
