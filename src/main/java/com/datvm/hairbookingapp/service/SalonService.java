@@ -9,8 +9,8 @@ import java.util.List;
 @Service
 public interface SalonService {
     SalonResponse createSalon(SalonCreationRequest request);
-    SalonResponse findSalonBySalonId(Long salonId);
+    SalonResponse findSalonById(Long salonId);
     List<SalonResponse> findAllSalon();
-    SalonResponse updateSalonBySalonId(Long salonId, SalonUpdateRequest request);
-    void deleteSalonBySalonId(Long salonId);
+    SalonResponse updateSalonById(Long salonId, SalonUpdateRequest request);
+    void deleteSalonById(Long salonId);
 }

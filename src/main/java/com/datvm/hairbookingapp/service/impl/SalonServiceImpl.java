@@ -10,7 +10,9 @@ import com.datvm.hairbookingapp.repository.SalonRepository;
 import com.datvm.hairbookingapp.service.SalonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
+
 import static com.datvm.hairbookingapp.exception.ErrorCode.*;
 
 @Service
@@ -34,7 +36,7 @@ public class SalonServiceImpl implements SalonService {
     }
 
     @Override
-    public SalonResponse findSalonBySalonId(Long salonId) {
+    public SalonResponse findSalonById(Long salonId) {
         if (!salonRepository.existsById(salonId)) throw new AppException(SALON_NOT_EXISTED);
         return salonMapper.toSalonResponse(salonRepository.findBySalonId(salonId));
     }
@@ -48,19 +50,19 @@ public class SalonServiceImpl implements SalonService {
     }
 
     @Override
-    public SalonResponse updateSalonBySalonId(Long salonId, SalonUpdateRequest request) {
+    public SalonResponse updateSalonById(Long salonId, SalonUpdateRequest request) {
         if (!salonRepository.existsById(salonId)) throw new AppException(SALON_NOT_EXISTED);
         Salon salon = salonRepository.findBySalonId(salonId);
         salonMapper.updateSalon(salon, request);
-        try{
-            return salonMapper.toSalonResponse(salonRepository.saveAndFlush(salon));
-        }catch (Exception e) {
+        try {
+            return salonMapper.toSalonResponse(salonRepository.save(salon));
+        } catch (Exception e) {
             throw new AppException(DUPLICATE_PHONE);
         }
     }
 
     @Override
-    public void deleteSalonBySalonId(Long salonId) {
+    public void deleteSalonById(Long salonId) {
         if (!salonRepository.existsById(salonId)) throw new AppException(SALON_NOT_EXISTED);
         salonRepository.deleteBySalonId(salonId);
     }

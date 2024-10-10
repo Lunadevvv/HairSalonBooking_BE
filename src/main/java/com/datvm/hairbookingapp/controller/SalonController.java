@@ -17,17 +17,18 @@ import java.util.List;
 public class SalonController {
     @Autowired
     private SalonService salonService;
+
     @PostMapping()
-    public ApiResponse<SalonResponse> create(@Valid @RequestBody SalonCreationRequest request) {
+    public ApiResponse<SalonResponse> createSalon(@Valid @RequestBody SalonCreationRequest request) {
         return ApiResponse.<SalonResponse>builder()
                 .result(salonService.createSalon(request))
                 .build();
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<SalonResponse> findSalonsById(@PathVariable("id") Long id) {
+    public ApiResponse<SalonResponse> findSalonById(@PathVariable("id") Long id) {
         return ApiResponse.<SalonResponse>builder()
-                .result(salonService.findSalonBySalonId(id))
+                .result(salonService.findSalonById(id))
                 .build();
     }
     @GetMapping()
@@ -39,12 +40,12 @@ public class SalonController {
     @PutMapping("/{id}")
     public ApiResponse<SalonResponse> updateSalonById(@RequestBody SalonUpdateRequest request, @PathVariable("id") Long id) {
         return ApiResponse.<SalonResponse>builder()
-                .result(salonService.updateSalonBySalonId(id,request))
+                .result(salonService.updateSalonById(id,request))
                 .build();
     }
     @DeleteMapping("/{id}")
     public ApiResponse<String> deleteSalonById(@PathVariable("id") Long id) {
-        salonService.deleteSalonBySalonId(id);
+        salonService.deleteSalonById(id);
         return ApiResponse.<String>builder()
                 .result("Salon has been deleted")
                 .build();
