@@ -16,7 +16,9 @@ public class Category {
 
     @Id
     private Long categoryId;
+    @Column(nullable = false)
     private String categoryName;
+    @Column(nullable = false)
     private String categoryDescription;
 
     @OneToMany(mappedBy = "categories", fetch = FetchType.LAZY, cascade = CascadeType.ALL)

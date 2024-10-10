@@ -15,14 +15,14 @@ import lombok.NoArgsConstructor;
 public class Salon {
     @Id
     private Long salonId;
-
+    @Column(nullable = false)
     private String salonName;
-
+    @Column(nullable = false)
     private String salonAddress;
-
+    @Column(nullable = false, unique = true)
     private String phoneNumber;
-
+    @Column(nullable = false)
     private String openingHours;
-
+    @Column(nullable = false)
     private String description;
 }
