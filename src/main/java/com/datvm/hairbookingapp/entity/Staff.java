@@ -48,7 +48,7 @@ public class Staff {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
-    @JsonIgnore
+    @OneToOne
+    @JoinColumn(name = "account_id")
     private Account account;
 }

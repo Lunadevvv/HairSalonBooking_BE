@@ -49,8 +49,7 @@ public class Account implements UserDetails {
     @Enumerated(EnumType.STRING) //Luu xuong database se theo kieu string
     private Role role;
 
-    @OneToOne
-    @JoinColumn(name = "staff_id")
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
     private Staff staff;
 
     @Override
