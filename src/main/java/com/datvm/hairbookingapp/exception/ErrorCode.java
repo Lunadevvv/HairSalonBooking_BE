@@ -8,8 +8,12 @@ public enum ErrorCode {
     USER_NOT_EXISTED(1005, "User not existed"),
     TOKEN_MISSING(1006, "Token is missing"),
     DUPLICATE_PHONE(1000, "Duplicate Phone"),
-    SALON_NOT_EXISTED(1005, "Salon not existed"),
     SALON_EXISTED(1002, "Salon existed"),
+    SALON_NOT_EXISTED(1005, "Salon not existed"),
+    CATEGORY_EXISTED(1002, "Category already existed"),
+    CATEGORY_NOT_EXISTED(1005, "Category not existed"),
+    SERVICES_EXISTED(1002, "Services already existed"),
+    SERVICES_NOT_EXISTED(1005, "Service not existed"),
     ;
 
     private int code;
