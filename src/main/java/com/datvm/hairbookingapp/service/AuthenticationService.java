@@ -90,7 +90,7 @@ public class AuthenticationService implements UserDetailsService {
         EmailDetail emailDetail = new EmailDetail();
         emailDetail.setAccount(account);//set receiver
         emailDetail.setSubject("Reset password");
-        emailDetail.setLink("https://www.google.com?token=" + token);
+        emailDetail.setLink("http://localhost:3000/reset-password?token=" + token);
         emailService.sendEmail(emailDetail);
     }
 
