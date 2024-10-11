@@ -4,15 +4,11 @@ import com.datvm.hairbookingapp.dto.request.ServicesCreationRequest;
 import com.datvm.hairbookingapp.dto.request.ServicesUpdateRequest;
 import com.datvm.hairbookingapp.dto.response.ApiResponse;
 import com.datvm.hairbookingapp.dto.response.ServicesResponse;
-import com.datvm.hairbookingapp.entity.Category;
-import com.datvm.hairbookingapp.entity.Services;
 import com.datvm.hairbookingapp.service.ServicesService;
 import jakarta.validation.Valid;
-import org.apache.coyote.Request;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
