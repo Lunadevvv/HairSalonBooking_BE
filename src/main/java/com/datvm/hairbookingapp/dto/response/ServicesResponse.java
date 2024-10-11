@@ -17,5 +17,7 @@ public class ServicesResponse {
     String description;
     String duration;
     BigDecimal price;
+    String image;
     Category categories;
+
 }
