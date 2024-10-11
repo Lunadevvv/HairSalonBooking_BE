@@ -27,8 +27,12 @@ public class ServicesServiceImpl implements ServicesService {
 
     @Override
     public ServicesResponse createService(ServicesCreationRequest request, Long categoryId) {
-        if(servicesRepository.existsById(request.getServiceId())) throw new AppException(SERVICES_EXISTED);
-        if(!categoryRepository.existsById(categoryId)) throw new AppException(CATEGORY_NOT_EXISTED);
+        if(servicesRepository.existsById(request.getServiceId()))
+            throw new AppException(SERVICES_EXISTED);
+        if(!categoryRepository.existsById(categoryId))
+            throw new AppException(CATEGORY_NOT_EXISTED);
+        if(!request.getImage().contains("imgur"))
+            throw new AppException(INVALID_IMAGE);
         request.setCategories(categoryRepository.findByCategoryId(categoryId));
         Services service = servicesMapper.toServices(request);
         return servicesMapper.toServicesResponse(servicesRepository.save(service));
@@ -49,10 +53,11 @@ public class ServicesServiceImpl implements ServicesService {
     public ServicesResponse updateByServiceId(ServicesUpdateRequest request, Long serviceId, Long categoryId) {
         if(!servicesRepository.existsById(serviceId)) throw new AppException(SERVICES_NOT_EXISTED);
         if(!categoryRepository.existsById(categoryId)) throw new AppException(CATEGORY_NOT_EXISTED);
+        if(!request.getImage().contains("imgur"))
+            throw new AppException(INVALID_IMAGE);
         Services service = servicesRepository.findByServiceId(serviceId);
         servicesMapper.updateServices(service, request);
         service.setCategories(categoryRepository.findByCategoryId(categoryId));
-        System.out.println("this is service" + service);
         return servicesMapper.toServicesResponse(servicesRepository.save(service));
     }
 
