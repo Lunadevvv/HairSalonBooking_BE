@@ -25,7 +25,7 @@ public class ServicesUpdateRequest {
     @NotNull(message = "price can't be null")
     BigDecimal price;
 
+    @NotBlank(message = "image can't be blank. Please add image url")
     String image;
-
     Category categories;
 }
