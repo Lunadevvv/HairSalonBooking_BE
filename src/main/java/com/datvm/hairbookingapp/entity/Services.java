@@ -20,6 +20,7 @@ public class Services {
     @Column(nullable = false)
     private BigDecimal price;
 
+    private String image;
     @ManyToOne(targetEntity = Category.class,fetch = FetchType.EAGER)
     @JoinColumn(name = "CategoryId", nullable = false)
     private Category categories;

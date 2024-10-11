@@ -29,5 +29,8 @@ public class ServicesCreationRequest {
     @NotNull(message = "price can't be null")
     BigDecimal price;
 
+
+    String image;
+
     Category categories;
 }
