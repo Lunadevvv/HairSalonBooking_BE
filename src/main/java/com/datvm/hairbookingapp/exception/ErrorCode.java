@@ -12,6 +12,7 @@ public enum ErrorCode {
     CATEGORY_NOT_EXISTED(1005, "Category not existed"),
     SERVICES_EXISTED(1002, "Services already existed"),
     SERVICES_NOT_EXISTED(1005, "Service not existed"),
+    INVALID_IMAGE(1007,"Invalid image format"),
     ;
 
     private int code;
