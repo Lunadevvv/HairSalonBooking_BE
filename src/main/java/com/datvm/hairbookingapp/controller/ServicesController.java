@@ -17,15 +17,15 @@ public class ServicesController {
     @Autowired
     private ServicesService servicesService;
 
-    @PostMapping("/{categoryId}")
-    public ApiResponse<ServicesResponse> createService(@RequestBody @Valid ServicesCreationRequest service , @PathVariable("categoryId") Long categoryId) {
+    @PostMapping()
+    public ApiResponse<ServicesResponse> createService(@RequestBody @Valid ServicesCreationRequest service , @PathVariable("categoryId") String categoryId) {
         return ApiResponse.<ServicesResponse>builder()
                 .result(servicesService.createService(service, categoryId))
                 .build();
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<ServicesResponse> findServicesById(@PathVariable("id") Long id) {
+    public ApiResponse<ServicesResponse> findServicesById(@PathVariable("id") String id) {
         return ApiResponse.<ServicesResponse>builder()
                 .result(servicesService.findByServiceId(id))
                 .build();
@@ -39,14 +39,14 @@ public class ServicesController {
     }
 
     @PutMapping("/{id}/category/{categoryId}")
-    public ApiResponse<ServicesResponse> updateServiceById(@RequestBody @Valid ServicesUpdateRequest service, @PathVariable("categoryId") Long categoryId, @PathVariable("id") Long serviceId) {
+    public ApiResponse<ServicesResponse> updateServiceById(@RequestBody @Valid ServicesUpdateRequest service, @PathVariable("categoryId") String categoryId, @PathVariable("id") String serviceId) {
         return ApiResponse.<ServicesResponse>builder()
                 .result(servicesService.updateByServiceId(service,serviceId,categoryId))
                 .build();
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<String> deleteServiceById(@PathVariable("id") Long id) {
+    public ApiResponse<String> deleteServiceById(@PathVariable("id") String id) {
         servicesService.deleteByServiceId(id);
         return ApiResponse.<String>builder()
                 .result("Services has been deleted")
