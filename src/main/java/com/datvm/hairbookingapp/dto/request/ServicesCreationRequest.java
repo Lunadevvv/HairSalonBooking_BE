@@ -14,8 +14,7 @@ import java.math.BigDecimal;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ServicesCreationRequest {
-    @NotNull(message = "serviceId can't be null")
-    Long serviceId;
+    String serviceId;
 
     @NotBlank(message = "service name can't be blank")
     String serviceName;
