@@ -17,7 +17,7 @@ public class ServicesController {
     @Autowired
     private ServicesService servicesService;
 
-    @PostMapping()
+    @PostMapping("/{categoryId}")
     public ApiResponse<ServicesResponse> createService(@RequestBody @Valid ServicesCreationRequest service , @PathVariable("categoryId") String categoryId) {
         return ApiResponse.<ServicesResponse>builder()
                 .result(servicesService.createService(service, categoryId))
