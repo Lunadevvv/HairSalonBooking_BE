@@ -36,7 +36,8 @@ public class Filter extends OncePerRequestFilter {
     private final List<String> AUTH_PERMISSION = List.of( //những api mà ai cũng truy cập đc
             "/api/v1/login",
             "/api/v1/register",
-            "/api/v1/forgot-password"
+            "/api/v1/forgot-password",
+            "/api/v1/*"
     );
 
     public boolean checkIsPublicAPI(String uri){
