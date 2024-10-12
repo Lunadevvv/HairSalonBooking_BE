@@ -12,7 +12,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
 public class CategoryResponse {
-    Long categoryId;
+    String categoryId;
     String categoryName;
     String categoryDescription;
     @JsonIgnore
