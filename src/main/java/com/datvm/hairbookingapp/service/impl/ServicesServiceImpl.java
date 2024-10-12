@@ -26,7 +26,8 @@ public class ServicesServiceImpl implements ServicesService {
     private ServicesMapper servicesMapper;
 
     @Override
-    public ServicesResponse createService(ServicesCreationRequest request, Long categoryId) {
+    public ServicesResponse createService(ServicesCreationRequest request, String categoryId) {
+        request.setServiceId(generateServiceId());
         if(servicesRepository.existsById(request.getServiceId()))
             throw new AppException(SERVICES_EXISTED);
         if(!categoryRepository.existsById(categoryId))
@@ -39,7 +40,7 @@ public class ServicesServiceImpl implements ServicesService {
     }
 
     @Override
-    public ServicesResponse findByServiceId(Long id) {
+    public ServicesResponse findByServiceId(String id) {
         if(!servicesRepository.existsById(id)) throw new AppException(SERVICES_NOT_EXISTED);
         return servicesMapper.toServicesResponse(servicesRepository.findByServiceId(id));
     }
@@ -50,7 +51,7 @@ public class ServicesServiceImpl implements ServicesService {
     }
 
     @Override
-    public ServicesResponse updateByServiceId(ServicesUpdateRequest request, Long serviceId, Long categoryId) {
+    public ServicesResponse updateByServiceId(ServicesUpdateRequest request, String serviceId, String categoryId) {
         if(!servicesRepository.existsById(serviceId)) throw new AppException(SERVICES_NOT_EXISTED);
         if(!categoryRepository.existsById(categoryId)) throw new AppException(CATEGORY_NOT_EXISTED);
         if(!request.getImage().contains("imgur"))
@@ -62,8 +63,19 @@ public class ServicesServiceImpl implements ServicesService {
     }
 
     @Override
-    public void deleteByServiceId(Long serviceId) {
+    public void deleteByServiceId(String serviceId) {
         if(!servicesRepository.existsById(serviceId)) throw new AppException(SERVICES_NOT_EXISTED);
         servicesRepository.deleteById(serviceId);
+    }
+
+    @Override
+    public String generateServiceId() {
+        String id = "SV0001";
+        String lastId = servicesRepository.findLastId();
+        if(lastId == null)
+            return id;
+        int fourLastNumber = Integer.parseInt(lastId.substring(1));
+        id = String.format("SV%04d", ++fourLastNumber);
+        return id;
     }
 }
