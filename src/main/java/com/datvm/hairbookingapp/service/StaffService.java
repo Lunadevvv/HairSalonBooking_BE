@@ -15,6 +15,8 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Service;
 
 import javax.security.auth.login.AccountExpiredException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class StaffService {
@@ -27,6 +29,11 @@ public class StaffService {
 
     @Autowired
     AuthenticationRepository authenticationRepository;
+
+    public List<Staff> getAllStaff(){
+        List<Staff> list = staffRepository.findAll();
+        return list;
+    }
 
     public StaffResponse createStaff(CreateStaffRequest request) throws HttpMessageNotReadableException {
             String code = generateStaffCode();
