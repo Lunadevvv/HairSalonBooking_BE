@@ -12,7 +12,7 @@ import lombok.experimental.FieldDefaults;
 @Builder
 public class CategoryUpdateRequest {
     @NotBlank(message = "categoryName can't be blank")
-    String CategoryName;
+    String categoryName;
     @NotBlank(message = "categoryDescription can't be blank")
-    String CategoryDescription;
+    String categoryDescription;
 }
