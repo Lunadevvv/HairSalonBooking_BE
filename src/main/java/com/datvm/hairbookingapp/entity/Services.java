@@ -1,8 +1,6 @@
 package com.datvm.hairbookingapp.entity;
-
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.ToString;
 
 
 import java.math.BigDecimal;
@@ -12,15 +10,22 @@ import java.math.BigDecimal;
 @Table(name = "Services")
 public class Services {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long serviceId;
 
+    @Column(nullable = false)
     private String serviceName;
 
+    @Column(nullable = false)
     private String description;
 
+    @Column(nullable = false)
     private String duration;
+
+    @Column(nullable = false)
     private BigDecimal price;
+
+    @Column(nullable = false)
+    private String image;
 
     @ManyToOne(targetEntity = Category.class,fetch = FetchType.EAGER)
     @JoinColumn(name = "CategoryId", nullable = false)

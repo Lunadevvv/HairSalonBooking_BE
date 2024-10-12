@@ -1,49 +1,69 @@
 package com.datvm.hairbookingapp.service.impl;
 
-import com.datvm.hairbookingapp.entity.Category;
+import com.datvm.hairbookingapp.dto.request.ServicesCreationRequest;
+import com.datvm.hairbookingapp.dto.request.ServicesUpdateRequest;
+import com.datvm.hairbookingapp.dto.response.ServicesResponse;
 import com.datvm.hairbookingapp.entity.Services;
-
+import com.datvm.hairbookingapp.exception.AppException;
+import com.datvm.hairbookingapp.mapper.ServicesMapper;
 import com.datvm.hairbookingapp.repository.CategoryRepository;
 import com.datvm.hairbookingapp.repository.ServicesRepository;
 import com.datvm.hairbookingapp.service.ServicesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
+import static com.datvm.hairbookingapp.exception.ErrorCode.*;
+
 @Service
 public class ServicesServiceImpl implements ServicesService {
     @Autowired
     private ServicesRepository servicesRepository;
     @Autowired
     private CategoryRepository categoryRepository;
+    @Autowired
+    private ServicesService servicesService;
+    @Autowired
+    private ServicesMapper servicesMapper;
 
     @Override
-
-    public Services createService(Services service, Long categoryId) {
-        Category category = categoryRepository.findCategoryByCategoryId(categoryId);
-        service.setCategories(category);
-
-        return servicesRepository.save(service);
-    }
-
-    public Services findServicesByServiceId(Long id){
-        return servicesRepository.findServicesByServiceId(id);
-    }
-
-    @Override
-    public List<Services> getAllServices() {
-        return servicesRepository.findAll();
-    }
-
-    @Override
-    public int updateServicesByServiceId(Services service, Long categoryId, Long serviceId) {
-        Category category = categoryRepository.findCategoryByCategoryId(categoryId);
-        return servicesRepository.updateServicesByServiceId(serviceId,service.getServiceName()
-                , service.getDescription(), service.getPrice(), service.getDuration(), category);
+    public ServicesResponse createService(ServicesCreationRequest request, Long categoryId) {
+        if(servicesRepository.existsById(request.getServiceId()))
+            throw new AppException(SERVICES_EXISTED);
+        if(!categoryRepository.existsById(categoryId))
+            throw new AppException(CATEGORY_NOT_EXISTED);
+        if(!request.getImage().contains("imgur"))
+            throw new AppException(INVALID_IMAGE);
+        request.setCategories(categoryRepository.findByCategoryId(categoryId));
+        Services service = servicesMapper.toServices(request);
+        return servicesMapper.toServicesResponse(servicesRepository.save(service));
     }
 
     @Override
-    public void deleteServicesByServiceId(Long id) {
-        servicesRepository.deleteServiceByServiceId(id);
+    public ServicesResponse findByServiceId(Long id) {
+        if(!servicesRepository.existsById(id)) throw new AppException(SERVICES_NOT_EXISTED);
+        return servicesMapper.toServicesResponse(servicesRepository.findByServiceId(id));
+    }
+
+    @Override
+    public List<ServicesResponse> findAllServices() {
+        return servicesRepository.findAll().stream().map(servicesMapper::toServicesResponse).toList();
+    }
+
+    @Override
+    public ServicesResponse updateByServiceId(ServicesUpdateRequest request, Long serviceId, Long categoryId) {
+        if(!servicesRepository.existsById(serviceId)) throw new AppException(SERVICES_NOT_EXISTED);
+        if(!categoryRepository.existsById(categoryId)) throw new AppException(CATEGORY_NOT_EXISTED);
+        if(!request.getImage().contains("imgur"))
+            throw new AppException(INVALID_IMAGE);
+        Services service = servicesRepository.findByServiceId(serviceId);
+        servicesMapper.updateServices(service, request);
+        service.setCategories(categoryRepository.findByCategoryId(categoryId));
+        return servicesMapper.toServicesResponse(servicesRepository.save(service));
+    }
+
+    @Override
+    public void deleteByServiceId(Long serviceId) {
+        if(!servicesRepository.existsById(serviceId)) throw new AppException(SERVICES_NOT_EXISTED);
+        servicesRepository.deleteById(serviceId);
     }
 }
