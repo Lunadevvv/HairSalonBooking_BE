@@ -11,6 +11,8 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
 public class CategoryUpdateRequest {
+    @NotBlank(message = "categoryId can't be blank")
+    String categoryId;
     @NotBlank(message = "categoryName can't be blank")
     String categoryName;
     @NotBlank(message = "categoryDescription can't be blank")
