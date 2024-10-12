@@ -49,7 +49,7 @@ public class Account implements UserDetails {
     @Enumerated(EnumType.STRING) //Luu xuong database se theo kieu string
     private Role role;
 
-    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Staff staff;
 
     @Override
