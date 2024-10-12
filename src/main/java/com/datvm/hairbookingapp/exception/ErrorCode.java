@@ -9,6 +9,7 @@ public enum ErrorCode {
     USER_NOT_EXISTED(1005, "User not existed"),
     TOKEN_MISSING(1006, "Token is missing"),
     DUPLICATE_PHONE(1000, "Duplicate Phone"),
+    STAFF_NOT_FOUND(9999, "Staff not found"),
 
     ;
 

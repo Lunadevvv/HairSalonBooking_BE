@@ -37,17 +37,20 @@ public class Account implements UserDetails {
 
     @Email(message = "Invalid email")
     @Column(unique = true)
-    String email;
+    private String email;
 
     @Pattern(regexp = "(84|0[3|5|7|8|9])+(\\d{8})\\b" , message = "Invalid phone number")
     @Column(unique = true)
-    String phone;
+    private String phone;
 
     @Size(min = 6 , message = "Password must be exceed 6 characters ")
-    String password;
+    private String password;
 
     @Enumerated(EnumType.STRING) //Luu xuong database se theo kieu string
-    Role role;
+    private Role role;
+
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Staff staff;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -3,6 +3,7 @@ package com.datvm.hairbookingapp.service;
 import com.datvm.hairbookingapp.dto.request.LoginRequest;
 import com.datvm.hairbookingapp.dto.request.RegisterRequest;
 import com.datvm.hairbookingapp.dto.request.ResetPasswordRequest;
+import com.datvm.hairbookingapp.dto.response.AccountResponse;
 import com.datvm.hairbookingapp.dto.response.EmailDetail;
 import com.datvm.hairbookingapp.dto.response.LoginResponse;
 import com.datvm.hairbookingapp.dto.response.RegisterResponse;
@@ -90,7 +91,7 @@ public class AuthenticationService implements UserDetailsService {
         EmailDetail emailDetail = new EmailDetail();
         emailDetail.setAccount(account);//set receiver
         emailDetail.setSubject("Reset password");
-        emailDetail.setLink("https://www.google.com?token=" + token);
+        emailDetail.setLink("http://localhost:3000/reset-password?token=" + token);
         emailService.sendEmail(emailDetail);
     }
 
@@ -106,6 +107,14 @@ public class AuthenticationService implements UserDetailsService {
 
         }
         return status;
+    }
+
+    public AccountResponse getAccountByPhone(String phone) throws UsernameNotFoundException {
+        Account account = accountRepository.findAccountByPhone(phone);
+        if (account == null) {
+            throw new AppException(ErrorCode.USER_NOT_EXISTED);
+        }
+        return accountMapper.toAccountRes(account);
     }
 
 
