@@ -66,7 +66,7 @@ public class CategoryServiceImpl implements CategoryService {
         String lastId = categoryRepository.findLastId();
         if(lastId == null)
             return id;
-        int fourLastNumber = Integer.parseInt(lastId.substring(1));
+        int fourLastNumber = Integer.parseInt(lastId.substring(2));
         id = String.format("CT%04d", ++fourLastNumber);
         return id;
     }

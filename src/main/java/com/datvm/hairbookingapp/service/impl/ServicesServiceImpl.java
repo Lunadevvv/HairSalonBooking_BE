@@ -74,7 +74,7 @@ public class ServicesServiceImpl implements ServicesService {
         String lastId = servicesRepository.findLastId();
         if(lastId == null)
             return id;
-        int fourLastNumber = Integer.parseInt(lastId.substring(1));
+        int fourLastNumber = Integer.parseInt(lastId.substring(2));
         id = String.format("SV%04d", ++fourLastNumber);
         return id;
     }
