@@ -26,6 +26,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryResponse createCategory(CategoryCreationRequest request) {
+        request.setCategoryId(generateCategoryId());
         if (categoryRepository.existsById(request.getCategoryId())) throw new AppException(CATEGORY_EXISTED);
         Category category = categoryMapper.toCategory(request);
         // can't map from 3 entities to 4 entities
@@ -33,7 +34,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryResponse findCategoryById(Long id) {
+    public CategoryResponse findCategoryById(String id) {
         if (!categoryRepository.existsById(id)) throw new AppException(CATEGORY_NOT_EXISTED);
         return categoryMapper.toCategoryResponse(categoryRepository.findByCategoryId(id));
     }
@@ -46,7 +47,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryResponse updateCategoryById(Long id, CategoryUpdateRequest request) {
+    public CategoryResponse updateCategoryById(String id, CategoryUpdateRequest request) {
         if (!categoryRepository.existsById(id)) throw new AppException(CATEGORY_NOT_EXISTED);
         Category category = categoryRepository.findByCategoryId(id);
         categoryMapper.updateCategory(category, request);
@@ -54,9 +55,19 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void deleteCategoryById(Long id) {
+    public void deleteCategoryById(String id) {
         if (!categoryRepository.existsById(id)) throw new AppException(CATEGORY_NOT_EXISTED);
         categoryRepository.deleteByCategoryId(id);
     }
 
+    @Override
+    public String generateCategoryId() {
+        String id = "CT0001";
+        String lastId = categoryRepository.findLastId();
+        if(lastId == null)
+            return id;
+        int fourLastNumber = Integer.parseInt(lastId.substring(1));
+        id = String.format("CT%04d", ++fourLastNumber);
+        return id;
+    }
 }
