@@ -14,6 +14,8 @@ import java.math.BigDecimal;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ServicesCreationRequest {
+    @NotBlank(message = "categoryId can't be blank")
+    String categoryId;
     String serviceId;
 
     @NotBlank(message = "service name can't be blank")
