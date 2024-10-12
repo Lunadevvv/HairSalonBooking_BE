@@ -39,10 +39,10 @@ public class CategoryController {
                 .build();
     }
 
-    @PutMapping("/{id}")
-    public ApiResponse<CategoryResponse> updateCategoryById(@PathVariable("id") String id,@RequestBody @Valid CategoryUpdateRequest request){
+    @PutMapping()
+    public ApiResponse<CategoryResponse> updateCategoryById(@RequestBody @Valid CategoryUpdateRequest request){
         return ApiResponse.<CategoryResponse>builder()
-                .result(categoryService.updateCategoryById(id,request))
+                .result(categoryService.updateCategoryById(request))
                 .build();
     }
     @DeleteMapping("/{id}")

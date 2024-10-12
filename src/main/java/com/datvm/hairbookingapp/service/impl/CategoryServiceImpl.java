@@ -47,9 +47,9 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryResponse updateCategoryById(String id, CategoryUpdateRequest request) {
-        if (!categoryRepository.existsById(id)) throw new AppException(CATEGORY_NOT_EXISTED);
-        Category category = categoryRepository.findByCategoryId(id);
+    public CategoryResponse updateCategoryById(CategoryUpdateRequest request) {
+        if (!categoryRepository.existsById(request.getCategoryId())) throw new AppException(CATEGORY_NOT_EXISTED);
+        Category category = categoryRepository.findByCategoryId(request.getCategoryId());
         categoryMapper.updateCategory(category, request);
         return categoryMapper.toCategoryResponse(categoryRepository.save(category));
     }

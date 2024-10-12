@@ -13,7 +13,7 @@ public interface CategoryService {
     CategoryResponse createCategory(CategoryCreationRequest request);
     CategoryResponse findCategoryById(String id);
     List<CategoryResponse> findAllCategory();
-    CategoryResponse updateCategoryById(String id, CategoryUpdateRequest request);
+    CategoryResponse updateCategoryById(CategoryUpdateRequest request);
     void deleteCategoryById(String id);
     String generateCategoryId();
 }
