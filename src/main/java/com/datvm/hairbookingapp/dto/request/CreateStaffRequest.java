@@ -38,6 +38,6 @@ public class CreateStaffRequest {
     @NotNull(message = "Join in can't be null")
     private LocalDate joinIn;
 
-    @NotNull(message = "Role can't be null")
+//    @NotNull(message = "Role can't be null")
     private Role role;
 }
