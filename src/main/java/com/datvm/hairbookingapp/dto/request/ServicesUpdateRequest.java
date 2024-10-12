@@ -13,6 +13,10 @@ import java.math.BigDecimal;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ServicesUpdateRequest {
+    @NotBlank(message = "serviceId can't be blank")
+    String serviceId;
+    @NotBlank(message = "categoryId can't be blank")
+    String categoryId;
     @NotBlank(message = "service name can't be blank")
     String serviceName;
 
