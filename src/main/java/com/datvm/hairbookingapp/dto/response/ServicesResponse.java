@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ServicesResponse {
-    Long serviceId;
+    String serviceId;
     String serviceName;
     String description;
     String duration;
