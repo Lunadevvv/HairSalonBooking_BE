@@ -17,10 +17,10 @@ public class ServicesController {
     @Autowired
     private ServicesService servicesService;
 
-    @PostMapping("/{categoryId}")
-    public ApiResponse<ServicesResponse> createService(@RequestBody @Valid ServicesCreationRequest service , @PathVariable("categoryId") String categoryId) {
+    @PostMapping()
+    public ApiResponse<ServicesResponse> createService(@RequestBody @Valid ServicesCreationRequest service) {
         return ApiResponse.<ServicesResponse>builder()
-                .result(servicesService.createService(service, categoryId))
+                .result(servicesService.createService(service))
                 .build();
     }
 
@@ -38,10 +38,10 @@ public class ServicesController {
                 .build();
     }
 
-    @PutMapping("/{id}/category/{categoryId}")
-    public ApiResponse<ServicesResponse> updateServiceById(@RequestBody @Valid ServicesUpdateRequest service, @PathVariable("categoryId") String categoryId, @PathVariable("id") String serviceId) {
+    @PutMapping()
+    public ApiResponse<ServicesResponse> updateServiceById(@RequestBody @Valid ServicesUpdateRequest service) {
         return ApiResponse.<ServicesResponse>builder()
-                .result(servicesService.updateByServiceId(service,serviceId,categoryId))
+                .result(servicesService.updateByServiceId(service))
                 .build();
     }
 

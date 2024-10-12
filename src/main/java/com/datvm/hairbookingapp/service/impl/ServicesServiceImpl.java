@@ -26,15 +26,15 @@ public class ServicesServiceImpl implements ServicesService {
     private ServicesMapper servicesMapper;
 
     @Override
-    public ServicesResponse createService(ServicesCreationRequest request, String categoryId) {
+    public ServicesResponse createService(ServicesCreationRequest request) {
         request.setServiceId(generateServiceId());
         if(servicesRepository.existsById(request.getServiceId()))
             throw new AppException(SERVICES_EXISTED);
-        if(!categoryRepository.existsById(categoryId))
+        if(!categoryRepository.existsById(request.getCategoryId()))
             throw new AppException(CATEGORY_NOT_EXISTED);
         if(!request.getImage().contains("imgur"))
             throw new AppException(INVALID_IMAGE);
-        request.setCategories(categoryRepository.findByCategoryId(categoryId));
+        request.setCategories(categoryRepository.findByCategoryId(request.getCategoryId()));
         Services service = servicesMapper.toServices(request);
         return servicesMapper.toServicesResponse(servicesRepository.save(service));
     }
@@ -51,14 +51,14 @@ public class ServicesServiceImpl implements ServicesService {
     }
 
     @Override
-    public ServicesResponse updateByServiceId(ServicesUpdateRequest request, String serviceId, String categoryId) {
-        if(!servicesRepository.existsById(serviceId)) throw new AppException(SERVICES_NOT_EXISTED);
-        if(!categoryRepository.existsById(categoryId)) throw new AppException(CATEGORY_NOT_EXISTED);
+    public ServicesResponse updateByServiceId(ServicesUpdateRequest request) {
+        if(!servicesRepository.existsById(request.getServiceId())) throw new AppException(SERVICES_NOT_EXISTED);
+        if(!categoryRepository.existsById(request.getCategoryId())) throw new AppException(CATEGORY_NOT_EXISTED);
         if(!request.getImage().contains("imgur"))
             throw new AppException(INVALID_IMAGE);
-        Services service = servicesRepository.findByServiceId(serviceId);
+        Services service = servicesRepository.findByServiceId(request.getServiceId());
         servicesMapper.updateServices(service, request);
-        service.setCategories(categoryRepository.findByCategoryId(categoryId));
+        service.setCategories(categoryRepository.findByCategoryId(request.getCategoryId()));
         return servicesMapper.toServicesResponse(servicesRepository.save(service));
     }
 
