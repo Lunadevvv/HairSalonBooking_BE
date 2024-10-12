@@ -11,8 +11,9 @@ import java.util.List;
 @Service
 public interface CategoryService {
     CategoryResponse createCategory(CategoryCreationRequest request);
-    CategoryResponse findCategoryById(Long id);
+    CategoryResponse findCategoryById(String id);
     List<CategoryResponse> findAllCategory();
-    CategoryResponse updateCategoryById(Long id, CategoryUpdateRequest request);
-    void deleteCategoryById(Long id);
+    CategoryResponse updateCategoryById(String id, CategoryUpdateRequest request);
+    void deleteCategoryById(String id);
+    String generateCategoryId();
 }
