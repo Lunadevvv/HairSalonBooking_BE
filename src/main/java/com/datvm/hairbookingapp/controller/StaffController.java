@@ -31,13 +31,13 @@ public class StaffController {
                 .build();
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{code}")
     public ApiResponse<StaffResponse> updateStaffProfile(@RequestBody @Valid CreateStaffRequest request,
-                                                         @PathVariable Long id){
+                                                         @PathVariable String code){
         return ApiResponse.<StaffResponse>builder()
                 .code(200)
-                .message("Update id: " + id +" thành công!")
-                .result(staffService.updateStaffProfile(request, id))
+                .message("Update nhân viên: " + code +" thành công!")
+                .result(staffService.updateStaffProfile(request, code))
                 .build();
     }
 
@@ -46,6 +46,23 @@ public class StaffController {
         return ApiResponse.<List<Staff>>builder()
                 .code(200)
                 .result(staffService.getAllStaff())
+                .build();
+    }
+
+    @GetMapping("{code}")
+    public ApiResponse<StaffResponse> getAllStaff(@PathVariable String code){
+        return ApiResponse.<StaffResponse>builder()
+                .code(200)
+                .result(staffService.getStaffByCode(code))
+                .build();
+    }
+
+    @DeleteMapping("{code}")
+    public ApiResponse deleteStaff(@PathVariable String code){
+        staffService.deleteStaff(code);
+        return ApiResponse.builder()
+                .code(200)
+                .message("Xoá nhân viên có mã số " + code + " thành công!")
                 .build();
     }
 }

@@ -12,6 +12,7 @@ import com.datvm.hairbookingapp.repository.AuthenticationRepository;
 import com.datvm.hairbookingapp.repository.StaffRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.security.auth.login.AccountExpiredException;
@@ -30,9 +31,26 @@ public class StaffService {
     @Autowired
     AuthenticationRepository authenticationRepository;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
+    public void deleteStaff(String code){
+        Staff staff = staffRepository.findStaffByCode(code);
+        if(staff == null)
+            throw new AppException(ErrorCode.STAFF_NOT_FOUND);
+        staffRepository.delete(staff);
+    }
+
     public List<Staff> getAllStaff(){
         List<Staff> list = staffRepository.findAll();
         return list;
+    }
+
+    public StaffResponse getStaffByCode(String code){
+        Staff staff = staffRepository.findStaffByCode(code);
+        if(staff == null)
+            throw new AppException(ErrorCode.STAFF_NOT_FOUND);
+        return accountMapper.toStaffRes(staff);
     }
 
     public StaffResponse createStaff(CreateStaffRequest request) throws HttpMessageNotReadableException {
@@ -42,16 +60,16 @@ public class StaffService {
             Staff staff = accountMapper.toStaff(request);
             staff.setCode(code);
             try{
-                authenticationRepository.save(Account.builder()
-                                .email(staff.getEmail())
-                                .staff(staff)
-                                .role(staff.getRole())
-                                .phone(staff.getPhone())
-                                .lastName(staff.getLastName())
-                                .firstName(staff.getFirstName())
-                                .password("staff123")
-                                .build()
-                );
+                staff.setAccount(authenticationRepository.save(Account.builder()
+                        .email(staff.getEmail())
+                        .staff(staff)
+                        .role(staff.getRole())
+                        .phone(staff.getPhone())
+                        .lastName(staff.getLastName())
+                        .firstName(staff.getFirstName())
+                        .password(passwordEncoder.encode("staff123"))
+                        .build()
+                ));
                 staff = staffRepository.save(staff);
             }catch (AppException e){
                 throw new AppException(ErrorCode.PROCESS_FAILED);
@@ -60,8 +78,10 @@ public class StaffService {
             return accountMapper.toStaffRes(staff);
     }
 
-    public StaffResponse updateStaffProfile(CreateStaffRequest request, Long id){
-        Staff staff = staffRepository.findStaffById(id);
+    public StaffResponse updateStaffProfile(CreateStaffRequest request, String code){
+        Staff staff = staffRepository.findStaffByCode(code);
+        if(staff == null)
+            throw new AppException(ErrorCode.STAFF_NOT_FOUND);
         staff.setGender(request.getGender());
         staff.setEmail(request.getEmail());
         staff.setYob(request.getYob());
