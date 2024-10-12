@@ -14,8 +14,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
 public class CategoryCreationRequest {
-    @NotNull(message = "categoryId can't be null")
-    Long categoryId;
+    String categoryId;
     @NotBlank(message = "categoryName can't be blank")
     String categoryName;
     @NotBlank(message = "categoryDescription can't be blank")
