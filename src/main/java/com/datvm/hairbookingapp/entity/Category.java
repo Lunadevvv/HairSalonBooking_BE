@@ -13,9 +13,8 @@ import java.util.List;
 @Data
 @Table(name = "category")
 public class Category {
-
     @Id
-    private Long categoryId;
+    private String categoryId;
     @Column(nullable = false)
     private String categoryName;
     @Column(nullable = false)
