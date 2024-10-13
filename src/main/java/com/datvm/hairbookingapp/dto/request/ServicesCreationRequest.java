@@ -16,7 +16,6 @@ import java.math.BigDecimal;
 public class ServicesCreationRequest {
     @NotBlank(message = "categoryId can't be blank")
     String categoryId;
-    String serviceId;
 
     @NotBlank(message = "service name can't be blank")
     String serviceName;
@@ -32,6 +31,4 @@ public class ServicesCreationRequest {
 
     @NotBlank(message = "image can't be blank. Please add image url")
     String image;
-
-    Category categories;
 }
