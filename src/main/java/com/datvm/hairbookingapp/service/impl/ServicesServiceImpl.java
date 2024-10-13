@@ -27,15 +27,13 @@ public class ServicesServiceImpl implements ServicesService {
 
     @Override
     public ServicesResponse createService(ServicesCreationRequest request) {
-        request.setServiceId(generateServiceId());
-        if(servicesRepository.existsById(request.getServiceId()))
-            throw new AppException(SERVICES_EXISTED);
         if(!categoryRepository.existsById(request.getCategoryId()))
             throw new AppException(CATEGORY_NOT_EXISTED);
         if(!request.getImage().contains("imgur"))
             throw new AppException(INVALID_IMAGE);
-        request.setCategories(categoryRepository.findByCategoryId(request.getCategoryId()));
         Services service = servicesMapper.toServices(request);
+        service.setServiceId(generateServiceId());
+        service.setCategories(categoryRepository.findByCategoryId(request.getCategoryId()));
         return servicesMapper.toServicesResponse(servicesRepository.save(service));
     }
 
