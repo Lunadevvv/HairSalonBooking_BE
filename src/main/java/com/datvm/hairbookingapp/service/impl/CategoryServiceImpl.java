@@ -26,10 +26,9 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryResponse createCategory(CategoryCreationRequest request) {
-        request.setCategoryId(generateCategoryId());
-        if (categoryRepository.existsById(request.getCategoryId())) throw new AppException(CATEGORY_EXISTED);
         Category category = categoryMapper.toCategory(request);
         // can't map from 3 entities to 4 entities
+        category.setCategoryId(generateCategoryId());
         return categoryMapper.toCategoryResponse(categoryRepository.save(category));
     }
 
