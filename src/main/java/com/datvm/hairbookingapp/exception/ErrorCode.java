@@ -9,8 +9,12 @@ public enum ErrorCode {
     USER_NOT_EXISTED(1005, "User not existed"),
     TOKEN_MISSING(1006, "Token is missing"),
     DUPLICATE_PHONE(1000, "Duplicate Phone"),
+    CATEGORY_EXISTED(1002, "Category already existed"),
+    CATEGORY_NOT_EXISTED(1005, "Category not existed"),
+    SERVICES_EXISTED(1002, "Services already existed"),
+    SERVICES_NOT_EXISTED(1005, "Service not existed"),
+    INVALID_IMAGE(1007,"Invalid image format"),
     STAFF_NOT_FOUND(9999, "Staff not found"),
-
     ;
 
     private int code;

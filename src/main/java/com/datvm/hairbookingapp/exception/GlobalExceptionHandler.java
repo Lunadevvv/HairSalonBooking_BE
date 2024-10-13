@@ -25,6 +25,8 @@ public class GlobalExceptionHandler {
 //    }
 
 
+
+
     //Neu co bat cu exception loai AppException thi se duoc dieu huong vo day
     @ExceptionHandler(value = AppException.class)
     ResponseEntity<ApiResponse> handlingAppException(AppException exception){
@@ -37,14 +39,13 @@ public class GlobalExceptionHandler {
     }
 
 
-    //Handling cac exception cua validation anotation
+//    Handling cac exception cua validation anotation
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     ResponseEntity<ApiResponse> handlingValidation(MethodArgumentNotValidException exception){
         String msg = "";
         for(FieldError fieldError :exception.getBindingResult().getFieldErrors()){
             //loop qua từng field của dữ liệu , nếu cái nào có lỗi thì thêm vào msg
             msg += fieldError.getDefaultMessage()+" ";
-
         }
 
         ApiResponse apiResponse = new ApiResponse();
