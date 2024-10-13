@@ -15,7 +15,4 @@ public class CategoryResponse {
     String categoryId;
     String categoryName;
     String categoryDescription;
-    @JsonIgnore
-    @ToString.Exclude
-    List<Services> service;
 }
