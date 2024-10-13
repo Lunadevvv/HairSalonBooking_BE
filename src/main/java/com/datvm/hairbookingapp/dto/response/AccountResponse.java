@@ -16,5 +16,6 @@ public class AccountResponse {
     private String lastName;
     private String email;
     private String phone;
+    private int shinePoint;
     private Role role;
 }

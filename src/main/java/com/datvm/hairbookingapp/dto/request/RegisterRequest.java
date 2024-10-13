@@ -30,5 +30,7 @@ public class RegisterRequest {
     @Size(min = 6 , message = "Password must be exceed 6 characters ")
     String password;
 
+    private int shinePoint;
+
     Role role;
 }
