@@ -1,6 +1,7 @@
 package com.datvm.hairbookingapp.controller;
 
 import com.datvm.hairbookingapp.dto.request.RegisterRequest;
+import com.datvm.hairbookingapp.dto.response.RegisterResponse;
 import com.datvm.hairbookingapp.entity.Account;
 import com.datvm.hairbookingapp.service.AuthenticationService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,27 +34,25 @@ public class AccountControllerTest {
     AuthenticationService authenticationService;
 
     private RegisterRequest request;
-    private Account account;
-    private LocalDate dob;
+    private RegisterResponse account;
 
     @BeforeEach //Ham nay se dc goi truoc moi lan testDD
     public void initData(){
-        dob = LocalDate.of(1999, 1,1);
 
         request = RegisterRequest.builder()
-                .username("john")
+                .phone("0919859856")
+                .email("test8@gmail.com")
                 .firstName("John")
                 .lastName("Doe")
                 .password("1234567")
-                .yob(dob)
                 .build();
 
-        account = Account.builder()
+        account = RegisterResponse.builder()
                 .id(Long.valueOf(3))
-                .username("john")
+                .phone("0919859856")
+                .email("test8@gmail.com")
                 .firstName("John")
                 .lastName("Doe")
-                .yob(dob)
                 .build();
     }
 
@@ -72,8 +71,9 @@ public class AccountControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(content))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("code").value("0"))
-                .andExpect(MockMvcResultMatchers.jsonPath("result.username").value("john")
+                .andExpect(MockMvcResultMatchers.jsonPath("code").value("201"))
+                .andExpect(MockMvcResultMatchers.jsonPath("result.phone").value("0919859856"))
+                .andExpect(MockMvcResultMatchers.jsonPath("result.email").value("test8@gmail.com")
                 );
         //Then: Khi then xay ra thi minh expect gi
     }
@@ -81,7 +81,7 @@ public class AccountControllerTest {
     @Test
     void createAccount_usernameInvalid_fail() throws Exception {
         //Given: Nhung du lieu dau vao
-        request.setUsername("joh");
+        request.setEmail("joh");
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         String content = objectMapper.writeValueAsString(request); //Serialize object thanh chuoi string
@@ -92,8 +92,8 @@ public class AccountControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(content))
                 .andExpect(MockMvcResultMatchers.status().isOk()
-//                .andExpect(MockMvcResultMatchers.jsonPath("code").value("0"))
-//                .andExpect(MockMvcResultMatchers.jsonPath("message").value("At least 4 characters")
+//                .andExpect(MockMvcResultMatchers.jsonPath("code").value("400"))
+//                .andExpect(MockMvcResultMatchers.jsonPath("message").value("Invalid email")
                 );
         //Then: Khi then xay ra thi minh expect gi
     }

@@ -10,10 +10,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class RegisterResponse {
+public class AccountResponse {
     private long id;
     private String firstName;
     private String lastName;
     private String email;
     private String phone;
+    private int shinePoint;
+    private Role role;
 }
