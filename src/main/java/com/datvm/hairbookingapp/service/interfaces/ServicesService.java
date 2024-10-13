@@ -1,10 +1,8 @@
-package com.datvm.hairbookingapp.service;
+package com.datvm.hairbookingapp.service.interfaces;
 
 import com.datvm.hairbookingapp.dto.request.ServicesCreationRequest;
 import com.datvm.hairbookingapp.dto.request.ServicesUpdateRequest;
-import com.datvm.hairbookingapp.dto.response.ApiResponse;
 import com.datvm.hairbookingapp.dto.response.ServicesResponse;
-import com.datvm.hairbookingapp.entity.Services;
 import org.springframework.stereotype.Service;
 import java.util.List;
 @Service

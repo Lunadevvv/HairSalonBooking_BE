@@ -1,4 +1,4 @@
-package com.datvm.hairbookingapp.service;
+package com.datvm.hairbookingapp.service.interfaces;
 
 
 import com.datvm.hairbookingapp.dto.request.CategoryCreationRequest;

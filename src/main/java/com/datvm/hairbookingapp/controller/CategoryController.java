@@ -4,7 +4,7 @@ import com.datvm.hairbookingapp.dto.request.CategoryCreationRequest;
 import com.datvm.hairbookingapp.dto.request.CategoryUpdateRequest;
 import com.datvm.hairbookingapp.dto.response.ApiResponse;
 import com.datvm.hairbookingapp.dto.response.CategoryResponse;
-import com.datvm.hairbookingapp.service.CategoryService;
+import com.datvm.hairbookingapp.service.interfaces.CategoryService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

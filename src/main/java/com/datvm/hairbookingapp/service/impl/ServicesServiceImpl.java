@@ -8,7 +8,7 @@ import com.datvm.hairbookingapp.exception.AppException;
 import com.datvm.hairbookingapp.mapper.ServicesMapper;
 import com.datvm.hairbookingapp.repository.CategoryRepository;
 import com.datvm.hairbookingapp.repository.ServicesRepository;
-import com.datvm.hairbookingapp.service.ServicesService;
+import com.datvm.hairbookingapp.service.interfaces.ServicesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
