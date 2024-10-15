@@ -46,6 +46,7 @@ public class Account implements UserDetails {
     private int shinePoint;
 
     @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private Staff staff;
 
     @Override
