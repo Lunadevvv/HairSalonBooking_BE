@@ -15,6 +15,7 @@ public enum ErrorCode {
     SERVICES_NOT_EXISTED(1005, "Service not existed"),
     INVALID_IMAGE(1007,"Invalid image format"),
     STAFF_NOT_FOUND(9999, "Staff not found"),
+    COMBO_NOT_FOUND(9999, "Combo not found"),
     ;
 
     private int code;

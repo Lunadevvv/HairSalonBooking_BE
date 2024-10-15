@@ -27,6 +27,15 @@ public class ComboService {
     @Autowired
     ComboMapper comboMapper;
 
+    public List<Combo> getAllCombos(){
+        return comboRepository.findAll();
+    }
+
+    public Combo getCombo(Long id){
+        Combo combo = comboRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.COMBO_NOT_FOUND));
+        return combo;
+    }
+
     public ComboInfoResponse createCombo(ComboCreationRequest request){
         List<Services> list = new ArrayList<>();
         for (String serviceId : request.getListServiceId()) {
@@ -48,5 +57,30 @@ public class ComboService {
         res.setPrice(combo.getPrice());
         res.setDescription(combo.getDescription());
         return res;
+    }
+
+    public Combo updateCombo(Long id, ComboCreationRequest request){
+        Combo combo = comboRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.COMBO_NOT_FOUND));
+        List<Services> list = new ArrayList<>();
+        for (String serviceId : request.getListServiceId()) {
+            var service = servicesRepository.findByServiceId(serviceId).orElseThrow(() -> new AppException(ErrorCode.SERVICES_NOT_EXISTED));
+            list.add(service);
+        }
+        combo.setName(request.getName());
+        combo.setServices(list);
+        combo.setDescription(request.getDescription());
+        combo.setPrice(request.getPrice());
+        return comboRepository.save(combo);
+    }
+
+    public void deleteCombo(Long id){
+        Combo combo = comboRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.COMBO_NOT_FOUND));
+        // Remove the associations
+        for (Services service : combo.getServices()) {
+            service.getCombos().remove(combo); // Remove this combo from each service's list
+        }
+        combo.getServices().clear(); // Clear the services list in the combo
+
+        comboRepository.delete(combo);
     }
 }
