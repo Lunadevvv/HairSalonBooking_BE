@@ -59,6 +59,7 @@ public class StaffService {
                 request.setRole(Role.STAFF);
             Staff staff = accountMapper.toStaff(request);
             staff.setCode(code);
+            staff.setImage(request.getImage());
             try{
                 staff.setAccount(authenticationRepository.save(Account.builder()
                         .email(staff.getEmail())
@@ -75,7 +76,9 @@ public class StaffService {
                 throw new AppException(ErrorCode.PROCESS_FAILED);
             }
 
-            return accountMapper.toStaffRes(staff);
+            StaffResponse res = accountMapper.toStaffRes(staff);
+            res.setImage(staff.getImage());
+            return res;
     }
 
     public StaffResponse updateStaffProfile(CreateStaffRequest request, String code){

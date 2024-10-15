@@ -31,4 +31,6 @@ public class StaffResponse {
     private LocalDate joinIn;
 
     private Role role;
+
+    private String image;
 }

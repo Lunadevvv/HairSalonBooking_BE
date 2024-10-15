@@ -40,4 +40,7 @@ public class CreateStaffRequest {
 
 //    @NotNull(message = "Role can't be null")
     private Role role;
+
+    @Pattern(regexp = "https://imgur\\.com.*", message = "Invalid url. Default: https://imgur.com")
+    private String image;
 }
