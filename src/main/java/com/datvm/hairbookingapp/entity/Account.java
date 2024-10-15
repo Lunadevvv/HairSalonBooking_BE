@@ -28,23 +28,16 @@ public class Account implements UserDetails {
 //    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
 
-    @NotBlank(message = "First name can't be blank")
-    @Size(min = 2, message = "First name must be at least 2 characters")
     private String firstName;
 
-    @NotBlank(message = "Last name can't be blank")
-    @Size(min = 2, message = "Last name must be at least 2 characters")
     private String lastName;
 
-    @Email(message = "Invalid email")
     @Column(unique = true)
     private String email;
 
-    @Pattern(regexp = "(84|0[3|5|7|8|9])+(\\d{8})\\b" , message = "Invalid phone number")
     @Column(unique = true)
     private String phone;
 
-    @Size(min = 6 , message = "Password must be exceed 6 characters ")
     private String password;
 
     @Enumerated(EnumType.STRING) //Luu xuong database se theo kieu string
