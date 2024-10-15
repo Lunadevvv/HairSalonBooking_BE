@@ -17,5 +17,10 @@ public class ComboCreationRequest {
     @NotNull(message = "Combo's name can't be null")
     private String name;
 
+    @NotNull(message = "Combo's price can't be null")
+    private int price;
+
+    private String description;
+
     private List<String> listServiceId;
 }

@@ -37,12 +37,16 @@ public class ComboService {
         Combo combo = new Combo();
         combo.setServices(list);
         combo.setName(request.getName());
+        combo.setPrice(request.getPrice());
+        combo.setDescription(request.getDescription());
         combo = comboRepository.save(combo);
 
         ComboInfoResponse res = new ComboInfoResponse();
         res.setId(combo.getId());
         res.setName(combo.getName());
         res.setListServices(combo.getServices());
+        res.setPrice(combo.getPrice());
+        res.setDescription(combo.getDescription());
         return res;
     }
 }
