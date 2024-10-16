@@ -35,6 +35,7 @@ public class Filter extends OncePerRequestFilter {
 
     private final List<String> AUTH_PERMISSION = List.of( //những api mà ai cũng truy cập đc
             "/api/v1/auth/login",
+            "/api/v1/auth/{id}",
             "/api/v1/auth/register",
             "/api/v1/auth/forgot-password",
             "/api/v1/category",
