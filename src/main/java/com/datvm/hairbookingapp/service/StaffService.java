@@ -38,7 +38,9 @@ public class StaffService {
         Staff staff = staffRepository.findStaffByCode(code);
         if(staff == null)
             throw new AppException(ErrorCode.STAFF_NOT_FOUND);
+        Account account = authenticationRepository.findAccountByPhone(staff.getPhone());
         staffRepository.delete(staff);
+        authenticationRepository.delete(account);
     }
 
     public List<Staff> getAllStaff(){
