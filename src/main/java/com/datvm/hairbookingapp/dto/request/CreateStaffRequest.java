@@ -1,10 +1,7 @@
 package com.datvm.hairbookingapp.dto.request;
 
-import com.datvm.hairbookingapp.entity.Role;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import com.datvm.hairbookingapp.entity.enums.Role;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Builder;

@@ -3,7 +3,7 @@ package com.datvm.hairbookingapp.service;
 import com.datvm.hairbookingapp.dto.request.CreateStaffRequest;
 import com.datvm.hairbookingapp.dto.response.StaffResponse;
 import com.datvm.hairbookingapp.entity.Account;
-import com.datvm.hairbookingapp.entity.Role;
+import com.datvm.hairbookingapp.entity.enums.Role;
 import com.datvm.hairbookingapp.entity.Staff;
 import com.datvm.hairbookingapp.exception.AppException;
 import com.datvm.hairbookingapp.exception.ErrorCode;
@@ -15,8 +15,6 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.security.auth.login.AccountExpiredException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service

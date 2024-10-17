@@ -9,7 +9,7 @@ import com.datvm.hairbookingapp.dto.response.EmailDetail;
 import com.datvm.hairbookingapp.dto.response.LoginResponse;
 import com.datvm.hairbookingapp.dto.response.RegisterResponse;
 import com.datvm.hairbookingapp.entity.Account;
-import com.datvm.hairbookingapp.entity.Role;
+import com.datvm.hairbookingapp.entity.enums.Role;
 import com.datvm.hairbookingapp.exception.AppException;
 import com.datvm.hairbookingapp.exception.ErrorCode;
 import com.datvm.hairbookingapp.mapper.AccountMapper;

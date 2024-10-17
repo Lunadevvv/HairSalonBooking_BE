@@ -1,6 +1,6 @@
 package com.datvm.hairbookingapp.dto.request;
 
-import com.datvm.hairbookingapp.entity.Role;
+import com.datvm.hairbookingapp.entity.enums.Role;
 import lombok.Builder;
 import lombok.Data;
 

@@ -1,6 +1,6 @@
 package com.datvm.hairbookingapp.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.datvm.hairbookingapp.entity.enums.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
