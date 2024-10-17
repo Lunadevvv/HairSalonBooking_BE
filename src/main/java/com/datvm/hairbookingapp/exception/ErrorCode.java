@@ -16,6 +16,7 @@ public enum ErrorCode {
     INVALID_IMAGE(1007,"Invalid image format"),
     STAFF_NOT_FOUND(9999, "Staff not found"),
     COMBO_NOT_FOUND(9999, "Combo not found"),
+    PASSWORD_WRONG(9999, "Password wrong!"),
     ;
 
     private int code;
