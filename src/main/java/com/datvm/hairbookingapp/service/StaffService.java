@@ -37,8 +37,12 @@ public class StaffService {
         if(staff == null)
             throw new AppException(ErrorCode.STAFF_NOT_FOUND);
         Account account = authenticationRepository.findAccountByPhone(staff.getPhone());
-        staffRepository.delete(staff);
-        authenticationRepository.delete(account);
+        try {
+            staffRepository.delete(staff);
+            authenticationRepository.delete(account);
+        }catch (AppException e){
+            throw new AppException(ErrorCode.PROCESS_FAILED);
+        }
     }
 
     public List<Staff> getAllStaff(){
