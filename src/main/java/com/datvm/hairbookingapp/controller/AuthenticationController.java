@@ -1,9 +1,6 @@
 package com.datvm.hairbookingapp.controller;
 
-import com.datvm.hairbookingapp.dto.request.ForgotRequest;
-import com.datvm.hairbookingapp.dto.request.RegisterRequest;
-import com.datvm.hairbookingapp.dto.request.LoginRequest;
-import com.datvm.hairbookingapp.dto.request.ResetPasswordRequest;
+import com.datvm.hairbookingapp.dto.request.*;
 import com.datvm.hairbookingapp.dto.response.AccountResponse;
 import com.datvm.hairbookingapp.dto.response.ApiResponse;
 import com.datvm.hairbookingapp.dto.response.LoginResponse;
@@ -50,7 +47,7 @@ public class AuthenticationController {
                 .build();
     }
 
-    @PostMapping("/reset-password")
+    @PostMapping("/password/reset")
     ApiResponse resetPassword(@RequestBody @Valid ResetPasswordRequest request){
         boolean status = authenticationService.resetPassword(request);
         if (!status) {
@@ -68,6 +65,15 @@ public class AuthenticationController {
         return ApiResponse.<AccountResponse>builder()
                 .code(200)
                 .result(authenticationService.getAccountByPhone(phone))
+                .build();
+    }
+
+    @PostMapping("/password/change")
+    public ApiResponse<AccountResponse> changePassword(@RequestBody @Valid ChangePasswordResquest request){
+        return ApiResponse.<AccountResponse>builder()
+                .code(201)
+                .message("Đổi mật khẩu thành công!")
+                .result(authenticationService.changePassword(request))
                 .build();
     }
 
