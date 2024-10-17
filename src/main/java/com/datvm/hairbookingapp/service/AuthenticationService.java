@@ -1,5 +1,6 @@
 package com.datvm.hairbookingapp.service;
 
+import com.datvm.hairbookingapp.dto.request.ChangePasswordResquest;
 import com.datvm.hairbookingapp.dto.request.LoginRequest;
 import com.datvm.hairbookingapp.dto.request.RegisterRequest;
 import com.datvm.hairbookingapp.dto.request.ResetPasswordRequest;
@@ -107,6 +108,19 @@ public class AuthenticationService implements UserDetailsService {
 
         }
         return status;
+    }
+
+    public AccountResponse changePassword(ChangePasswordResquest request){
+        Account account = getCurrentAccount();
+        if (!passwordEncoder.matches(request.getOldPassword(), account.getPassword()))
+            throw new AppException(ErrorCode.PASSWORD_WRONG);
+        account.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        try{
+            return accountMapper.toAccountRes(accountRepository.save(account));
+        }catch (AppException e){
+            throw new AppException(ErrorCode.PROCESS_FAILED);
+        }
+
     }
 
     public AccountResponse getAccountByPhone(String phone) throws UsernameNotFoundException {
