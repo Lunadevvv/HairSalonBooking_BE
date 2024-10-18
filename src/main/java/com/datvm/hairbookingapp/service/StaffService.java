@@ -96,6 +96,7 @@ public class StaffService {
         staff.setLastName(request.getLastName());
         staff.setPhone(request.getPhone());
         staff.setJoinIn(request.getJoinIn());
+        staff.setImage(request.getImage());
         if(request.getRole() == null)
             request.setRole(Role.STAFF);
         else
