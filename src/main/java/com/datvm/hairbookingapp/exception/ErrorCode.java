@@ -17,6 +17,7 @@ public enum ErrorCode {
     STAFF_NOT_FOUND(9999, "Không tìm thấy nhân viên này!"),
     COMBO_NOT_FOUND(9999, "Combo không có!"),
     PASSWORD_WRONG(9999, "Sai mật khẩu!"),
+    EMPTY_SLOT(9999, "Không có Slot nào!"),
     ;
 
     private int code;
