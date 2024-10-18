@@ -73,7 +73,7 @@ public class GlobalExceptionHandler {
         ApiResponse apiResponse = new ApiResponse();
 
         apiResponse.setCode(400);
-        apiResponse.setMessage("Wrong format. Please follow: yyyy-MM-dd");
+        apiResponse.setMessage("Wrong format!");
 
         return ResponseEntity.badRequest().body(apiResponse);
     }
