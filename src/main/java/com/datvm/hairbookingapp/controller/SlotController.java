@@ -4,6 +4,7 @@ import com.datvm.hairbookingapp.dto.request.SlotCreationRequest;
 import com.datvm.hairbookingapp.dto.response.ApiResponse;
 import com.datvm.hairbookingapp.entity.Slot;
 import com.datvm.hairbookingapp.service.SlotService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +17,7 @@ public class SlotController {
     SlotService slotService;
 
     @PostMapping
-    public ApiResponse createSlot(@RequestBody SlotCreationRequest request){
+    public ApiResponse createSlot(@RequestBody @Valid SlotCreationRequest request){
         slotService.createSlot(request);
         return ApiResponse.builder()
                 .code(201)
@@ -33,7 +34,7 @@ public class SlotController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse updateSlotById(@PathVariable Long id, @RequestBody SlotCreationRequest request){
+    public ApiResponse updateSlotById(@PathVariable Long id, @RequestBody @Valid SlotCreationRequest request){
         slotService.updateSlotById(id, request);
         return ApiResponse.builder()
                 .code(201)
