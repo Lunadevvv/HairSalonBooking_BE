@@ -24,11 +24,13 @@ public class Booking {
     @Column(nullable = false)
     private LocalDate date;
 
-    @Column(nullable = false)
-    private String stylistId;
+    @ManyToOne
+    @JoinColumn(name = "staff_id", nullable = false)
+    private Staff stylistId;
 
-    @Column(nullable = false)
-    private int slotId;
+    @ManyToOne
+    @JoinColumn(name = "slot_id", nullable = false)
+    private Slot slot;
 
     @Column(nullable = false)
     private BookingStatus status;
@@ -44,4 +46,7 @@ public class Booking {
             inverseJoinColumns = @JoinColumn(name = "service_id") // Khóa ngoại cho Services
     )
     private List<Services> services;
+
+    @Column(nullable = false)
+    private int price;
 }
