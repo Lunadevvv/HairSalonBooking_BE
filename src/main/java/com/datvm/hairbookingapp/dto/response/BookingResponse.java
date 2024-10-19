@@ -37,4 +37,6 @@ public class BookingResponse {
     private int price;
 
     private BookingStatus status;
+
+    private int period;
 }

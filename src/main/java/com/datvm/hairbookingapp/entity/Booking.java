@@ -49,4 +49,7 @@ public class Booking {
 
     @Column(nullable = false)
     private int price;
+
+    @Column(nullable = false)
+    private int period;
 }

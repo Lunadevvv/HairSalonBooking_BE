@@ -30,4 +30,6 @@ public class BookingRequest {
     private int price;
 
     private List<String> serviceId;
+
+    private int period;
 }

@@ -62,6 +62,7 @@ public class BookingService {
         booking.setStylistId(staff);
         booking.setAccount(account);
         booking.setServices(list);
+        booking.setPeriod(request.getPeriod());
 
         return bookingMapper.toRes(bookingRepository.save(booking));
     }
