@@ -26,11 +26,11 @@ public class BookingResponse {
 
     private LocalDate date;
 
-    private Staff stylistId;
+    private String stylistId;
 
     private Slot slot;
 
-    private Account account;
+//    private Account account;
 
     private List<Services> services;
 

@@ -23,7 +23,7 @@ public class BookingRequest {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
 
-    private String stylistId;
+    private String stylistId; //"None"
 
     private Long slotId;
 

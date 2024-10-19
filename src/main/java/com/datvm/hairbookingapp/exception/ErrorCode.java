@@ -19,6 +19,7 @@ public enum ErrorCode {
     PASSWORD_WRONG(9999, "Sai mật khẩu!"),
     EMPTY_SLOT(9999, "Không có Slot nào!"),
     STYLIST_ONLY(9999, "Nhân viên này không phải Stylist!"),
+    NO_AVAILABLE_STYLISTS(9999, "Không có Stylist nào trống!"),
     ;
 
     private int code;

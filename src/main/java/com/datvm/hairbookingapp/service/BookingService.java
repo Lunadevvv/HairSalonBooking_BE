@@ -15,8 +15,10 @@ import com.datvm.hairbookingapp.repository.StaffRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @Service
 public class BookingService {
@@ -42,10 +44,23 @@ public class BookingService {
         Account account = authenticationService.getCurrentAccount();
         String id = generateBookingId();
         Slot slot = slotRepository.findById(request.getSlotId()).orElseThrow(() -> new AppException(ErrorCode.EMPTY_SLOT));
-        Staff staff = staffRepository.findStaffByCode(request.getStylistId());
-        Role role = staff.getRole();
-        if(role != Role.STYLIST)
-            throw new AppException(ErrorCode.STYLIST_ONLY);
+//        Staff staff = staffRepository.findStaffByCode(request.getStylistId());
+//        Role role = staff.getRole();
+//        if(role != Role.STYLIST)
+//            throw new AppException(ErrorCode.STYLIST_ONLY);
+
+        Staff staff = null;
+
+        // Check if stylistId is "None"
+        if ("None".equals(request.getStylistId())) {
+            staff = getRandomAvailableStylist(request.getSlotId(), request.getDate());
+        } else {
+            staff = staffRepository.findStaffByCode(request.getStylistId());
+            Role role = staff.getRole();
+            if (role != Role.STYLIST) {
+                throw new AppException(ErrorCode.STYLIST_ONLY);
+            }
+        }
 
         List<Services> list = new ArrayList<>();
         for (String serviceId : request.getServiceId()) {
@@ -64,7 +79,18 @@ public class BookingService {
         booking.setServices(list);
         booking.setPeriod(request.getPeriod());
 
-        return bookingMapper.toRes(bookingRepository.save(booking));
+        booking = bookingRepository.save(booking);
+
+        return BookingResponse.builder()
+                .stylistId(staff.getCode())
+                .services(list)
+                .date(booking.getDate())
+                .id(booking.getId())
+                .price(booking.getPrice())
+                .period(booking.getPeriod())
+                .slot(booking.getSlot())
+                .status(booking.getStatus())
+                .build();
     }
 
     public String generateBookingId() {
@@ -75,5 +101,14 @@ public class BookingService {
         int fourLastNumber = Integer.parseInt(lastId.substring(1));
         id = String.format("B%04d", ++fourLastNumber);
         return id;
+    }
+
+    private Staff getRandomAvailableStylist(Long slotId, LocalDate date) {
+        List<Staff> availableStylists = staffRepository.findAvailableStylists(slotId, date, Role.STYLIST);
+        if (availableStylists.isEmpty()) {
+            throw new AppException(ErrorCode.NO_AVAILABLE_STYLISTS);
+        }
+        Random random = new Random();
+        return availableStylists.get(random.nextInt(availableStylists.size()));
     }
 }
