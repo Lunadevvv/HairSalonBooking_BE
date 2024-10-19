@@ -64,11 +64,12 @@ public class StaffService {
             Staff staff = accountMapper.toStaff(request);
             staff.setCode(code);
             staff.setImage(request.getImage());
+            staff.setRole(request.getRole());
             try{
                 staff.setAccount(authenticationRepository.save(Account.builder()
                         .email(staff.getEmail())
                         .staff(staff)
-                        .role(staff.getRole())
+                        .role(request.getRole())
                         .phone(staff.getPhone())
                         .lastName(staff.getLastName())
                         .firstName(staff.getFirstName())
@@ -97,10 +98,19 @@ public class StaffService {
         staff.setPhone(request.getPhone());
         staff.setJoinIn(request.getJoinIn());
         staff.setImage(request.getImage());
-        if(request.getRole() == null)
-            request.setRole(Role.STAFF);
-        else
-            staff.setRole(request.getRole());
+        staff.setRole(request.getRole());
+
+        Account account = staff.getAccount();
+        if (account != null) {
+            account.setFirstName(request.getFirstName());
+            account.setLastName(request.getLastName());
+            account.setEmail(request.getEmail());
+            account.setPhone(request.getPhone());
+            if (!account.getRole().equals(request.getRole())) {
+                account.setRole(request.getRole());
+            }
+        }
+
         try{
             return accountMapper.toStaffRes(staffRepository.save(staff));
         }catch (AppException e) {
