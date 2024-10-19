@@ -25,8 +25,8 @@ public class Booking {
     private LocalDate date;
 
     @ManyToOne
-    @JoinColumn(name = "staff_id", nullable = false)
-    private Staff stylistId;
+    @JoinColumn(name = "stylist_id", nullable = false)
+    private Staff stylistId; // Consider renaming to 'staff' for clarity
 
     @ManyToOne
     @JoinColumn(name = "slot_id", nullable = false)
