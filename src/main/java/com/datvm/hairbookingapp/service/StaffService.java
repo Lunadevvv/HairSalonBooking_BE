@@ -3,7 +3,7 @@ package com.datvm.hairbookingapp.service;
 import com.datvm.hairbookingapp.dto.request.CreateStaffRequest;
 import com.datvm.hairbookingapp.dto.response.StaffResponse;
 import com.datvm.hairbookingapp.entity.Account;
-import com.datvm.hairbookingapp.entity.Role;
+import com.datvm.hairbookingapp.entity.enums.Role;
 import com.datvm.hairbookingapp.entity.Staff;
 import com.datvm.hairbookingapp.exception.AppException;
 import com.datvm.hairbookingapp.exception.ErrorCode;
@@ -15,8 +15,6 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.security.auth.login.AccountExpiredException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -39,8 +37,12 @@ public class StaffService {
         if(staff == null)
             throw new AppException(ErrorCode.STAFF_NOT_FOUND);
         Account account = authenticationRepository.findAccountByPhone(staff.getPhone());
-        staffRepository.delete(staff);
-        authenticationRepository.delete(account);
+        try {
+            staffRepository.delete(staff);
+            authenticationRepository.delete(account);
+        }catch (AppException e){
+            throw new AppException(ErrorCode.PROCESS_FAILED);
+        }
     }
 
     public List<Staff> getAllStaff(){
@@ -62,11 +64,12 @@ public class StaffService {
             Staff staff = accountMapper.toStaff(request);
             staff.setCode(code);
             staff.setImage(request.getImage());
+            staff.setRole(request.getRole());
             try{
                 staff.setAccount(authenticationRepository.save(Account.builder()
                         .email(staff.getEmail())
                         .staff(staff)
-                        .role(staff.getRole())
+                        .role(request.getRole())
                         .phone(staff.getPhone())
                         .lastName(staff.getLastName())
                         .firstName(staff.getFirstName())
@@ -94,10 +97,20 @@ public class StaffService {
         staff.setLastName(request.getLastName());
         staff.setPhone(request.getPhone());
         staff.setJoinIn(request.getJoinIn());
-        if(request.getRole() == null)
-            request.setRole(Role.STAFF);
-        else
-            staff.setRole(request.getRole());
+        staff.setImage(request.getImage());
+        staff.setRole(request.getRole());
+
+        Account account = staff.getAccount();
+        if (account != null) {
+            account.setFirstName(request.getFirstName());
+            account.setLastName(request.getLastName());
+            account.setEmail(request.getEmail());
+            account.setPhone(request.getPhone());
+            if (!account.getRole().equals(request.getRole())) {
+                account.setRole(request.getRole());
+            }
+        }
+
         try{
             return accountMapper.toStaffRes(staffRepository.save(staff));
         }catch (AppException e) {

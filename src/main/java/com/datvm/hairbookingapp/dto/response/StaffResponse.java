@@ -1,7 +1,6 @@
 package com.datvm.hairbookingapp.dto.response;
 
-import com.datvm.hairbookingapp.entity.Role;
-import jakarta.validation.constraints.NotNull;
+import com.datvm.hairbookingapp.entity.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

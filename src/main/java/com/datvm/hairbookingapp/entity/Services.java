@@ -36,4 +36,8 @@ public class Services {
     @ManyToMany(mappedBy = "services")
     @JsonIgnore
     private List<Combo> combos;
+
+    @ManyToMany(mappedBy = "services") // Liên kết với thuộc tính services trong Booking
+    @JsonIgnore
+    private List<Booking> bookings; // Danh sách booking liên quan đến service
 }
