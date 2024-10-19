@@ -1,6 +1,7 @@
 package com.datvm.hairbookingapp.entity;
 
 import com.datvm.hairbookingapp.entity.enums.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -56,6 +57,7 @@ public class Staff {
     private Account account;
 
     @OneToMany(mappedBy = "stylistId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Booking> bookings;
 
 }
