@@ -33,6 +33,7 @@ public class Booking {
     private Slot slot;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private BookingStatus status;
 
     @ManyToOne
