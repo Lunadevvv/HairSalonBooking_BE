@@ -18,6 +18,7 @@ public enum ErrorCode {
     COMBO_NOT_FOUND(9999, "Combo không có!"),
     PASSWORD_WRONG(9999, "Sai mật khẩu!"),
     EMPTY_SLOT(9999, "Không có Slot nào!"),
+    STYLIST_ONLY(9999, "Nhân viên này không phải Stylist!"),
     ;
 
     private int code;
