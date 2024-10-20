@@ -1,6 +1,7 @@
 package com.datvm.hairbookingapp.service;
 
 import com.datvm.hairbookingapp.dto.request.BookingRequest;
+import com.datvm.hairbookingapp.dto.request.BookingUpdateRequest;
 import com.datvm.hairbookingapp.dto.response.BookingResponse;
 import com.datvm.hairbookingapp.entity.*;
 import com.datvm.hairbookingapp.entity.enums.BookingStatus;
@@ -91,6 +92,16 @@ public class BookingService {
                 .slot(booking.getSlot())
                 .status(booking.getStatus())
                 .build();
+    }
+
+    public BookingResponse updateBooking(BookingUpdateRequest request){
+            Booking booking = bookingRepository.findById(request.getBookingId())
+                    .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
+
+
+
+
+            return null;
     }
 
     public String generateBookingId() {
