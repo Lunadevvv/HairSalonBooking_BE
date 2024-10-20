@@ -1,6 +1,7 @@
 package com.datvm.hairbookingapp.service;
 
 import com.datvm.hairbookingapp.dto.request.CreateStaffRequest;
+import com.datvm.hairbookingapp.dto.request.DateAndSlotRequest;
 import com.datvm.hairbookingapp.dto.response.StaffResponse;
 import com.datvm.hairbookingapp.entity.Account;
 import com.datvm.hairbookingapp.entity.enums.Role;
@@ -16,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class StaffService {
@@ -31,6 +33,11 @@ public class StaffService {
 
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    public List<StaffResponse> getAvailableStylist(DateAndSlotRequest request){
+        List<Staff> list = staffRepository.findAvailableStylists(request.getSlotId(), request.getDate(), Role.STYLIST);
+        return list.stream().map(accountMapper::toStaffRes).collect(Collectors.toList());
+    }
 
     public void deleteStaff(String code){
         Staff staff = staffRepository.findStaffByCode(code);
