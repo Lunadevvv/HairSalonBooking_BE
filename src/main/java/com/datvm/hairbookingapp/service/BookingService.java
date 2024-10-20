@@ -41,7 +41,7 @@ public class BookingService {
     @Autowired
     BookingMapper bookingMapper;
 
-    public void updateBookingStatus(String id, BookingStatus status){
+    public void updateBookingStatus(String id, BookingStatus status) {
         Booking booking = bookingRepository.findById(id).orElseThrow(
                 () -> new AppException(ErrorCode.BOOKING_NOT_FOUND)
         );
@@ -49,24 +49,24 @@ public class BookingService {
         bookingRepository.save(booking);
     }
 
-    public BookingResponse submitBooking(BookingRequest request){
+    public BookingResponse submitBooking(BookingRequest request) {
         Account account = authenticationService.getCurrentAccount();
         BookingResponse res = new BookingResponse();
         //check the latest booking status is CANCELED or COMPLETED
         var lastBooking = bookingRepository.findLastBooking(account);
-        if(lastBooking != null) {
-            if (lastBooking.getStatus() == BookingStatus.CANCELED || lastBooking.getStatus() == BookingStatus.COMPLETED){
+        if (lastBooking != null) {
+            if (lastBooking.getStatus() == BookingStatus.CANCELED || lastBooking.getStatus() == BookingStatus.COMPLETED) {
                 //Generate new Booking
                 res = createBooking(request, account);
-            }else {
+            } else {
                 throw new AppException(ErrorCode.CANT_SUBMIT_BOOKING);
             }
-        }else
+        } else
             res = createBooking(request, account);
         return res;
     }
 
-    public BookingResponse createBooking(BookingRequest request, Account account){
+    public BookingResponse createBooking(BookingRequest request, Account account) {
         String id = generateBookingId();
         Slot slot = slotRepository.findById(request.getSlotId()).orElseThrow(() -> new AppException(ErrorCode.EMPTY_SLOT));
 //        Staff staff = staffRepository.findStaffByCode(request.getStylistId());
@@ -105,7 +105,6 @@ public class BookingService {
         booking.setPeriod(request.getPeriod());
 
         booking = bookingRepository.save(booking);
-
         return BookingResponse.builder()
                 .stylistId(staff.getCode())
                 .services(list)
@@ -118,20 +117,38 @@ public class BookingService {
                 .build();
     }
 
-    public BookingResponse updateBooking(BookingUpdateRequest request){
-            Booking booking = bookingRepository.findById(request.getBookingId())
-                    .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
+    public BookingResponse updateBookingSlot(BookingUpdateRequest request) {
+        Booking booking = bookingRepository.findById(request.getBookingId())
+                .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_FOUND));
+        Slot slot = slotRepository.findById(request.getSlotId()).orElseThrow(() -> new AppException(ErrorCode.EMPTY_SLOT));
+        if (bookingRepository.countBookingInSlot(booking.getDate(), request.getSlotId()) < staffRepository.count()) {
+            booking.setSlot(slot);
+            booking = bookingRepository.save(booking);
+        } else
+            throw new AppException(ErrorCode.BOOKING_FULL);
+        return BookingResponse.builder()
+                .stylistId(booking.getStylistId().getCode())
+                .services(booking.getServices())
+                .date(booking.getDate())
+                .id(booking.getId())
+                .price(booking.getPrice())
+                .period(booking.getPeriod())
+                .slot(booking.getSlot())
+                .status(booking.getStatus())
+                .build();
+    }
 
-
-
-
-            return null;
+    public String deleteBooking(String id) {
+        if(!bookingRepository.existsById(id))
+            throw new AppException(ErrorCode.BOOKING_NOT_FOUND);
+        bookingRepository.deleteById(id);
+        return "Booking has been deleted";
     }
 
     public String generateBookingId() {
         String id = "B0001";
         String lastId = bookingRepository.findLastId();
-        if(lastId == null)
+        if (lastId == null)
             return id;
         int fourLastNumber = Integer.parseInt(lastId.substring(1));
         id = String.format("B%04d", ++fourLastNumber);
