@@ -64,7 +64,7 @@ public class BookingService {
 
         List<Services> list = new ArrayList<>();
         for (String serviceId : request.getServiceId()) {
-            var service = servicesRepository.findByServiceId(serviceId).orElseThrow(() -> new AppException(ErrorCode.SERVICES_NOT_EXISTED));
+            var service = servicesRepository.findById(serviceId).orElseThrow(() -> new AppException(ErrorCode.SERVICES_NOT_EXISTED));
             list.add(service);
         }
 

@@ -12,7 +12,6 @@ import java.util.Optional;
 @Repository
 public interface ServicesRepository extends JpaRepository<Services, String>, JpaSpecificationExecutor<Services> {
     List<Services> findAll();
-    Optional<Services> findByServiceId(String id);
     @Transactional
     void deleteByServiceId(String serviceId);
 

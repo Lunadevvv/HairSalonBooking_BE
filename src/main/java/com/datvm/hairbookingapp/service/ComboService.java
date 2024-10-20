@@ -39,7 +39,7 @@ public class ComboService {
     public ComboInfoResponse createCombo(ComboCreationRequest request){
         List<Services> list = new ArrayList<>();
         for (String serviceId : request.getListServiceId()) {
-            var service = servicesRepository.findByServiceId(serviceId).orElseThrow(() -> new AppException(ErrorCode.SERVICES_NOT_EXISTED));
+            var service = servicesRepository.findById(serviceId).orElseThrow(() -> new AppException(ErrorCode.SERVICES_NOT_EXISTED));
             list.add(service);
         }
 
@@ -63,7 +63,7 @@ public class ComboService {
         Combo combo = comboRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.COMBO_NOT_FOUND));
         List<Services> list = new ArrayList<>();
         for (String serviceId : request.getListServiceId()) {
-            var service = servicesRepository.findByServiceId(serviceId).orElseThrow(() -> new AppException(ErrorCode.SERVICES_NOT_EXISTED));
+            var service = servicesRepository.findById(serviceId).orElseThrow(() -> new AppException(ErrorCode.SERVICES_NOT_EXISTED));
             list.add(service);
         }
         combo.setName(request.getName());

@@ -39,7 +39,7 @@ public class ServicesServiceImpl implements ServicesService {
 
     @Override
     public ServicesResponse findByServiceId(String id) {
-        return servicesMapper.toServicesResponse(servicesRepository.findByServiceId(id).orElseThrow(() -> new AppException(SERVICES_NOT_EXISTED)));
+        return servicesMapper.toServicesResponse(servicesRepository.findById(id).orElseThrow(() -> new AppException(SERVICES_NOT_EXISTED)));
     }
 
     @Override
@@ -52,7 +52,7 @@ public class ServicesServiceImpl implements ServicesService {
         if(!categoryRepository.existsById(request.getCategoryId())) throw new AppException(CATEGORY_NOT_EXISTED);
         if(!request.getImage().contains("imgur"))
             throw new AppException(INVALID_IMAGE);
-        Services service = servicesRepository.findByServiceId(request.getServiceId()).orElseThrow(() -> new AppException(SERVICES_NOT_EXISTED));
+        Services service = servicesRepository.findById(request.getServiceId()).orElseThrow(() -> new AppException(SERVICES_NOT_EXISTED));
         servicesMapper.updateServices(service, request);
         service.setCategories(categoryRepository.findByCategoryId(request.getCategoryId()));
         return servicesMapper.toServicesResponse(servicesRepository.save(service));
