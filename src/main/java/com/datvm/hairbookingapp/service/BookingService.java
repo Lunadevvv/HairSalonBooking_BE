@@ -14,14 +14,18 @@ import com.datvm.hairbookingapp.repository.ServicesRepository;
 import com.datvm.hairbookingapp.repository.SlotRepository;
 import com.datvm.hairbookingapp.repository.StaffRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 @Service
+@EnableScheduling
 public class BookingService {
     @Autowired
     BookingRepository bookingRepository;
@@ -144,6 +148,35 @@ public class BookingService {
         bookingRepository.deleteById(id);
         return "Booking has been deleted";
     }
+
+    public List<Booking> getBookings() {
+        List<Booking> bookings = bookingRepository.findAll();
+        return bookings;
+    }
+
+    @Scheduled(cron = "0 34 21 * * ?")
+    public void cancelBookings() {
+        System.out.println("THE SYSTEM HAS TRIED TO DO THIS !!!!!!!!!!!!!!!!!!!");
+        bookingRepository.updateBySpecificTime(BookingStatus.CANCELED,1L,BookingStatus.RECEIVED);
+    }
+
+    public BookingResponse cancelPeriodBooking(String id){
+        Booking booking = bookingRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_FOUND));
+        booking.setPeriod(0);
+        return BookingResponse.builder()
+                .stylistId(booking.getStylistId().getCode())
+                .services(booking.getServices())
+                .date(booking.getDate())
+                .id(booking.getId())
+                .price(booking.getPrice())
+                .period(booking.getPeriod())
+                .slot(booking.getSlot())
+                .status(booking.getStatus())
+                .build();
+    }
+
+
 
     public String generateBookingId() {
         String id = "B0001";
