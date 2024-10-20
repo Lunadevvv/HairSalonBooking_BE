@@ -34,10 +34,16 @@ public class BookingController {
                 .build();
     }
     @PutMapping()
-    public ApiResponse<BookingResponse> updateBooking(@RequestBody @Valid BookingUpdateRequest request){
+    public ApiResponse<BookingResponse> updateBookingSlot(@RequestBody @Valid BookingUpdateRequest request){
         return ApiResponse.<BookingResponse>builder()
                 .message("Dời lịch thành công!")
-                .result(bookingService.updateBooking(request))
+                .result(bookingService.updateBookingSlot(request))
+                .build();
+    }
+    @DeleteMapping("/{id}")
+    public ApiResponse<String> deleteBooking(@PathVariable String id){
+        return ApiResponse.<String>builder()
+                .result(bookingService.deleteBooking(id))
                 .build();
     }
 }
