@@ -21,6 +21,7 @@ public enum ErrorCode {
     STYLIST_ONLY(9999, "Nhân viên này không phải Stylist!"),
     NO_AVAILABLE_STYLISTS(9999, "Không có Stylist nào trống!"),
     BOOKING_NOT_FOUND(9999, "Không tìm thầy Booking này!"),
+    BOOKING_FULL(9999,"Slot này đã full booking"),
     CANT_SUBMIT_BOOKING(9999, "Bạn có đơn đặt lịch khác đang chờ!"),
     ;
 
