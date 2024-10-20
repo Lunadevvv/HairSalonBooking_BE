@@ -40,8 +40,32 @@ public class BookingService {
     @Autowired
     BookingMapper bookingMapper;
 
-    public BookingResponse createBooking(BookingRequest request){
+    public void updateBookingStatus(String id, BookingStatus status){
+        Booking booking = bookingRepository.findById(id).orElseThrow(
+                () -> new AppException(ErrorCode.BOOKING_NOT_FOUND)
+        );
+        booking.setStatus(status);
+        bookingRepository.save(booking);
+    }
+
+    public BookingResponse submitBooking(BookingRequest request){
         Account account = authenticationService.getCurrentAccount();
+        BookingResponse res = new BookingResponse();
+        //check the latest booking status is CANCELED or COMPLETED
+        var lastBooking = bookingRepository.findLastBooking(account);
+        if(lastBooking != null) {
+            if (lastBooking.getStatus() == BookingStatus.CANCELED || lastBooking.getStatus() == BookingStatus.COMPLETED){
+                //Generate new Booking
+                res = createBooking(request, account);
+            }else {
+                throw new AppException(ErrorCode.CANT_SUBMIT_BOOKING);
+            }
+        }else
+            res = createBooking(request, account);
+        return res;
+    }
+
+    public BookingResponse createBooking(BookingRequest request, Account account){
         String id = generateBookingId();
         Slot slot = slotRepository.findById(request.getSlotId()).orElseThrow(() -> new AppException(ErrorCode.EMPTY_SLOT));
 //        Staff staff = staffRepository.findStaffByCode(request.getStylistId());
