@@ -20,7 +20,8 @@ public enum ErrorCode {
     EMPTY_SLOT(9999, "Không có Slot nào!"),
     STYLIST_ONLY(9999, "Nhân viên này không phải Stylist!"),
     NO_AVAILABLE_STYLISTS(9999, "Không có Stylist nào trống!"),
-    BOOKING_NOT_EXISTED(1005,"Booking không tồn tại")
+    BOOKING_NOT_FOUND(9999, "Không tìm thầy Booking này!"),
+    CANT_SUBMIT_BOOKING(9999, "Bạn có đơn đặt lịch khác đang chờ!"),
     ;
 
     private int code;
