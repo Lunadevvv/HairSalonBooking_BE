@@ -1,12 +1,13 @@
 package com.datvm.hairbookingapp.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
 public class BookingUpdateRequest {
-    @NotBlank(message = "categoryId can't be blank")
+    @NotBlank(message = "bookingId can't be blank")
     String bookingId;
-    @NotBlank(message = "categoryId can't be blank")
-    String slotId;
+    @NotNull(message = "slotId can't be null")
+    Long slotId;
 }
