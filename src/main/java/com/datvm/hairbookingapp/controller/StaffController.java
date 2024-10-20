@@ -1,6 +1,7 @@
 package com.datvm.hairbookingapp.controller;
 
 import com.datvm.hairbookingapp.dto.request.CreateStaffRequest;
+import com.datvm.hairbookingapp.dto.request.DateAndSlotRequest;
 import com.datvm.hairbookingapp.dto.response.ApiResponse;
 import com.datvm.hairbookingapp.dto.response.StaffResponse;
 import com.datvm.hairbookingapp.entity.Staff;
@@ -63,6 +64,14 @@ public class StaffController {
         return ApiResponse.builder()
                 .code(200)
                 .message("Xoá nhân viên có mã số " + code + " thành công!")
+                .build();
+    }
+
+    @GetMapping("/stylist")
+    public ApiResponse<List<StaffResponse>> getAvailableStylist(@RequestBody @Valid DateAndSlotRequest request){
+        return ApiResponse.<List<StaffResponse>>builder()
+                .code(200)
+                .result(staffService.getAvailableStylist(request))
                 .build();
     }
 }
