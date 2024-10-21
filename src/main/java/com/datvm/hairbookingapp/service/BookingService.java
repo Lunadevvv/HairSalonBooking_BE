@@ -154,6 +154,12 @@ public class BookingService {
         return bookings;
     }
 
+    public List<Booking> getBookingsByAccount(){
+        Account account = authenticationService.getCurrentAccount();
+        List<Booking> bookings = bookingRepository.findByAccount(account);
+        return bookings;
+    }
+
     @Scheduled(cron = "0 34 21 * * ?")
     public void cancelBookings() {
         System.out.println("THE SYSTEM HAS TRIED TO DO THIS !!!!!!!!!!!!!!!!!!!");
