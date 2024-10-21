@@ -153,8 +153,8 @@ public class BookingService {
         return bookings;
     }
 
-
-    @Scheduled(cron = "0 20 9,10,11,12 * * ?")
+//8h -> 22h
+    @Scheduled(cron = "0 30 8,9,10,11,12,13,14,15,16,17,18,19,20,21,22 * * ?")
     public void cancelBookings() {
         System.out.println("THE SYSTEM HAS TRIED TO DO THIS !!!!!!!!!!!!!!!!!!!");
         LocalTime time = LocalTime.of(LocalTime.now().getHour(),0, 0);
