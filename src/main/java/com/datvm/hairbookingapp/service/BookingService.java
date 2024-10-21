@@ -17,9 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -154,10 +153,14 @@ public class BookingService {
         return bookings;
     }
 
-    @Scheduled(cron = "0 34 21 * * ?")
+
+    @Scheduled(cron = "0 20 9,10,11,12 * * ?")
     public void cancelBookings() {
         System.out.println("THE SYSTEM HAS TRIED TO DO THIS !!!!!!!!!!!!!!!!!!!");
-        bookingRepository.updateBySpecificTime(BookingStatus.CANCELED,1L,BookingStatus.RECEIVED);
+        LocalTime time = LocalTime.of(LocalTime.now().getHour(),0, 0);
+        Long slotId = slotRepository.findByTimeStart(time);
+        System.out.println(slotId);
+        bookingRepository.updateBySpecificTime(BookingStatus.CANCELED,slotId,BookingStatus.RECEIVED);
     }
 
     public BookingResponse cancelPeriodBooking(String id){
