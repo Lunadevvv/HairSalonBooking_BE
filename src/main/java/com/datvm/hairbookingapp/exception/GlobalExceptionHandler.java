@@ -3,10 +3,13 @@ package com.datvm.hairbookingapp.exception;
 import com.datvm.hairbookingapp.dto.response.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import java.sql.SQLIntegrityConstraintViolationException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -22,6 +25,8 @@ public class GlobalExceptionHandler {
 //    }
 
 
+
+
     //Neu co bat cu exception loai AppException thi se duoc dieu huong vo day
     @ExceptionHandler(value = AppException.class)
     ResponseEntity<ApiResponse> handlingAppException(AppException exception){
@@ -34,20 +39,41 @@ public class GlobalExceptionHandler {
     }
 
 
-    //Handling cac exception cua validation anotation
+//    Handling cac exception cua validation anotation
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     ResponseEntity<ApiResponse> handlingValidation(MethodArgumentNotValidException exception){
         String msg = "";
         for(FieldError fieldError :exception.getBindingResult().getFieldErrors()){
             //loop qua từng field của dữ liệu , nếu cái nào có lỗi thì thêm vào msg
-            msg += fieldError.getDefaultMessage()+"\n";
-
+            msg += fieldError.getDefaultMessage()+" ";
         }
 
         ApiResponse apiResponse = new ApiResponse();
 
         apiResponse.setCode(400);
         apiResponse.setMessage(msg);
+
+        return ResponseEntity.badRequest().body(apiResponse);
+    }
+
+    @ExceptionHandler(value = SQLIntegrityConstraintViolationException.class)
+    ResponseEntity<ApiResponse> handlingSQLIntegrityConstraintViolationException(SQLIntegrityConstraintViolationException exception){
+
+        ApiResponse apiResponse = new ApiResponse();
+
+        apiResponse.setCode(400);
+        apiResponse.setMessage("Email hoặc Sđt của bạn đã bị trùng");
+
+        return ResponseEntity.badRequest().body(apiResponse);
+    }
+
+    @ExceptionHandler(value = HttpMessageNotReadableException.class)
+    ResponseEntity<ApiResponse> handlingHttpMessageNotReadableException(HttpMessageNotReadableException exception){
+
+        ApiResponse apiResponse = new ApiResponse();
+
+        apiResponse.setCode(400);
+        apiResponse.setMessage("Wrong format!");
 
         return ResponseEntity.badRequest().body(apiResponse);
     }
