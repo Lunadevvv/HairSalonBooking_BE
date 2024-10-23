@@ -29,7 +29,7 @@ public class Services {
     @Column(nullable = false)
     private String image;
 
-    @ManyToOne(targetEntity = Category.class,fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "CategoryId", nullable = false)
     private Category categories;
 

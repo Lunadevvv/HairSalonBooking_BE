@@ -60,4 +60,12 @@ public class Staff {
     @JsonIgnore
     private List<Booking> bookings;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "salonId")
+    private Salon salons;
+
+    @OneToOne(mappedBy = "staff" ,fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Manager manager;
 }
+
