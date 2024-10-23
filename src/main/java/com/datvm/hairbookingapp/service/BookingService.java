@@ -170,6 +170,8 @@ public class BookingService {
         Booking booking = bookingRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_FOUND));
         booking.setPeriod(0);
+        booking = bookingRepository.save(booking);
+
         return BookingResponse.builder()
                 .stylistId(booking.getStylistId().getCode())
                 .services(booking.getServices())
