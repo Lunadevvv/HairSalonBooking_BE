@@ -1,5 +1,6 @@
 package com.datvm.hairbookingapp.dto.response;
 
+import com.datvm.hairbookingapp.entity.Salon;
 import com.datvm.hairbookingapp.entity.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,4 +33,6 @@ public class StaffResponse {
     private Role role;
 
     private String image;
+
+    private Salon salons;
 }
