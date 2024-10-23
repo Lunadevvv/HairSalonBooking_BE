@@ -123,6 +123,7 @@ public class BookingService {
         Slot slot = slotRepository.findById(request.getSlotId()).orElseThrow(() -> new AppException(ErrorCode.EMPTY_SLOT));
         if (bookingRepository.countBookingInSlot(booking.getDate(), request.getSlotId()) < staffRepository.countStylist(Role.STYLIST)) {
             booking.setSlot(slot);
+            booking.setDate(request.getDate());
             booking = bookingRepository.save(booking);
         } else
             throw new AppException(ErrorCode.BOOKING_FULL);

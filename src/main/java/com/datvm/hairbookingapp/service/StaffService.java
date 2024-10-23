@@ -1,7 +1,6 @@
 package com.datvm.hairbookingapp.service;
 
 import com.datvm.hairbookingapp.dto.request.CreateStaffRequest;
-import com.datvm.hairbookingapp.dto.request.DateAndSlotRequest;
 import com.datvm.hairbookingapp.dto.response.StaffResponse;
 import com.datvm.hairbookingapp.entity.Account;
 import com.datvm.hairbookingapp.entity.enums.Role;
