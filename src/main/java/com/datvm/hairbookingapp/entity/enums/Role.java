@@ -4,5 +4,6 @@ public enum Role {
     MEMBER,
     STAFF,
     STYLIST,
-    ADMIN
+    ADMIN,
+    MANAGER
 }
