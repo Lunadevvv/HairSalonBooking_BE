@@ -12,6 +12,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -68,10 +69,10 @@ public class StaffController {
     }
 
     @GetMapping("/stylist")
-    public ApiResponse<List<StaffResponse>> getAvailableStylist(@RequestBody @Valid DateAndSlotRequest request){
+    public ApiResponse<List<StaffResponse>> getAvailableStylist(@RequestParam LocalDate date, @RequestParam Long slotId){
         return ApiResponse.<List<StaffResponse>>builder()
                 .code(200)
-                .result(staffService.getAvailableStylist(request))
+                .result(staffService.getAvailableStylist(date, slotId))
                 .build();
     }
 }

@@ -16,6 +16,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,8 +35,8 @@ public class StaffService {
     @Autowired
     PasswordEncoder passwordEncoder;
 
-    public List<StaffResponse> getAvailableStylist(DateAndSlotRequest request){
-        List<Staff> list = staffRepository.findAvailableStylists(request.getSlotId(), request.getDate(), Role.STYLIST);
+    public List<StaffResponse> getAvailableStylist(LocalDate date, Long slotId){
+        List<Staff> list = staffRepository.findAvailableStylists(slotId, date, Role.STYLIST);
         return list.stream().map(accountMapper::toStaffRes).collect(Collectors.toList());
     }
 
