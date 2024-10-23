@@ -53,7 +53,14 @@ public class AuthenticationService implements UserDetailsService {
             else
                 account.setRole(request.getRole());
             account.setPassword(passwordEncoder.encode(request.getPassword()));
-            return accountMapper.toAuthRes(accountRepository.save(account));
+            account = accountRepository.save(account);
+            EmailDetail emailDetail = new EmailDetail();
+            emailDetail.setAccount(account);//set receiver
+            emailDetail.setSubject("Reset password");
+            emailDetail.setContent("Đăng kí tài khoảng thành công. Cảm ơn bạn đã lựa chọn và tin tưởng 360Shine!");
+            emailDetail.setLink("http://localhost:3000/");
+            emailService.sendEmail(emailDetail);
+            return accountMapper.toAuthRes(account);
         }catch(Exception e){
             if(e.getMessage().contains(account.getEmail())){
                 throw new AppException(ErrorCode.DUPLICATE_EMAIL);
@@ -92,6 +99,7 @@ public class AuthenticationService implements UserDetailsService {
         EmailDetail emailDetail = new EmailDetail();
         emailDetail.setAccount(account);//set receiver
         emailDetail.setSubject("Reset password");
+        emailDetail.setContent("Bạn hãy nhấp vào ô bên dưới để reset mật khẩu!");
         emailDetail.setLink("http://localhost:3000/reset-password?token=" + token);
         emailService.sendEmail(emailDetail);
     }
