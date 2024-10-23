@@ -26,6 +26,13 @@ public class BookingController {
                 .build();
     }
 
+    @PatchMapping()
+    public ApiResponse<List<Booking>> getAccountBookings() {
+        return ApiResponse.<List<Booking>>builder()
+                .result(bookingService.getBookingsByAccount())
+                .build();
+    }
+
     @PostMapping
     public ApiResponse<BookingResponse> createBooking(@RequestBody @Valid BookingRequest request){
         return ApiResponse.<BookingResponse>builder()

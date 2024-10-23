@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -72,10 +73,6 @@ public class BookingService {
     public BookingResponse createBooking(BookingRequest request, Account account) {
         String id = generateBookingId();
         Slot slot = slotRepository.findById(request.getSlotId()).orElseThrow(() -> new AppException(ErrorCode.EMPTY_SLOT));
-//        Staff staff = staffRepository.findStaffByCode(request.getStylistId());
-//        Role role = staff.getRole();
-//        if(role != Role.STYLIST)
-//            throw new AppException(ErrorCode.STYLIST_ONLY);
 
         Staff staff = null;
 
@@ -124,7 +121,7 @@ public class BookingService {
         Booking booking = bookingRepository.findById(request.getBookingId())
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_FOUND));
         Slot slot = slotRepository.findById(request.getSlotId()).orElseThrow(() -> new AppException(ErrorCode.EMPTY_SLOT));
-        if (bookingRepository.countBookingInSlot(booking.getDate(), request.getSlotId()) < staffRepository.count()) {
+        if (bookingRepository.countBookingInSlot(booking.getDate(), request.getSlotId()) < staffRepository.countStylist(Role.STYLIST)) {
             booking.setSlot(slot);
             booking = bookingRepository.save(booking);
         } else
@@ -153,8 +150,13 @@ public class BookingService {
         return bookings;
     }
 
-//8h -> 22h
-    @Scheduled(cron = "0 30 8,9,10,11,12,13,14,15,16,17,18,19,20,21,22 * * ?")
+    public List<Booking> getBookingsByAccount(){
+        Account account = authenticationService.getCurrentAccount();
+        List<Booking> bookings = bookingRepository.findByAccount(account);
+        return bookings;
+    }
+
+    @Scheduled(cron = "0 30 * * * ?")
     public void cancelBookings() {
         System.out.println("THE SYSTEM HAS TRIED TO DO THIS !!!!!!!!!!!!!!!!!!!");
         LocalTime time = LocalTime.of(LocalTime.now().getHour(),0, 0);

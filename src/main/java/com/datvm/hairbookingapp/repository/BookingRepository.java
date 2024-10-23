@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, String> {
@@ -29,6 +30,6 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
     @Transactional
     int updateBySpecificTime(BookingStatus newStatus ,Long slotId, BookingStatus status);
 
-
-//    Booking findTopByAccountOrderByDateDesc(Account account);
+    @Query("Select b From Booking b Where b.account = ?1")
+    List<Booking> findByAccount(Account account);
 }
