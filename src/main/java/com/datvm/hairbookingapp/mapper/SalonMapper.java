@@ -9,7 +9,7 @@ import org.mapstruct.MappingTarget;
 
 @Mapper
 public interface SalonMapper {
-    Salon toSalon(SalonCreationRequest CategoryCreationRequest);
-    SalonResponse toSalonResponse(Salon response);
+    Salon toSalon(SalonCreationRequest request);
+    SalonResponse toSalonResponse(Salon salon);
     void updateSalon(@MappingTarget Salon salon, SalonUpdateRequest SalonUpdateRequest);
 }
