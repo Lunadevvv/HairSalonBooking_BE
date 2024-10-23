@@ -121,7 +121,7 @@ public class BookingService {
         Booking booking = bookingRepository.findById(request.getBookingId())
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_FOUND));
         Slot slot = slotRepository.findById(request.getSlotId()).orElseThrow(() -> new AppException(ErrorCode.EMPTY_SLOT));
-        if (bookingRepository.countBookingInSlot(booking.getDate(), request.getSlotId()) < staffRepository.countStylist(Role.STYLIST)) {
+        if (bookingRepository.countBookingInSlot(request.getDate(), request.getSlotId()) < staffRepository.countStylist(Role.STYLIST)) {
             booking.setSlot(slot);
             booking.setDate(request.getDate());
             booking = bookingRepository.save(booking);
