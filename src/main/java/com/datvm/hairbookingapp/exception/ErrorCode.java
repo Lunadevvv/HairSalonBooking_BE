@@ -23,6 +23,9 @@ public enum ErrorCode {
     BOOKING_NOT_FOUND(9999, "Không tìm thầy Booking này!"),
     BOOKING_FULL(9999,"Slot này đã full booking"),
     CANT_SUBMIT_BOOKING(9999, "Bạn có đơn đặt lịch khác đang chờ!"),
+    SALON_NOT_FOUND(9999,"Không tim thấy salon"),
+    MANAGER_NOT_FOUND(9999,"Không tìm thấy Manager"),
+    INVALID_ACTION(9999,"Salon này đã có manager")
     ;
 
     private int code;
