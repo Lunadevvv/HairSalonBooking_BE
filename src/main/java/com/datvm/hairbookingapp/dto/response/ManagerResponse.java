@@ -10,4 +10,5 @@ import lombok.Data;
 public class ManagerResponse {
     private String id;
     private Staff staff;
+    private Salon salon;
 }
