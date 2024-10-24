@@ -7,5 +7,6 @@ import lombok.Data;
 public class EmailDetail {
     Account account;
     String subject;
+    String content;
     String link;
 }

@@ -23,6 +23,7 @@ public enum ErrorCode {
     BOOKING_NOT_FOUND(9999, "Không tìm thầy Booking này!"),
     BOOKING_FULL(9999,"Slot này đã full booking"),
     CANT_SUBMIT_BOOKING(9999, "Bạn có đơn đặt lịch khác đang chờ!"),
+    DUPLICATE_COMBO(9999, "Trùng combo rồi!"),
     ;
 
     private int code;
