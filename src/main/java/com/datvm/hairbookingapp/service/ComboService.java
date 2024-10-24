@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -36,13 +38,45 @@ public class ComboService {
         return combo;
     }
 
-    public ComboInfoResponse createCombo(ComboCreationRequest request){
+    public ComboInfoResponse submitCreateCombo(ComboCreationRequest request){
         List<Services> list = new ArrayList<>();
+
+        // Retrieve services based on the provided IDs
         for (String serviceId : request.getListServiceId()) {
-            var service = servicesRepository.findById(serviceId).orElseThrow(() -> new AppException(ErrorCode.SERVICES_NOT_EXISTED));
+            var service = servicesRepository.findById(serviceId)
+                    .orElseThrow(() -> new AppException(ErrorCode.SERVICES_NOT_EXISTED));
             list.add(service);
         }
 
+        // Sort the list of services for consistent comparison
+        Collections.sort(list, Comparator.comparing(Services::getServiceId));
+
+        // Check for existing combos
+        List<Combo> combos = comboRepository.findAll();
+        for (Combo combo : combos) {
+            List<Services> existingServices = combo.getServices();
+            Collections.sort(existingServices, Comparator.comparing(Services::getServiceId));
+
+            // Check if the existing combo's services match the new list
+            if (existingServices.size() == list.size()) {
+                boolean match = true;
+                for (int i = 0; i < existingServices.size(); i++) {
+                    if (!existingServices.get(i).getServiceId().equals(list.get(i).getServiceId())) {
+                        match = false;
+                        break;
+                    }
+                }
+                if (match) {
+                    throw new AppException(ErrorCode.DUPLICATE_COMBO);
+                }
+            }
+        }
+
+        // If no duplicate found, create the new combo
+        return createCombo(request, list);
+    }
+
+    public ComboInfoResponse createCombo(ComboCreationRequest request, List<Services> list){
         Combo combo = new Combo();
         combo.setServices(list);
         combo.setName(request.getName());

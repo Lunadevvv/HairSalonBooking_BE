@@ -40,7 +40,7 @@ public class ComboController {
     public ApiResponse<ComboInfoResponse> createCombo(@RequestBody @Valid ComboCreationRequest request){
         return ApiResponse.<ComboInfoResponse>builder()
                 .code(200)
-                .result(comboService.createCombo(request))
+                .result(comboService.submitCreateCombo(request))
                 .build();
     }
 
