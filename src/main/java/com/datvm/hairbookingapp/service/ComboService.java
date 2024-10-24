@@ -104,6 +104,30 @@ public class ComboService {
             var service = servicesRepository.findById(serviceId).orElseThrow(() -> new AppException(ErrorCode.SERVICES_NOT_EXISTED));
             list.add(service);
         }
+        // Sort the list of services for consistent comparison
+        Collections.sort(list, Comparator.comparing(Services::getServiceId));
+
+        // Check for existing combos
+        List<Combo> combos = comboRepository.findAll();
+        for (Combo combo2 : combos) {
+            List<Services> existingServices = combo2.getServices();
+            Collections.sort(existingServices, Comparator.comparing(Services::getServiceId));
+
+            // Check if the existing combo's services match the new list
+            if (existingServices.size() == list.size()) {
+                boolean match = true;
+                for (int i = 0; i < existingServices.size(); i++) {
+                    if (!existingServices.get(i).getServiceId().equals(list.get(i).getServiceId())) {
+                        match = false;
+                        break;
+                    }
+                }
+                if (match) {
+                    throw new AppException(ErrorCode.DUPLICATE_COMBO);
+                }
+            }
+        }
+
         combo.setName(request.getName());
         combo.setServices(list);
         combo.setDescription(request.getDescription());
