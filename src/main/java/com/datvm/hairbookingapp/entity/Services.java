@@ -24,7 +24,7 @@ public class Services {
     private String duration;
 
     @Column(nullable = false)
-    private BigDecimal price;
+    private int price;
 
     @Column(nullable = false)
     private String image;

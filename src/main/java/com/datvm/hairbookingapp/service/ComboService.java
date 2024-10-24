@@ -10,6 +10,7 @@ import com.datvm.hairbookingapp.mapper.ComboMapper;
 import com.datvm.hairbookingapp.repository.ComboRepository;
 import com.datvm.hairbookingapp.repository.ServicesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -28,6 +29,9 @@ public class ComboService {
 
     @Autowired
     ComboMapper comboMapper;
+
+    @Value("${app.comboPercent}")
+    private double percent;
 
     public List<Combo> getAllCombos(){
         return comboRepository.findAll();
@@ -80,7 +84,7 @@ public class ComboService {
         Combo combo = new Combo();
         combo.setServices(list);
         combo.setName(request.getName());
-        combo.setPrice(request.getPrice());
+        combo.setPrice(setComboPrice(list));
         combo.setDescription(request.getDescription());
         combo = comboRepository.save(combo);
 
@@ -103,8 +107,16 @@ public class ComboService {
         combo.setName(request.getName());
         combo.setServices(list);
         combo.setDescription(request.getDescription());
-        combo.setPrice(request.getPrice());
+        combo.setPrice(setComboPrice(list));
         return comboRepository.save(combo);
+    }
+
+    public int setComboPrice(List<Services> services){
+        int price = 0;
+        for(Services s : services){
+            price = price + s.getPrice();
+        }
+        return (int) Math.floor(price * (100 - percent) / 100);
     }
 
     public void deleteCombo(Long id){
