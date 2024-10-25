@@ -3,6 +3,7 @@ package com.datvm.hairbookingapp.service.impl;
 import com.datvm.hairbookingapp.dto.request.ServicesCreationRequest;
 import com.datvm.hairbookingapp.dto.request.ServicesUpdateRequest;
 import com.datvm.hairbookingapp.dto.response.ServicesResponse;
+import com.datvm.hairbookingapp.entity.Category;
 import com.datvm.hairbookingapp.entity.Services;
 import com.datvm.hairbookingapp.exception.AppException;
 import com.datvm.hairbookingapp.mapper.ServicesMapper;
@@ -33,7 +34,8 @@ public class ServicesServiceImpl implements ServicesService {
             throw new AppException(INVALID_IMAGE);
         Services service = servicesMapper.toServices(request);
         service.setServiceId(generateServiceId());
-        service.setCategories(categoryRepository.findByCategoryId(request.getCategoryId()));
+        Category category = categoryRepository.findByCategoryId(request.getCategoryId());
+        service.setCategories(category);
         return servicesMapper.toServicesResponse(servicesRepository.save(service));
     }
 
