@@ -1,6 +1,7 @@
 package com.datvm.hairbookingapp.entity;
 
 import com.datvm.hairbookingapp.entity.enums.BookingStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -53,4 +54,12 @@ public class Booking {
 
     @Column(nullable = false)
     private int period;
+
+    @OneToOne(mappedBy = "booking",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private Feedback feedback;
+
+    @OneToOne(mappedBy = "booking",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private Payment payment;
 }

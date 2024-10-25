@@ -1,5 +1,6 @@
 package com.datvm.hairbookingapp.dto.request;
 
+import com.datvm.hairbookingapp.entity.Feedback;
 import com.datvm.hairbookingapp.entity.Slot;
 import com.datvm.hairbookingapp.entity.Staff;
 import jakarta.persistence.Column;
@@ -32,4 +33,5 @@ public class BookingRequest {
     private List<String> serviceId;
 
     private int period;
+    private Feedback feedback;
 }
