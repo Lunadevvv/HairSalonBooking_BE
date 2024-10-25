@@ -16,6 +16,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,11 +46,24 @@ public class BookingService {
     private FeedbackRepository feedbackRepository;
     @Autowired
     private FeedbackService feedbackService;
+    @Autowired
+    private PaymentRepository paymentRepository;
+    @Autowired
+    private AuthenticationRepository accountRepository;
 
     public void updateBookingStatus(String id, BookingStatus status) {
         Booking booking = bookingRepository.findById(id).orElseThrow(
                 () -> new AppException(ErrorCode.BOOKING_NOT_FOUND)
         );
+        if(booking.getStatus()==BookingStatus.SUCCESS){
+            LocalDateTime date = LocalDateTime.now();
+            booking.getPayment().setDate(date);
+            Account account = booking.getAccount();
+            int shinePoint = account.getShinePoint();
+            int pointAdd = booking.getPrice()/1000;
+            account.setShinePoint(shinePoint+pointAdd);
+            accountRepository.save(account);
+        }
         booking.setStatus(status);
         bookingRepository.save(booking);
     }
@@ -104,10 +118,15 @@ public class BookingService {
         booking.setAccount(account);
         booking.setServices(list);
         booking.setPeriod(request.getPeriod());
+        Payment payment = new Payment();
+        payment.setId(generatePaymentId());
+        payment.setPrice(request.getPrice());
+        payment.setBooking(booking);
         Feedback feedback = new Feedback();
         feedback.setId(generateFeedbackId());
         feedback.setBooking(booking);
         booking.setFeedback(feedback);
+        booking.setPayment(payment);
         booking = bookingRepository.save(booking);
         return BookingResponse.builder()
                 .stylistId(staff.getCode())
@@ -207,6 +226,16 @@ public class BookingService {
             return id;
         int fourLastNumber = Integer.parseInt(lastId.substring(1));
         id = String.format("F%04d", ++fourLastNumber);
+        return id;
+    }
+
+    public String generatePaymentId() {
+        String id = "P0001";
+        String lastId = paymentRepository.findLastId();
+        if (lastId == null)
+            return id;
+        int fourLastNumber = Integer.parseInt(lastId.substring(1));
+        id = String.format("P%04d", ++fourLastNumber);
         return id;
     }
 
