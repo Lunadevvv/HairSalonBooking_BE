@@ -108,7 +108,7 @@ public class ComboService {
         Collections.sort(list, Comparator.comparing(Services::getServiceId));
 
         // Check for existing combos
-        List<Combo> combos = comboRepository.findAll();
+        List<Combo> combos = comboRepository.findAllRemainCombo(id);
         for (Combo combo2 : combos) {
             List<Services> existingServices = combo2.getServices();
             Collections.sort(existingServices, Comparator.comparing(Services::getServiceId));
