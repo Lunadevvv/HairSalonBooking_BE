@@ -3,6 +3,7 @@ package com.datvm.hairbookingapp.service;
 import com.datvm.hairbookingapp.dto.request.BookingRequest;
 import com.datvm.hairbookingapp.dto.request.BookingUpdateRequest;
 import com.datvm.hairbookingapp.dto.response.BookingResponse;
+import com.datvm.hairbookingapp.dto.response.EmailDetail;
 import com.datvm.hairbookingapp.entity.*;
 import com.datvm.hairbookingapp.entity.enums.BookingStatus;
 import com.datvm.hairbookingapp.entity.enums.Role;
@@ -45,6 +46,9 @@ public class BookingService {
     @Autowired
     BookingMapper bookingMapper;
 
+    @Autowired
+    EmailService emailService;
+
     public void updateBookingStatus(String id, BookingStatus status) {
         Booking booking = bookingRepository.findById(id).orElseThrow(
                 () -> new AppException(ErrorCode.BOOKING_NOT_FOUND)
@@ -56,6 +60,9 @@ public class BookingService {
     public BookingResponse submitBooking(BookingRequest request) {
         Account account = authenticationService.getCurrentAccount();
         BookingResponse res = new BookingResponse();
+        if (bookingRepository.countBookingInSlot(request.getDate(), request.getSlotId()) == staffRepository.countStylist(Role.STYLIST)) {
+            throw new AppException(ErrorCode.BOOKING_FULL);
+        }
         //check the latest booking status is CANCELED or COMPLETED
         var lastBooking = bookingRepository.findLastBooking(account);
         if (lastBooking != null) {
@@ -105,6 +112,13 @@ public class BookingService {
         booking.setPeriod(request.getPeriod());
 
         booking = bookingRepository.save(booking);
+
+        EmailDetail emailDetail = new EmailDetail();
+        emailDetail.setAccount(account);//set receiver
+        emailDetail.setSubject("Đặt lịch thành công!");
+        emailDetail.setContent("Đặt lịch thành công vào lúc " + slot.getTimeStart() + " - " + booking.getDate().toString() + ". Cảm ơn bạn đã lựa chọn và tin tưởng 360Shine!");
+        emailDetail.setLink("http://localhost:3000/");
+        emailService.sendEmail(emailDetail);
         return BookingResponse.builder()
                 .stylistId(staff.getCode())
                 .services(list)
