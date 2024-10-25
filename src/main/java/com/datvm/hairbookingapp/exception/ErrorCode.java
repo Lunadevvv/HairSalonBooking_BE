@@ -24,7 +24,10 @@ public enum ErrorCode {
     BOOKING_FULL(9999,"Slot này đã full booking"),
     CANT_SUBMIT_BOOKING(9999, "Bạn có đơn đặt lịch khác đang chờ!"),
     DUPLICATE_COMBO(9999, "Trùng combo rồi!"),
-    FEEDBACK_NOT_FOUND(9999,"Không tìm thấy feedback")
+    FEEDBACK_NOT_FOUND(9999,"Không tìm thấy feedback"),
+    PAYMENT_NOT_FOUND(9999,"Không tìm thấy payment"),
+    PAYMENT_ALREADY_DONE(9999,"Payment này đã được thanh toán"),
+    PAYMENT_INVALID_SUBMIT(9999,"Không thể thanh toán payment này")
     ;
 
     private int code;
