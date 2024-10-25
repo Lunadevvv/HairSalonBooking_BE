@@ -58,4 +58,8 @@ public class Booking {
     @OneToOne(mappedBy = "booking",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private Feedback feedback;
+
+    @OneToOne(mappedBy = "booking",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private Payment payment;
 }
