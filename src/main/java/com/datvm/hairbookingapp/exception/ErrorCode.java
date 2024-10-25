@@ -24,6 +24,7 @@ public enum ErrorCode {
     BOOKING_FULL(9999,"Slot này đã full booking"),
     CANT_SUBMIT_BOOKING(9999, "Bạn có đơn đặt lịch khác đang chờ!"),
     DUPLICATE_COMBO(9999, "Trùng combo rồi!"),
+    FEEDBACK_NOT_FOUND(9999,"Không tìm thấy feedback")
     ;
 
     private int code;
