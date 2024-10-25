@@ -31,9 +31,7 @@ public class FeedbackService {
     }
 
     public FeedbackResponse getFeedbackById(String id) {
-        Feedback feedback = feedbackRepository.findFeedbackWithBookingCompleted(BookingStatus.COMPLETED, id);
-        if(feedback == null)
-            throw new AppException(ErrorCode.FEEDBACK_NOT_FOUND);
+        Feedback feedback = feedbackRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.FEEDBACK_NOT_FOUND));
         return feedbackMapper.toFeedbackResponse(feedback);
     }
 
