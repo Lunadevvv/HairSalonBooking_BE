@@ -55,7 +55,7 @@ public class StaffService {
             throw new AppException(ErrorCode.STAFF_NOT_FOUND);
         Account account = authenticationRepository.findAccountByPhone(staff.getPhone());
         try {
-            staff.setActive(false);
+            staff.setStatus(false);
             staffRepository.save(staff);
             authenticationRepository.delete(account);
         } catch (AppException e) {
@@ -85,7 +85,7 @@ public class StaffService {
         staff.setImage(request.getImage());
         staff.setRole(request.getRole());
         staff.setSalons(salon);
-        staff.setActive(true);
+        staff.setStatus(true);
         try {
             staff.setAccount(authenticationRepository.save(Account.builder()
                     .email(staff.getEmail())
@@ -143,7 +143,7 @@ public class StaffService {
 
     public void promoteToManager(String code, PromoteStaffRequest request){
         Staff staff = staffRepository.findStaffByCode(code);
-        if (staff == null || !staff.isActive())
+        if (staff == null || !staff.isStatus())
             throw new AppException(ErrorCode.STAFF_NOT_FOUND);
         Salon salon = salonRepository.findById(request.getSalonId()).orElseThrow(() -> new AppException(ErrorCode.SALON_NOT_FOUND));
         staff.setSalons(salon);
