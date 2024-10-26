@@ -2,6 +2,7 @@ package com.datvm.hairbookingapp.controller;
 
 import com.datvm.hairbookingapp.dto.request.CreateStaffRequest;
 import com.datvm.hairbookingapp.dto.request.DateAndSlotRequest;
+import com.datvm.hairbookingapp.dto.request.PromoteStaffRequest;
 import com.datvm.hairbookingapp.dto.response.ApiResponse;
 import com.datvm.hairbookingapp.dto.response.StaffResponse;
 import com.datvm.hairbookingapp.entity.Staff;
@@ -21,6 +22,16 @@ public class StaffController {
 
     @Autowired
     StaffService staffService;
+
+    @PutMapping("/promote/{code}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ApiResponse promoteToManager(@PathVariable String code, @RequestBody @Valid PromoteStaffRequest request){
+        staffService.promoteToManager(code, request);
+        return ApiResponse.builder()
+                .code(200)
+                .message("Thăng cấp cho nhân viên " + code + " thành công!")
+                .build();
+    }
 
     @PostMapping
     public ApiResponse<StaffResponse> createStaff(@RequestBody @Valid CreateStaffRequest request)

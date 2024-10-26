@@ -2,6 +2,7 @@ package com.datvm.hairbookingapp.service;
 
 import com.datvm.hairbookingapp.dto.request.CreateStaffRequest;
 import com.datvm.hairbookingapp.dto.request.DateAndSlotRequest;
+import com.datvm.hairbookingapp.dto.request.PromoteStaffRequest;
 import com.datvm.hairbookingapp.dto.response.StaffResponse;
 import com.datvm.hairbookingapp.entity.Account;
 import com.datvm.hairbookingapp.entity.Salon;
@@ -15,6 +16,7 @@ import com.datvm.hairbookingapp.repository.SalonRepository;
 import com.datvm.hairbookingapp.repository.StaffRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +41,9 @@ public class StaffService {
     @Autowired
     SalonRepository salonRepository;
 
+    @Autowired
+    ManagerService managerService;
+
     public List<StaffResponse> getAvailableStylist(DateAndSlotRequest request) {
         List<Staff> list = staffRepository.findAvailableStylists(request.getSlotId(), request.getDate(), Role.STYLIST);
         return list.stream().map(accountMapper::toStaffRes).collect(Collectors.toList());
@@ -50,7 +55,8 @@ public class StaffService {
             throw new AppException(ErrorCode.STAFF_NOT_FOUND);
         Account account = authenticationRepository.findAccountByPhone(staff.getPhone());
         try {
-            staffRepository.delete(staff);
+            staff.setActive(false);
+            staffRepository.save(staff);
             authenticationRepository.delete(account);
         } catch (AppException e) {
             throw new AppException(ErrorCode.PROCESS_FAILED);
@@ -79,6 +85,7 @@ public class StaffService {
         staff.setImage(request.getImage());
         staff.setRole(request.getRole());
         staff.setSalons(salon);
+        staff.setActive(true);
         try {
             staff.setAccount(authenticationRepository.save(Account.builder()
                     .email(staff.getEmail())
@@ -114,7 +121,7 @@ public class StaffService {
         staff.setPhone(request.getPhone());
         staff.setJoinIn(request.getJoinIn());
         staff.setImage(request.getImage());
-        staff.setRole(request.getRole());
+//        staff.setRole(request.getRole());
         staff.setSalons(salon);
         Account account = staff.getAccount();
         if (account != null) {
@@ -122,9 +129,9 @@ public class StaffService {
             account.setLastName(request.getLastName());
             account.setEmail(request.getEmail());
             account.setPhone(request.getPhone());
-            if (!account.getRole().equals(request.getRole())) {
-                account.setRole(request.getRole());
-            }
+//            if (!account.getRole().equals(request.getRole())) {
+//                account.setRole(request.getRole());
+//            }
         }
 
         try {
@@ -132,6 +139,22 @@ public class StaffService {
         } catch (AppException e) {
             throw new AppException(ErrorCode.PROCESS_FAILED);
         }
+    }
+
+    public void promoteToManager(String code, PromoteStaffRequest request){
+        Staff staff = staffRepository.findStaffByCode(code);
+        if (staff == null || !staff.isActive())
+            throw new AppException(ErrorCode.STAFF_NOT_FOUND);
+        Salon salon = salonRepository.findById(request.getSalonId()).orElseThrow(() -> new AppException(ErrorCode.SALON_NOT_FOUND));
+        staff.setSalons(salon);
+        staff.setRole(Role.MANAGER);
+        Account account = staff.getAccount();
+        if (account != null) {
+            if (account.getRole().equals(Role.STAFF) || account.getRole().equals(Role.STYLIST)) {
+                account.setRole(Role.MANAGER);
+            }
+        }
+        managerService.createManager(staff, salon);
     }
 
     public String generateStaffCode() {
