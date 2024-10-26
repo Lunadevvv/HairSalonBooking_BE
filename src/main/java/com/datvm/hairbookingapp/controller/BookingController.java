@@ -68,9 +68,9 @@ public class BookingController {
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<String> deleteBooking(@PathVariable String id){
+    public ApiResponse<String> cancelBooking(@PathVariable String id){
         return ApiResponse.<String>builder()
-                .result(bookingService.deleteBooking(id))
+                .result(bookingService.cancelBooking(id))
                 .build();
     }
 }

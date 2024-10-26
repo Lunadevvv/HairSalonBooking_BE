@@ -26,19 +26,19 @@ import java.util.Random;
 @EnableScheduling
 public class BookingService {
     @Autowired
-    BookingRepository bookingRepository;
+    private BookingRepository bookingRepository;
 
     @Autowired
-    AuthenticationService authenticationService;
+    private AuthenticationService authenticationService;
 
     @Autowired
-    SlotRepository slotRepository;
+    private SlotRepository slotRepository;
 
     @Autowired
-    StaffRepository staffRepository;
+    private StaffRepository staffRepository;
 
     @Autowired
-    ServicesRepository servicesRepository;
+    private ServicesRepository servicesRepository;
 
     @Autowired
     BookingMapper bookingMapper;
@@ -96,6 +96,8 @@ public class BookingService {
             staff = getRandomAvailableStylist(request.getSlotId(), request.getDate());
         } else {
             staff = staffRepository.findStaffByCode(request.getStylistId());
+            if(!staff.isStatus())
+                throw new AppException(ErrorCode.STAFF_NOT_ACTIVE);
             Role role = staff.getRole();
             if (role != Role.STYLIST) {
                 throw new AppException(ErrorCode.STYLIST_ONLY);
@@ -105,6 +107,8 @@ public class BookingService {
         List<Services> list = new ArrayList<>();
         for (String serviceId : request.getServiceId()) {
             var service = servicesRepository.findById(serviceId).orElseThrow(() -> new AppException(ErrorCode.SERVICES_NOT_EXISTED));
+            if (!service.isStatus())
+                throw new AppException(ErrorCode.SERVICES_NOT_ACTIVE);
             list.add(service);
         }
 
@@ -162,11 +166,14 @@ public class BookingService {
                 .build();
     }
 
-    public String deleteBooking(String id) {
-        if(!bookingRepository.existsById(id))
-            throw new AppException(ErrorCode.BOOKING_NOT_FOUND);
-        bookingRepository.deleteById(id);
-        return "Booking has been deleted";
+    public String cancelBooking(String id) {
+        Booking booking = bookingRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_FOUND));
+        if(booking.getStatus()==BookingStatus.RECEIVED)
+            booking.setStatus(BookingStatus.CANCELED);
+        else
+            throw new AppException(ErrorCode.BOOKING_INVALID_CANCELLED);
+        bookingRepository.save(booking);
+        return "Booking has been cancelled";
     }
 
     public List<Booking> getBookings() {
@@ -181,12 +188,12 @@ public class BookingService {
     }
 
     @Scheduled(cron = "0 30 * * * ?")
-    public void cancelBookings() {
-        System.out.println("THE SYSTEM HAS TRIED TO DO THIS !!!!!!!!!!!!!!!!!!!");
+    public void autoCancelBookings() {
         LocalTime time = LocalTime.of(LocalTime.now().getHour(),0, 0);
         Long slotId = slotRepository.findByTimeStart(time);
         System.out.println(slotId);
         bookingRepository.updateBySpecificTime(BookingStatus.CANCELED,slotId,BookingStatus.RECEIVED);
+        System.out.println("THE SYSTEM HAS CANCELLED RECEIVED BOOKING AT SLOT "+slotId);
     }
 
     public BookingResponse cancelPeriodBooking(String id){
