@@ -20,7 +20,7 @@ public class ComboController {
     ComboService comboService;
 
     @GetMapping
-    public ApiResponse<List<Combo>> getAllCombo(){
+    public ApiResponse<List<Combo>> getAllCombos(){
         return ApiResponse.<List<Combo>>builder()
                 .code(200)
                 .result(comboService.getAllCombos())
@@ -40,7 +40,7 @@ public class ComboController {
     public ApiResponse<ComboInfoResponse> createCombo(@RequestBody @Valid ComboCreationRequest request){
         return ApiResponse.<ComboInfoResponse>builder()
                 .code(200)
-                .result(comboService.createCombo(request))
+                .result(comboService.submitCreateCombo(request))
                 .build();
     }
 
@@ -58,7 +58,7 @@ public class ComboController {
         comboService.deleteCombo(id);
         return ApiResponse.builder()
                 .code(200)
-                .message("Delete ComboId: " + id + " thành công!")
+                .message("delete combo: " + id + " thành công!")
                 .build();
     }
 }

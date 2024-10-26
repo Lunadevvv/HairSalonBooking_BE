@@ -4,7 +4,7 @@ import com.datvm.hairbookingapp.dto.request.CategoryCreationRequest;
 import com.datvm.hairbookingapp.dto.request.CategoryUpdateRequest;
 import com.datvm.hairbookingapp.dto.response.ApiResponse;
 import com.datvm.hairbookingapp.dto.response.CategoryResponse;
-import com.datvm.hairbookingapp.service.interfaces.CategoryService;
+import com.datvm.hairbookingapp.service.CategoryService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -33,20 +33,21 @@ public class CategoryController {
     }
 
     @GetMapping()
-    public ApiResponse<List<CategoryResponse>> getAllCategories(){
+    public ApiResponse<List<CategoryResponse>> getAllCategories() {
         return ApiResponse.<List<CategoryResponse>>builder()
                 .result(categoryService.findAllCategory())
                 .build();
     }
 
     @PutMapping()
-    public ApiResponse<CategoryResponse> updateCategoryById(@RequestBody @Valid CategoryUpdateRequest request){
+    public ApiResponse<CategoryResponse> updateCategoryById(@RequestBody @Valid CategoryUpdateRequest request) {
         return ApiResponse.<CategoryResponse>builder()
                 .result(categoryService.updateCategoryById(request))
                 .build();
     }
+
     @DeleteMapping("/{id}")
-    public ApiResponse<String> deleteCategoryById(@PathVariable("id") String id){
+    public ApiResponse<String> deleteCategoryById(@PathVariable("id") String id) {
         categoryService.deleteCategoryById(id);
         return ApiResponse.<String>builder()
                 .result("Category has been deleted")

@@ -24,13 +24,15 @@ public class Services {
     private String duration;
 
     @Column(nullable = false)
-    private BigDecimal price;
+    private int price;
 
     @Column(nullable = false)
     private String image;
 
+    private boolean status;
+
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "CategoryId", nullable = false)
+    @JoinColumn(name = "CategoryId")
     private Category categories;
 
     @ManyToMany(mappedBy = "services")

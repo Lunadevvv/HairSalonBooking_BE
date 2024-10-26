@@ -1,7 +1,6 @@
 package com.datvm.hairbookingapp.service;
 
 import com.datvm.hairbookingapp.dto.request.CreateStaffRequest;
-import com.datvm.hairbookingapp.dto.request.DateAndSlotRequest;
 import com.datvm.hairbookingapp.dto.request.PromoteStaffRequest;
 import com.datvm.hairbookingapp.dto.response.StaffResponse;
 import com.datvm.hairbookingapp.entity.Account;
@@ -20,6 +19,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,33 +44,37 @@ public class StaffService {
     @Autowired
     ManagerService managerService;
 
-    public List<StaffResponse> getAvailableStylist(DateAndSlotRequest request) {
-        List<Staff> list = staffRepository.findAvailableStylists(request.getSlotId(), request.getDate(), Role.STYLIST);
+    public List<StaffResponse> getAvailableStylist(LocalDate date, Long slotId){
+        List<Staff> list = staffRepository.findAvailableStylists(slotId, date, Role.STYLIST);
         return list.stream().map(accountMapper::toStaffRes).collect(Collectors.toList());
     }
 
-    public void deleteStaff(String code) {
+    public void disableStaff(String code){
         Staff staff = staffRepository.findStaffByCode(code);
-        if (staff == null)
+        if(staff == null)
             throw new AppException(ErrorCode.STAFF_NOT_FOUND);
+        if(!staff.isStatus())
+            throw new AppException(ErrorCode.STAFF_INVALID_ACTION);
         Account account = authenticationRepository.findAccountByPhone(staff.getPhone());
         try {
             staff.setStatus(false);
-            staffRepository.save(staff);
+            staff.setAccount(null);
+            account.setStaff(null);
+            authenticationRepository.save(account);
             authenticationRepository.delete(account);
-        } catch (AppException e) {
+        }catch (AppException e){
             throw new AppException(ErrorCode.PROCESS_FAILED);
         }
     }
 
-    public List<Staff> getAllStaff() {
-        List<Staff> list = staffRepository.findAll();
+    public List<Staff> getAllStaff(){
+        List<Staff> list = staffRepository.findAllActiveStaffs(true);
         return list;
     }
 
-    public StaffResponse getStaffByCode(String code) {
+    public StaffResponse getStaffByCode(String code){
         Staff staff = staffRepository.findStaffByCode(code);
-        if (staff == null)
+        if(staff == null)
             throw new AppException(ErrorCode.STAFF_NOT_FOUND);
         return accountMapper.toStaffRes(staff);
     }
@@ -160,7 +164,7 @@ public class StaffService {
     public String generateStaffCode() {
         String code = "S0001";
         String latestCode = staffRepository.findTheLatestStaffCode();
-        if (latestCode == null)
+        if(latestCode == null)
             return code;
         int fourLastChar = Integer.parseInt(latestCode.substring(1));
         code = String.format("S%04d", ++fourLastChar);

@@ -9,16 +9,14 @@ import com.datvm.hairbookingapp.entity.enums.Role;
 import com.datvm.hairbookingapp.exception.AppException;
 import com.datvm.hairbookingapp.exception.ErrorCode;
 import com.datvm.hairbookingapp.mapper.BookingMapper;
-import com.datvm.hairbookingapp.repository.BookingRepository;
-import com.datvm.hairbookingapp.repository.ServicesRepository;
-import com.datvm.hairbookingapp.repository.SlotRepository;
-import com.datvm.hairbookingapp.repository.StaffRepository;
+import com.datvm.hairbookingapp.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,27 +26,44 @@ import java.util.Random;
 @EnableScheduling
 public class BookingService {
     @Autowired
-    BookingRepository bookingRepository;
+    private BookingRepository bookingRepository;
 
     @Autowired
-    AuthenticationService authenticationService;
+    private AuthenticationService authenticationService;
 
     @Autowired
-    SlotRepository slotRepository;
+    private SlotRepository slotRepository;
 
     @Autowired
-    StaffRepository staffRepository;
+    private StaffRepository staffRepository;
 
     @Autowired
-    ServicesRepository servicesRepository;
+    private ServicesRepository servicesRepository;
 
     @Autowired
     BookingMapper bookingMapper;
+    @Autowired
+    private FeedbackRepository feedbackRepository;
+    @Autowired
+    private FeedbackService feedbackService;
+    @Autowired
+    private PaymentRepository paymentRepository;
+    @Autowired
+    private AuthenticationRepository accountRepository;
 
     public void updateBookingStatus(String id, BookingStatus status) {
         Booking booking = bookingRepository.findById(id).orElseThrow(
                 () -> new AppException(ErrorCode.BOOKING_NOT_FOUND)
         );
+        if(booking.getStatus()==BookingStatus.SUCCESS){
+            LocalDateTime date = LocalDateTime.now();
+            booking.getPayment().setDate(date);
+            Account account = booking.getAccount();
+            int shinePoint = account.getShinePoint();
+            int pointAdd = booking.getPrice()/1000;
+            account.setShinePoint(shinePoint+pointAdd);
+            accountRepository.save(account);
+        }
         booking.setStatus(status);
         bookingRepository.save(booking);
     }
@@ -81,6 +96,8 @@ public class BookingService {
             staff = getRandomAvailableStylist(request.getSlotId(), request.getDate());
         } else {
             staff = staffRepository.findStaffByCode(request.getStylistId());
+            if(!staff.isStatus())
+                throw new AppException(ErrorCode.STAFF_NOT_ACTIVE);
             Role role = staff.getRole();
             if (role != Role.STYLIST) {
                 throw new AppException(ErrorCode.STYLIST_ONLY);
@@ -90,6 +107,8 @@ public class BookingService {
         List<Services> list = new ArrayList<>();
         for (String serviceId : request.getServiceId()) {
             var service = servicesRepository.findById(serviceId).orElseThrow(() -> new AppException(ErrorCode.SERVICES_NOT_EXISTED));
+            if (!service.isStatus())
+                throw new AppException(ErrorCode.SERVICES_NOT_ACTIVE);
             list.add(service);
         }
 
@@ -103,7 +122,15 @@ public class BookingService {
         booking.setAccount(account);
         booking.setServices(list);
         booking.setPeriod(request.getPeriod());
-
+        Payment payment = new Payment();
+        payment.setId(generatePaymentId());
+        payment.setPrice(request.getPrice());
+        payment.setBooking(booking);
+        Feedback feedback = new Feedback();
+        feedback.setId(generateFeedbackId());
+        feedback.setBooking(booking);
+        booking.setFeedback(feedback);
+        booking.setPayment(payment);
         booking = bookingRepository.save(booking);
         return BookingResponse.builder()
                 .stylistId(staff.getCode())
@@ -121,8 +148,9 @@ public class BookingService {
         Booking booking = bookingRepository.findById(request.getBookingId())
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_FOUND));
         Slot slot = slotRepository.findById(request.getSlotId()).orElseThrow(() -> new AppException(ErrorCode.EMPTY_SLOT));
-        if (bookingRepository.countBookingInSlot(booking.getDate(), request.getSlotId()) < staffRepository.countStylist(Role.STYLIST)) {
+        if (bookingRepository.countBookingInSlot(request.getDate(), request.getSlotId()) < staffRepository.countStylist(Role.STYLIST)) {
             booking.setSlot(slot);
+            booking.setDate(request.getDate());
             booking = bookingRepository.save(booking);
         } else
             throw new AppException(ErrorCode.BOOKING_FULL);
@@ -138,11 +166,14 @@ public class BookingService {
                 .build();
     }
 
-    public String deleteBooking(String id) {
-        if(!bookingRepository.existsById(id))
-            throw new AppException(ErrorCode.BOOKING_NOT_FOUND);
-        bookingRepository.deleteById(id);
-        return "Booking has been deleted";
+    public String cancelBooking(String id) {
+        Booking booking = bookingRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_FOUND));
+        if(booking.getStatus()==BookingStatus.RECEIVED)
+            booking.setStatus(BookingStatus.CANCELED);
+        else
+            throw new AppException(ErrorCode.BOOKING_INVALID_CANCELLED);
+        bookingRepository.save(booking);
+        return "Booking has been cancelled";
     }
 
     public List<Booking> getBookings() {
@@ -157,18 +188,20 @@ public class BookingService {
     }
 
     @Scheduled(cron = "0 30 * * * ?")
-    public void cancelBookings() {
-        System.out.println("THE SYSTEM HAS TRIED TO DO THIS !!!!!!!!!!!!!!!!!!!");
+    public void autoCancelBookings() {
         LocalTime time = LocalTime.of(LocalTime.now().getHour(),0, 0);
         Long slotId = slotRepository.findByTimeStart(time);
         System.out.println(slotId);
         bookingRepository.updateBySpecificTime(BookingStatus.CANCELED,slotId,BookingStatus.RECEIVED);
+        System.out.println("THE SYSTEM HAS CANCELLED RECEIVED BOOKING AT SLOT "+slotId);
     }
 
     public BookingResponse cancelPeriodBooking(String id){
         Booking booking = bookingRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_FOUND));
         booking.setPeriod(0);
+        booking = bookingRepository.save(booking);
+
         return BookingResponse.builder()
                 .stylistId(booking.getStylistId().getCode())
                 .services(booking.getServices())
@@ -190,6 +223,26 @@ public class BookingService {
             return id;
         int fourLastNumber = Integer.parseInt(lastId.substring(1));
         id = String.format("B%04d", ++fourLastNumber);
+        return id;
+    }
+
+    public String generateFeedbackId() {
+        String id = "F0001";
+        String lastId = feedbackRepository.findLastId();
+        if (lastId == null)
+            return id;
+        int fourLastNumber = Integer.parseInt(lastId.substring(1));
+        id = String.format("F%04d", ++fourLastNumber);
+        return id;
+    }
+
+    public String generatePaymentId() {
+        String id = "P0001";
+        String lastId = paymentRepository.findLastId();
+        if (lastId == null)
+            return id;
+        int fourLastNumber = Integer.parseInt(lastId.substring(1));
+        id = String.format("P%04d", ++fourLastNumber);
         return id;
     }
 

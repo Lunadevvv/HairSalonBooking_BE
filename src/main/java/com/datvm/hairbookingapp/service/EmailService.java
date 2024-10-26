@@ -23,6 +23,7 @@ public class EmailService {
             Context context = new Context();
             context.setVariable("name", emailDetail.getAccount().getFirstName() + " " + emailDetail.getAccount().getLastName());
             context.setVariable("button", "Go to page");
+            context.setVariable("content", emailDetail.getContent());
             context.setVariable("link", emailDetail.getLink());
             String template = templateEngine.process("welcome-template", context);
             // Creating a simple mail message

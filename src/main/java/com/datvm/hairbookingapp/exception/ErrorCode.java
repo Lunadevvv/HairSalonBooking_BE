@@ -25,7 +25,16 @@ public enum ErrorCode {
     CANT_SUBMIT_BOOKING(9999, "Bạn có đơn đặt lịch khác đang chờ!"),
     SALON_NOT_FOUND(9999,"Không tim thấy salon"),
     MANAGER_NOT_FOUND(9999,"Không tìm thấy Manager"),
-    INVALID_ACTION(9999,"Salon này đã có manager")
+    INVALID_ACTION(9999,"Salon này đã có manager"),
+    DUPLICATE_COMBO(9999, "Trùng combo rồi!"),
+    FEEDBACK_NOT_FOUND(9999,"Không tìm thấy feedback"),
+    PAYMENT_NOT_FOUND(9999,"Không tìm thấy payment"),
+    PAYMENT_ALREADY_DONE(9999,"Payment này đã được thanh toán"),
+    PAYMENT_INVALID_SUBMIT(9999,"Không thể thanh toán payment này"),
+    SERVICES_NOT_ACTIVE(9999,"Không thể sử dụng service này"),
+    BOOKING_INVALID_CANCELLED(9999,"Không thể cancel booking này"),
+    STAFF_NOT_ACTIVE(9999,"Không thể sử dụng staff này"),
+    STAFF_INVALID_ACTION(9999,"Staff này đã bị disabled")
     ;
 
     private int code;

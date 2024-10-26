@@ -35,4 +35,6 @@ public class StaffResponse {
     private String image;
 
     private Salon salons;
+
+    private boolean status;
 }

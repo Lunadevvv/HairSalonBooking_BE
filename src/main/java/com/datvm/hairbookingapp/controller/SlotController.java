@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -48,6 +49,14 @@ public class SlotController {
         return ApiResponse.builder()
                 .code(201)
                 .message("Xóa slot " + id + " thành công!")
+                .build();
+    }
+
+    @GetMapping("/{date}")
+    public ApiResponse<List<Slot>> getUnavailableSlot(@PathVariable LocalDate date){
+        return ApiResponse.<List<Slot>>builder()
+                .code(200)
+                .result(slotService.getUnavailableSlot(date))
                 .build();
     }
 }

@@ -1,7 +1,6 @@
 package com.datvm.hairbookingapp.controller;
 
 import com.datvm.hairbookingapp.dto.request.CreateStaffRequest;
-import com.datvm.hairbookingapp.dto.request.DateAndSlotRequest;
 import com.datvm.hairbookingapp.dto.request.PromoteStaffRequest;
 import com.datvm.hairbookingapp.dto.response.ApiResponse;
 import com.datvm.hairbookingapp.dto.response.StaffResponse;
@@ -13,6 +12,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -70,19 +70,19 @@ public class StaffController {
     }
 
     @DeleteMapping("{code}")
-    public ApiResponse deleteStaff(@PathVariable String code){
-        staffService.deleteStaff(code);
+    public ApiResponse disableStaff(@PathVariable String code){
+        staffService.disableStaff(code);
         return ApiResponse.builder()
                 .code(200)
-                .message("Xoá nhân viên có mã số " + code + " thành công!")
+                .message("Xóa account và disable nhân viên " + code + " thành công!")
                 .build();
     }
 
     @GetMapping("/stylist")
-    public ApiResponse<List<StaffResponse>> getAvailableStylist(@RequestBody @Valid DateAndSlotRequest request){
+    public ApiResponse<List<StaffResponse>> getAvailableStylist(@RequestParam LocalDate date, @RequestParam Long slotId){
         return ApiResponse.<List<StaffResponse>>builder()
                 .code(200)
-                .result(staffService.getAvailableStylist(request))
+                .result(staffService.getAvailableStylist(date, slotId))
                 .build();
     }
 }
