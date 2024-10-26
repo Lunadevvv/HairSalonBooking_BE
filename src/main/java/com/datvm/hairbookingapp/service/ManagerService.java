@@ -1,6 +1,7 @@
 package com.datvm.hairbookingapp.service;
 
 import com.datvm.hairbookingapp.dto.request.CreateStaffRequest;
+import com.datvm.hairbookingapp.dto.request.PromoteStaffRequest;
 import com.datvm.hairbookingapp.dto.response.ManagerResponse;
 import com.datvm.hairbookingapp.entity.Manager;
 import com.datvm.hairbookingapp.entity.Salon;
@@ -30,16 +31,12 @@ public class ManagerService {
     @Autowired
     private SalonRepository salonRepository;
 
-    public ManagerResponse createManager(CreateStaffRequest request) {
-        Salon salon = salonRepository.findById(request.getSalonId()).orElseThrow(() -> new AppException(ErrorCode.SALON_NOT_FOUND));
-        staffService.createStaff(request);
-        String staffCode = staffRepository.findTheLatestStaffCode();
-        Staff staff = staffRepository.findStaffByCode(staffCode);
+    public void createManager(Staff staff, Salon salon) {
         Manager manager = new Manager();
         manager.setStaff(staff);
         manager.setId(generateManagerId());
         manager.setSalon(salon);
-        return managerMapper.toManagerResponse(managerRepository.save(manager));
+        managerRepository.save(manager);
     }
 
     public ManagerResponse getManagerById(String id) {
@@ -52,25 +49,25 @@ public class ManagerService {
         return managers.stream().map(managerMapper::toManagerResponse).toList();
     }
 
-    public ManagerResponse updateManagerInfo(CreateStaffRequest request, String id) {
-        Salon salon = salonRepository.findById(request.getSalonId()).orElseThrow(() -> new AppException(ErrorCode.SALON_NOT_FOUND));
-        Manager manager = managerRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.MANAGER_NOT_FOUND));
-        // có salonId trong request va manager chua quan li salon nao
-        if (request.getSalonId() != null && manager.getSalon() == null) {
-            String code = managerRepository.findStaffCodeByManagerId(id);
-            staffService.updateStaffProfile(request, code);
-            manager.setSalon(salon);
-            manager.getSalon().setManager(manager);
-            return managerMapper.toManagerResponse(managerRepository.save(manager));
-            // salonId cũ trong request va manager da quan li salon
-        } else if (request.getSalonId() == manager.getSalon().getId() && manager.getSalon() != null) {
-            String code = managerRepository.findStaffCodeByManagerId(id);
-            staffService.updateStaffProfile(request, code);
-            return managerMapper.toManagerResponse(managerRepository.save(manager));
-            //truong hop con lai
-        } else
-            throw new AppException(ErrorCode.INVALID_ACTION);
-    }
+//    public ManagerResponse updateManagerInfo(PromoteStaffRequest request, String id) {
+//        Salon salon = salonRepository.findById(request.getSalonId()).orElseThrow(() -> new AppException(ErrorCode.SALON_NOT_FOUND));
+//        Manager manager = managerRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.MANAGER_NOT_FOUND));
+//        // có salonId trong request va manager chua quan li salon nao
+//        if (request.getSalonId() != null && manager.getSalon() == null) {
+//            String code = managerRepository.findStaffCodeByManagerId(id);
+//            staffService.updateStaffProfile(request, code);
+//            manager.setSalon(salon);
+//            manager.getSalon().setManager(manager);
+//            return managerMapper.toManagerResponse(managerRepository.save(manager));
+//            // salonId cũ trong request va manager da quan li salon
+//        } else if (request.getSalonId() == manager.getSalon().getId() && manager.getSalon() != null) {
+//            String code = managerRepository.findStaffCodeByManagerId(id);
+//            staffService.updateStaffProfile(request, code);
+//            return managerMapper.toManagerResponse(managerRepository.save(manager));
+//            //truong hop con lai
+//        } else
+//            throw new AppException(ErrorCode.INVALID_ACTION);
+//    }
 
     //kick manager
     public String deleteManager(String id) {

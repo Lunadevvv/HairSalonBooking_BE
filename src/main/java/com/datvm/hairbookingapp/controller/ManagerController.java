@@ -1,6 +1,7 @@
 package com.datvm.hairbookingapp.controller;
 
 import com.datvm.hairbookingapp.dto.request.CreateStaffRequest;
+import com.datvm.hairbookingapp.dto.request.PromoteStaffRequest;
 import com.datvm.hairbookingapp.dto.response.ApiResponse;
 import com.datvm.hairbookingapp.dto.response.ManagerResponse;
 import com.datvm.hairbookingapp.service.ManagerService;
@@ -16,12 +17,12 @@ public class ManagerController {
     @Autowired
     ManagerService managerService;
 
-    @PostMapping
-    public ApiResponse<ManagerResponse> createManager(@RequestBody @Valid CreateStaffRequest request){
-        return ApiResponse.<ManagerResponse>builder()
-                .result(managerService.createManager(request))
-                .build();
-    }
+//    @PostMapping
+//    public ApiResponse<ManagerResponse> createManager(@RequestBody @Valid CreateStaffRequest request){
+//        return ApiResponse.<ManagerResponse>builder()
+//                .result(managerService.createManager(request))
+//                .build();
+//    }
 
     @GetMapping("/{id}")
     public ApiResponse<ManagerResponse> getManagerById(@PathVariable String id){
@@ -38,9 +39,9 @@ public class ManagerController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<ManagerResponse> updateManagerById(@RequestBody @Valid CreateStaffRequest request ,@PathVariable String id){
+    public ApiResponse<ManagerResponse> updateManagerById(@RequestBody @Valid PromoteStaffRequest request, @PathVariable String id){
         return ApiResponse.<ManagerResponse>builder()
-                .result(managerService.updateManagerInfo(request,id))
+//                .result(managerService.updateManagerInfo(request,id))
                 .build();
     }
 
