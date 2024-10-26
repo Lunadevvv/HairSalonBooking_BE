@@ -11,9 +11,9 @@ import java.util.Optional;
 
 @Repository
 public interface ServicesRepository extends JpaRepository<Services, String>, JpaSpecificationExecutor<Services> {
-    List<Services> findAll();
-    @Transactional
-    void deleteByServiceId(String serviceId);
+
+    @Query("select s from Services s where s.status = ?1")
+    List<Services> findAllActiveServices(boolean status);
 
     @Query("SELECT MAX(s.serviceId) FROM Services s")
     String findLastId();
