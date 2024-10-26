@@ -34,6 +34,7 @@ public class SalonService {
     public SalonResponse CreateSalon(SalonCreationRequest request) {
         Salon salon = salonMapper.toSalon(request);
         salon.setId(generateSalonCode());
+        salon.setOpen(true);
         return salonMapper.toSalonResponse(salonRepository.save(salon));
     }
 
@@ -46,9 +47,9 @@ public class SalonService {
         return salonRepository.findAll().stream().map(salonMapper::toSalonResponse).toList();
     }
 
-    public SalonResponse UpdateSalon(SalonUpdateRequest request) {
-        Salon salon =  salonRepository.findById(request.getId()).orElseThrow(() -> new AppException(ErrorCode.SALON_NOT_FOUND));
-        salonMapper.updateSalon(salon, request);
+    public SalonResponse UpdateSalon(SalonUpdateRequest request, String code) {
+        Salon salon =  salonRepository.findById(code).orElseThrow(() -> new AppException(ErrorCode.SALON_NOT_FOUND));
+        salon = salonMapper.updateSalon(request);
         return salonMapper.toSalonResponse(salonRepository.save(salon));
     }
 
@@ -63,7 +64,8 @@ public class SalonService {
                 staff.setSalons(null);
             }
         }
-        salonRepository.delete(salon);
+        salon.setOpen(false);
+        salonRepository.save(salon);
         return "Salon has been deleted";
     }
 

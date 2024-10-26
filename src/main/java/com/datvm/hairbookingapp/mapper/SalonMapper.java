@@ -11,5 +11,5 @@ import org.mapstruct.MappingTarget;
 public interface SalonMapper {
     Salon toSalon(SalonCreationRequest request);
     SalonResponse toSalonResponse(Salon salon);
-    void updateSalon(@MappingTarget Salon salon, SalonUpdateRequest SalonUpdateRequest);
+    Salon updateSalon(SalonUpdateRequest SalonUpdateRequest);
 }

@@ -13,7 +13,7 @@ public class Salon {
     @Id
     private String id;
 
-    private boolean open;
+    private boolean isOpen;
 
     @NotNull
     private String address;

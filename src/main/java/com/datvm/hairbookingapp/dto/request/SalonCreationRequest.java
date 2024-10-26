@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 public class SalonCreationRequest {
-    private boolean open;
+//    private boolean open;
     @NotBlank(message = "address can't be blank")
     private String address;
     @NotBlank(message = "district can't be blank")
