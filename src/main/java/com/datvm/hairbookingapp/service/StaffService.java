@@ -39,13 +39,18 @@ public class StaffService {
         return list.stream().map(accountMapper::toStaffRes).collect(Collectors.toList());
     }
 
-    public void deleteStaff(String code){
+    public void disableStaff(String code){
         Staff staff = staffRepository.findStaffByCode(code);
         if(staff == null)
             throw new AppException(ErrorCode.STAFF_NOT_FOUND);
+        if(!staff.isStatus())
+            throw new AppException(ErrorCode.STAFF_INVALID_ACTION);
         Account account = authenticationRepository.findAccountByPhone(staff.getPhone());
         try {
-            staffRepository.delete(staff);
+            staff.setStatus(false);
+            staff.setAccount(null);
+            account.setStaff(null);
+            authenticationRepository.save(account);
             authenticationRepository.delete(account);
         }catch (AppException e){
             throw new AppException(ErrorCode.PROCESS_FAILED);
@@ -53,7 +58,7 @@ public class StaffService {
     }
 
     public List<Staff> getAllStaff(){
-        List<Staff> list = staffRepository.findAll();
+        List<Staff> list = staffRepository.findAllActiveStaffs(true);
         return list;
     }
 
@@ -72,6 +77,7 @@ public class StaffService {
             staff.setCode(code);
             staff.setImage(request.getImage());
             staff.setRole(request.getRole());
+            staff.setStatus(true);
             try{
                 staff.setAccount(authenticationRepository.save(Account.builder()
                         .email(staff.getEmail())

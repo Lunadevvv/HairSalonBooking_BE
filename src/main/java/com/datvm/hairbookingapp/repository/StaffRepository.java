@@ -29,4 +29,6 @@ public interface StaffRepository extends JpaRepository<Staff, Long> {
 
     @Query("SELECT COUNT(s) AS stylist_count FROM Staff s WHERE s.role = ?1")
     int countStylist(Role role);
+    @Query("select s from Staff s where s.status = ?1")
+    List<Staff> findAllActiveStaffs(boolean status);
 }

@@ -58,11 +58,11 @@ public class StaffController {
     }
 
     @DeleteMapping("{code}")
-    public ApiResponse deleteStaff(@PathVariable String code){
-        staffService.deleteStaff(code);
+    public ApiResponse disableStaff(@PathVariable String code){
+        staffService.disableStaff(code);
         return ApiResponse.builder()
                 .code(200)
-                .message("Xoá nhân viên có mã số " + code + " thành công!")
+                .message("Xóa account và disable nhân viên " + code + " thành công!")
                 .build();
     }
 

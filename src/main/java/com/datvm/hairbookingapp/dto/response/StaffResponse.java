@@ -32,4 +32,6 @@ public class StaffResponse {
     private Role role;
 
     private String image;
+
+    private boolean status;
 }

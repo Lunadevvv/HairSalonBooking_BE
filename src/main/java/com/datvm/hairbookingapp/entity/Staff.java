@@ -52,6 +52,8 @@ public class Staff {
 
     private String image;
 
+    private boolean status;
+
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "account_id")
     private Account account;
