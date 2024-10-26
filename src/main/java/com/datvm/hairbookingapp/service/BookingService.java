@@ -261,4 +261,13 @@ public class BookingService {
         Random random = new Random();
         return availableStylists.get(random.nextInt(availableStylists.size()));
     }
+
+    public String getFeedbackId(String bookingId){
+        Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_FOUND));
+        return booking.getFeedback().getId();
+    }
+    public String getPaymentId(String bookingId){
+        Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_FOUND));
+        return booking.getPayment().getId();
+    }
 }

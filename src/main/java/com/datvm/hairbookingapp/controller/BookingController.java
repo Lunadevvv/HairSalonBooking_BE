@@ -17,7 +17,7 @@ import java.util.List;
 @RequestMapping("/api/v1/booking")
 public class BookingController {
     @Autowired
-    BookingService bookingService;
+    private BookingService bookingService;
 
     @GetMapping
     public ApiResponse<List<Booking>> getAllBookings() {
@@ -71,6 +71,18 @@ public class BookingController {
     public ApiResponse<String> deleteBooking(@PathVariable String id){
         return ApiResponse.<String>builder()
                 .result(bookingService.deleteBooking(id))
+                .build();
+    }
+    @GetMapping("/feedback/{id}")
+    public ApiResponse<String> getFeedbackById(@PathVariable String id){
+        return  ApiResponse.<String>builder()
+                .result(bookingService.getFeedbackId(id))
+                .build();
+    }
+    @GetMapping("/payment/{id}")
+    public ApiResponse<String> getPaymentById(@PathVariable String id){
+        return  ApiResponse.<String>builder()
+                .result(bookingService.getPaymentId(id))
                 .build();
     }
 }
