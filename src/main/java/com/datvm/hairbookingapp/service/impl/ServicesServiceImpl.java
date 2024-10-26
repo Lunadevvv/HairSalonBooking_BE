@@ -32,11 +32,25 @@ public class ServicesServiceImpl implements ServicesService {
             throw new AppException(CATEGORY_NOT_EXISTED);
         if(!request.getImage().contains("imgur"))
             throw new AppException(INVALID_IMAGE);
-        Services service = servicesMapper.toServices(request);
+        Services service = new Services();
+        service.setDescription(request.getDescription());
+        service.setServiceName(request.getServiceName());
+        service.setImage(request.getImage());
+        service.setDuration(request.getDuration());
+        service.setPrice(request.getPrice());
         service.setServiceId(generateServiceId());
         Category category = categoryRepository.findByCategoryId(request.getCategoryId());
         service.setCategories(category);
-        return servicesMapper.toServicesResponse(servicesRepository.save(service));
+        service = servicesRepository.save(service);
+        return ServicesResponse.builder()
+                .serviceName(service.getServiceName())
+                .image(service.getImage())
+                .categories(service.getCategories())
+                .description(service.getDescription())
+                .duration(service.getDuration())
+                .price(service.getPrice())
+                .serviceId(service.getServiceId())
+                .build();
     }
 
     @Override

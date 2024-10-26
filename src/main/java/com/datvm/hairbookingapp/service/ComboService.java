@@ -136,7 +136,7 @@ public class ComboService {
     }
 
     public int setComboPrice(List<Services> services){
-        int price = 0;
+        double price = 0;
         for(Services s : services){
             price = price + s.getPrice();
         }

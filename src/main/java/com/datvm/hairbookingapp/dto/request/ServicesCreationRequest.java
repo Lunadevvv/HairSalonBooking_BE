@@ -27,7 +27,7 @@ public class ServicesCreationRequest {
     String duration;
 
     @NotNull(message = "price can't be null")
-    BigDecimal price;
+    int price;
 
     @NotBlank(message = "image can't be blank. Please add image url")
     String image;
