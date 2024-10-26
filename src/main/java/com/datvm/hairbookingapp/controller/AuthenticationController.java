@@ -39,10 +39,11 @@ public class AuthenticationController {
     }
 
     @PostMapping("/forgot-password")
-    ApiResponse forgotPassword(@RequestBody @Valid ForgotRequest forgotRequest){
-        authenticationService.forgotPassword(forgotRequest.getPhone());
-        return ApiResponse.builder()
+    ApiResponse<String> forgotPassword(@RequestBody @Valid ForgotRequest forgotRequest){
+        String token = authenticationService.forgotPassword(forgotRequest.getPhone());
+        return ApiResponse.<String>builder()
                 .code(200)
+                .result(token)
                 .message("Check your email to confirm reset password")
                 .build();
     }
