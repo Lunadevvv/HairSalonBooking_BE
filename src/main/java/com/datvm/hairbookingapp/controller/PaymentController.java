@@ -34,4 +34,11 @@ public class PaymentController {
                 .result(paymentService.getAllPaymentsAlreadyComplete())
                 .build();
     }
+
+    @GetMapping("/all")
+    public ApiResponse<List<PaymentResponse>> getAllPayments() {
+        return ApiResponse.<List<PaymentResponse>>builder()
+                .result(paymentService.getAllPayments())
+                .build();
+    }
 }

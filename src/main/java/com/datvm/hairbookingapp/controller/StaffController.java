@@ -49,7 +49,7 @@ public class StaffController {
                 .build();
     }
 
-    @GetMapping("{code}")
+    @GetMapping("/{code}")
     public ApiResponse<StaffResponse> getAllStaff(@PathVariable String code){
         return ApiResponse.<StaffResponse>builder()
                 .code(200)
@@ -57,7 +57,7 @@ public class StaffController {
                 .build();
     }
 
-    @DeleteMapping("{code}")
+    @DeleteMapping("/{code}")
     public ApiResponse deleteStaff(@PathVariable String code){
         staffService.deleteStaff(code);
         return ApiResponse.builder()

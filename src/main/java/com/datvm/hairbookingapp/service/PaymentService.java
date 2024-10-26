@@ -42,4 +42,9 @@ public class PaymentService {
         List<Payment> payments = paymentRepository.findAllPaymentAlreadyComplete(BookingStatus.COMPLETED);
         return payments.stream().map(paymentMapper::toPaymentResponse).toList();
     }
+
+    public List<PaymentResponse> getAllPayments(){
+        List<Payment> payments = paymentRepository.findAll();
+        return payments.stream().map(paymentMapper::toPaymentResponse).toList();
+    }
 }
