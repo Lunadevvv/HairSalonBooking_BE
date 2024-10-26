@@ -27,6 +27,8 @@ public class Combo {
 
     private String description;
 
+
+
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "combo_services",
