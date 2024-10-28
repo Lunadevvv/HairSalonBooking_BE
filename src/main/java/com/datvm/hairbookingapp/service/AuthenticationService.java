@@ -90,7 +90,7 @@ public class AuthenticationService implements UserDetailsService {
         }
     }
 
-    public void forgotPassword(String phone){
+    public String forgotPassword(String phone){
         Account account = accountRepository.findAccountByPhone(phone);
         if(account == null) {
             throw new AppException(ErrorCode.ACCOUNT_NOT_FOUND);
@@ -102,6 +102,7 @@ public class AuthenticationService implements UserDetailsService {
         emailDetail.setContent("Bạn hãy nhấp vào ô bên dưới để reset mật khẩu!");
         emailDetail.setLink("http://localhost:3000/reset-password?token=" + token);
         emailService.sendEmail(emailDetail);
+        return token;
     }
 
     public boolean resetPassword(ResetPasswordRequest request){
