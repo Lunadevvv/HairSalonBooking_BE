@@ -62,11 +62,6 @@ public class BookingService {
         if(booking.getStatus()==BookingStatus.SUCCESS){
             LocalDateTime date = LocalDateTime.now();
             booking.getPayment().setDate(date);
-            Account account = booking.getAccount();
-            int shinePoint = account.getShinePoint();
-            int pointAdd = booking.getPrice()/1000;
-            account.setShinePoint(shinePoint+pointAdd);
-            accountRepository.save(account);
         }
         booking.setStatus(status);
         bookingRepository.save(booking);

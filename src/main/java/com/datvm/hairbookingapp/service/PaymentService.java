@@ -1,12 +1,14 @@
 package com.datvm.hairbookingapp.service;
 
 import com.datvm.hairbookingapp.dto.response.PaymentResponse;
+import com.datvm.hairbookingapp.entity.Account;
 import com.datvm.hairbookingapp.entity.Booking;
 import com.datvm.hairbookingapp.entity.Payment;
 import com.datvm.hairbookingapp.entity.enums.BookingStatus;
 import com.datvm.hairbookingapp.exception.AppException;
 import com.datvm.hairbookingapp.exception.ErrorCode;
 import com.datvm.hairbookingapp.mapper.PaymentMapper;
+import com.datvm.hairbookingapp.repository.AuthenticationRepository;
 import com.datvm.hairbookingapp.repository.PaymentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,11 +23,17 @@ public class PaymentService {
     private PaymentRepository paymentRepository;
     @Autowired
     private BookingService bookingService;
-
+    @Autowired
+    AuthenticationRepository accountRepository;
     public PaymentResponse submitPayment(String id) {
         Payment payment = paymentRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PAYMENT_NOT_FOUND));
         Booking booking = payment.getBooking();
         if (booking.getStatus() == BookingStatus.SUCCESS) {
+            Account account = booking.getAccount();
+            int shinePoint = account.getShinePoint();
+            int pointAdd = booking.getPrice()/1000;
+            account.setShinePoint(shinePoint+pointAdd);
+            accountRepository.save(account);
             bookingService.updateBookingStatus(booking.getId(), BookingStatus.COMPLETED);
         } else if (booking.getStatus() == BookingStatus.COMPLETED)
             throw new AppException(ErrorCode.PAYMENT_ALREADY_DONE);
