@@ -42,14 +42,21 @@ public class BookingService {
 
     @Autowired
     BookingMapper bookingMapper;
+
     @Autowired
     private FeedbackRepository feedbackRepository;
+
     @Autowired
     private FeedbackService feedbackService;
+
     @Autowired
     private PaymentRepository paymentRepository;
+
     @Autowired
     private AuthenticationRepository accountRepository;
+
+    @Autowired
+    SalonRepository salonRepository;
 
     public void updateBookingStatus(String id, BookingStatus status) {
         Booking booking = bookingRepository.findById(id).orElseThrow(
@@ -88,12 +95,12 @@ public class BookingService {
     public BookingResponse createBooking(BookingRequest request, Account account) {
         String id = generateBookingId();
         Slot slot = slotRepository.findById(request.getSlotId()).orElseThrow(() -> new AppException(ErrorCode.EMPTY_SLOT));
-
+        Salon salon = salonRepository.findById(request.getSalonId()).orElseThrow(() -> new AppException(ErrorCode.SALON_NOT_FOUND));
         Staff staff = null;
 
         // Check if stylistId is "None"
         if ("None".equals(request.getStylistId())) {
-            staff = getRandomAvailableStylist(request.getSlotId(), request.getDate());
+            staff = getRandomAvailableStylist(request.getSlotId(), request.getDate(), salon);
         } else {
             staff = staffRepository.findStaffByCode(request.getStylistId());
             if(!staff.isStatus())
@@ -122,6 +129,7 @@ public class BookingService {
         booking.setAccount(account);
         booking.setServices(list);
         booking.setPeriod(request.getPeriod());
+        booking.setSalonId(request.getSalonId());
         Payment payment = new Payment();
         payment.setId(generatePaymentId());
         payment.setPrice(request.getPrice());
@@ -141,6 +149,7 @@ public class BookingService {
                 .period(booking.getPeriod())
                 .slot(booking.getSlot())
                 .status(booking.getStatus())
+                .salonId(booking.getSalonId())
                 .build();
     }
 
@@ -163,6 +172,7 @@ public class BookingService {
                 .period(booking.getPeriod())
                 .slot(booking.getSlot())
                 .status(booking.getStatus())
+                .salonId(booking.getSalonId())
                 .build();
     }
 
@@ -174,6 +184,13 @@ public class BookingService {
             throw new AppException(ErrorCode.BOOKING_INVALID_CANCELLED);
         bookingRepository.save(booking);
         return "Booking has been cancelled";
+    }
+
+    public List<Booking> getBookingsBySalon() {
+        Account account = authenticationService.getCurrentAccount();
+        Staff staff = staffRepository.findStaffByAccount(account);
+        List<Booking> bookings = bookingRepository.findBySalon(staff.getSalons().getId());
+        return bookings;
     }
 
     public List<Booking> getBookings() {
@@ -211,6 +228,7 @@ public class BookingService {
                 .period(booking.getPeriod())
                 .slot(booking.getSlot())
                 .status(booking.getStatus())
+                .salonId(booking.getSalonId())
                 .build();
     }
 
@@ -246,8 +264,8 @@ public class BookingService {
         return id;
     }
 
-    private Staff getRandomAvailableStylist(Long slotId, LocalDate date) {
-        List<Staff> availableStylists = staffRepository.findAvailableStylists(slotId, date, Role.STYLIST);
+    private Staff getRandomAvailableStylist(Long slotId, LocalDate date, Salon salon) {
+        List<Staff> availableStylists = staffRepository.findAvailableStylists(slotId, date, Role.STYLIST, salon);
         if (availableStylists.isEmpty()) {
             throw new AppException(ErrorCode.NO_AVAILABLE_STYLISTS);
         }

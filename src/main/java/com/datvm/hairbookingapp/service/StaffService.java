@@ -44,8 +44,9 @@ public class StaffService {
     @Autowired
     ManagerService managerService;
 
-    public List<StaffResponse> getAvailableStylist(LocalDate date, Long slotId){
-        List<Staff> list = staffRepository.findAvailableStylists(slotId, date, Role.STYLIST);
+    public List<StaffResponse> getAvailableStylist(LocalDate date, Long slotId, String salonId){
+        Salon salon = salonRepository.findById(salonId).orElseThrow(() -> new AppException(ErrorCode.SALON_NOT_FOUND));
+        List<Staff> list = staffRepository.findAvailableStylists(slotId, date, Role.STYLIST, salon);
         return list.stream().map(accountMapper::toStaffRes).collect(Collectors.toList());
     }
 
@@ -68,7 +69,7 @@ public class StaffService {
     }
 
     public List<Staff> getAllStaff(){
-        List<Staff> list = staffRepository.findAllActiveStaffs(true);
+        List<Staff> list = staffRepository.findAllActiveStaffs(true, Role.ADMIN);
         return list;
     }
 
@@ -149,7 +150,12 @@ public class StaffService {
         Staff staff = staffRepository.findStaffByCode(code);
         if (staff == null || !staff.isStatus())
             throw new AppException(ErrorCode.STAFF_NOT_FOUND);
+        else if (staff.getRole() == Role.MANAGER || staff.getRole() == Role.ADMIN) {
+            throw new AppException(ErrorCode.MANAGER_ALREADY);
+        }
         Salon salon = salonRepository.findById(request.getSalonId()).orElseThrow(() -> new AppException(ErrorCode.SALON_NOT_FOUND));
+        if(!(salon.getManager() == null))
+            throw new AppException(ErrorCode.INVALID_ACTION);
         staff.setSalons(salon);
         staff.setRole(Role.MANAGER);
         Account account = staff.getAccount();
@@ -159,6 +165,19 @@ public class StaffService {
             }
         }
         managerService.createManager(staff, salon);
+
+    }
+
+    public void demoteManager(Staff staff){
+        staff.setRole(Role.STAFF);
+        staff.setManager(null);
+        Account account = staff.getAccount();
+        if (account != null) {
+            account.setRole(staff.getRole());
+        }else {
+            throw new AppException(ErrorCode.ACCOUNT_NOT_FOUND);
+        }
+        staffRepository.save(staff);
     }
 
     public String generateStaffCode() {

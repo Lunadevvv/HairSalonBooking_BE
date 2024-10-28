@@ -79,10 +79,10 @@ public class StaffController {
     }
 
     @GetMapping("/stylist")
-    public ApiResponse<List<StaffResponse>> getAvailableStylist(@RequestParam LocalDate date, @RequestParam Long slotId){
+    public ApiResponse<List<StaffResponse>> getAvailableStylist(@RequestParam LocalDate date, @RequestParam Long slotId, @RequestParam String salonId){
         return ApiResponse.<List<StaffResponse>>builder()
                 .code(200)
-                .result(staffService.getAvailableStylist(date, slotId))
+                .result(staffService.getAvailableStylist(date, slotId, salonId))
                 .build();
     }
 }

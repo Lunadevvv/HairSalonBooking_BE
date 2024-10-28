@@ -9,6 +9,7 @@ import com.datvm.hairbookingapp.entity.enums.BookingStatus;
 import com.datvm.hairbookingapp.service.BookingService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +20,7 @@ public class BookingController {
     @Autowired
     BookingService bookingService;
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping
     public ApiResponse<List<Booking>> getAllBookings() {
         return ApiResponse.<List<Booking>>builder()
@@ -73,4 +75,12 @@ public class BookingController {
                 .result(bookingService.cancelBooking(id))
                 .build();
     }
+
+    @GetMapping("/manager")
+    public ApiResponse<List<Booking>> getAllBookingsBySalon() {
+        return ApiResponse.<List<Booking>>builder()
+                .result(bookingService.getBookingsBySalon())
+                .build();
+    }
+
 }

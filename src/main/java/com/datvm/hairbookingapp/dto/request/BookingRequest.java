@@ -20,6 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class BookingRequest {
+    private String salonId;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;

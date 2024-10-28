@@ -36,6 +36,8 @@ public class BookingResponse {
 
     private Slot slot;
 
+    private String salonId;
+
 //    private Account account;
 
     private List<Services> services;

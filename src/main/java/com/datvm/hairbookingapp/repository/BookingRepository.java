@@ -2,6 +2,7 @@ package com.datvm.hairbookingapp.repository;
 
 import com.datvm.hairbookingapp.entity.Account;
 import com.datvm.hairbookingapp.entity.Booking;
+import com.datvm.hairbookingapp.entity.Salon;
 import com.datvm.hairbookingapp.entity.enums.BookingStatus;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -32,4 +33,7 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
 
     @Query("Select b From Booking b Where b.account = ?1")
     List<Booking> findByAccount(Account account);
+
+    @Query("Select b From Booking b Where b.salonId = ?1")
+    List<Booking> findBySalon(String salonId);
 }

@@ -37,6 +37,8 @@ public class ManagerService {
         manager.setId(generateManagerId());
         manager.setSalon(salon);
         managerRepository.save(manager);
+        salon.setManager(manager);
+        salonRepository.save(salon);
     }
 
     public ManagerResponse getManagerById(String id) {
@@ -48,11 +50,7 @@ public class ManagerService {
         List<Manager> managers = managerRepository.findAll();
         return managers.stream().map(managerMapper::toManagerResponse).toList();
     }
-
-//    public ManagerResponse updateManagerInfo(PromoteStaffRequest request, String id) {
-//        Salon salon = salonRepository.findById(request.getSalonId()).orElseThrow(() -> new AppException(ErrorCode.SALON_NOT_FOUND));
-//        Manager manager = managerRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.MANAGER_NOT_FOUND));
-//        // có salonId trong request va manager chua quan li salon nao
+    //        // có salonId trong request va manager chua quan li salon nao
 //        if (request.getSalonId() != null && manager.getSalon() == null) {
 //            String code = managerRepository.findStaffCodeByManagerId(id);
 //            staffService.updateStaffProfile(request, code);
@@ -67,43 +65,67 @@ public class ManagerService {
 //            //truong hop con lai
 //        } else
 //            throw new AppException(ErrorCode.INVALID_ACTION);
-//    }
+    public void updateManagerInfo(PromoteStaffRequest request, String id) {
+        Manager manager = managerRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.MANAGER_NOT_FOUND));
+        if(request.getSalonId().equals("None") ){
+            manager.getStaff().setSalons(null);
+            manager.getSalon().setManager(null);
+            salonRepository.save(manager.getSalon());
+            staffRepository.save(manager.getStaff());
+            manager.setSalon(null);
+            managerRepository.save(manager);
+            return;
+        }
+
+        Salon salon = salonRepository.findById(request.getSalonId()).orElseThrow(() -> new AppException(ErrorCode.SALON_NOT_FOUND));
+        Staff staff = manager.getStaff();
+
+        if (!salon.isOpen()) {
+            throw new AppException(ErrorCode.SALON_CLOSED);
+        } else if (!(salon.getManager() == null)){//Ktra salon muon doi qua da co manager chua
+            throw new AppException(ErrorCode.INVALID_ACTION);
+        }
+        salon.setManager(manager);
+        staff.setSalons(salon);
+        manager.setSalon(salon);
+        salonRepository.save(salon);
+        staffRepository.save(staff);
+        managerRepository.save(manager);
+    }
 
     //kick manager
     public String deleteManager(String id) {
         Manager manager = managerRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.MANAGER_NOT_FOUND));
         Staff staff = manager.getStaff();
-        staff.setManager(null);
+        staffService.demoteManager(staff);
         manager.getSalon().setManager(null);
-        managerRepository.deleteById(id);
-        staff.getAccount().setStaff(null);
-        staff.setSalons(null);
-        staffRepository.delete(staff);
+        managerRepository.delete(manager);
         return "Manager has been deleted";
     }
 
     //deGrade manager
-    public String deGradeManager(String id) {
-        Manager manager = managerRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.MANAGER_NOT_FOUND));
-        Staff staff = manager.getStaff();
-        staff.setRole(Role.STAFF);
-        staff.setManager(null);
-        manager.getSalon().setManager(null);
-        managerRepository.delete(manager);
-        return "Manager has been degraded to staff";
-    }
+//    public String deGradeManager(String id) {
+//        Manager manager = managerRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.MANAGER_NOT_FOUND));
+//        Staff staff = manager.getStaff();
+//        staff.setRole(Role.STAFF);
+//        staff.setManager(null);
+//        staff.getAccount().setRole(staff.getRole());
+//        manager.getSalon().setManager(null);
+//        managerRepository.delete(manager);
+//        return "Manager has been degraded to staff";
+//    }
 
     //remove management
-    public String removeManage(String id) {
-        Manager manager = managerRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.MANAGER_NOT_FOUND));
-        if(manager.getSalon() != null) {
-            manager.getSalon().setManager(null);
-            manager.setSalon(null);
-        }else
-            return "this manager already manage no salon";
-        managerRepository.save(manager);
-        return "manager now manage no salon";
-    }
+//    public String removeManage(String id) {
+//        Manager manager = managerRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.MANAGER_NOT_FOUND));
+//        if(manager.getSalon() != null) {
+//            manager.getSalon().setManager(null);
+//            manager.setSalon(null);
+//        }else
+//            return "this manager already manage no salon";
+//        managerRepository.save(manager);
+//        return "manager now manage no salon";
+//    }
 
 
     public String generateManagerId() {

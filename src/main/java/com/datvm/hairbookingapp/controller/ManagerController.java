@@ -40,8 +40,9 @@ public class ManagerController {
 
     @PutMapping("/{id}")
     public ApiResponse<ManagerResponse> updateManagerById(@RequestBody @Valid PromoteStaffRequest request, @PathVariable String id){
+        managerService.updateManagerInfo(request,id);
         return ApiResponse.<ManagerResponse>builder()
-//                .result(managerService.updateManagerInfo(request,id))
+                .message("Cập nhật Quản lý " + id + " thành công!")
                 .build();
     }
 
@@ -52,17 +53,17 @@ public class ManagerController {
                 .build();
     }
 
-    @DeleteMapping("/degrade/{id}")
-    public ApiResponse<String> deGradeManagerById(@PathVariable String id){
-        return ApiResponse.<String>builder()
-                .result(managerService.deGradeManager(id))
-                .build();
-    }
-    @DeleteMapping("/remove/{id}")
-    public ApiResponse<String> removeManageById(@PathVariable String id){
-        return ApiResponse.<String>builder()
-                .result(managerService.removeManage(id))
-                .build();
-    }
+//    @DeleteMapping("/degrade/{id}")
+//    public ApiResponse<String> deGradeManagerById(@PathVariable String id){
+//        return ApiResponse.<String>builder()
+//                .result(managerService.deGradeManager(id))
+//                .build();
+//    }
+//    @DeleteMapping("/remove/{id}")
+//    public ApiResponse<String> removeManageById(@PathVariable String id){
+//        return ApiResponse.<String>builder()
+//                .result(managerService.removeManage(id))
+//                .build();
+//    }
 
 }

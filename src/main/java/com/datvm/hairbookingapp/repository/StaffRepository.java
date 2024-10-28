@@ -1,5 +1,7 @@
 package com.datvm.hairbookingapp.repository;
 
+import com.datvm.hairbookingapp.entity.Account;
+import com.datvm.hairbookingapp.entity.Salon;
 import com.datvm.hairbookingapp.entity.Staff;
 import com.datvm.hairbookingapp.entity.enums.Role;
 import jakarta.transaction.Transactional;
@@ -20,15 +22,17 @@ public interface StaffRepository extends JpaRepository<Staff, Long> {
     @Transactional
     String findTheLatestStaffCode();
 
-    Staff findStaffById(Long id);
+    @Query("Select s From Staff s Where s.account = ?1")
+    Staff findStaffByAccount(Account account);
+
     Staff findStaffByCode(String code);
 
-    @Query("SELECT s FROM Staff s WHERE s.role = :role AND s NOT IN " +
+    @Query("SELECT s FROM Staff s WHERE s.role = :role AND s.salons = :salon AND s NOT IN " +
             "(SELECT b.stylistId FROM Booking b WHERE b.slot.id = :slotId AND b.date = :date)")
-    List<Staff> findAvailableStylists(@Param("slotId") Long slotId, @Param("date") LocalDate date, @Param("role") Role role);
+    List<Staff> findAvailableStylists(@Param("slotId") Long slotId, @Param("date") LocalDate date, @Param("role") Role role, @Param("salon")Salon salon);
 
     @Query("SELECT COUNT(s) AS stylist_count FROM Staff s WHERE s.role = ?1")
     int countStylist(Role role);
-    @Query("select s from Staff s where s.status = ?1")
-    List<Staff> findAllActiveStaffs(boolean status);
+    @Query("select s from Staff s where s.status = ?1 and not s.role = ?2")
+    List<Staff> findAllActiveStaffs(boolean status, Role role);
 }
