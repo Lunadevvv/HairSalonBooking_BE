@@ -30,6 +30,8 @@ public class ServicesService {
     private ServicesMapper servicesMapper;
     @Autowired
     private ComboRepository comboRepository;
+    @Autowired
+    private ComboService comboService;
 
     public ServicesResponse createService(ServicesCreationRequest request) {
         if (!categoryRepository.existsById(request.getCategoryId()))
@@ -71,12 +73,11 @@ public class ServicesService {
             System.out.println("updated service.getStatus: "+service.isStatus());
             if(!newStatus && service.getCombos()!= null){
                 List<Combo> combos = service.getCombos();
-                //loại bỏ phần tử service trong các list các combo chứa service này
                 for (Combo combo : combos) {
                     combo.getServices().remove(service);
+                    combo.setPrice(comboService.setComboPrice(combo.getServices()));
                     comboRepository.save(combo);
                 }
-                //ko lưu lại các list combo đã từng chứa service này
                 service.setCombos(null);
             }
         return servicesMapper.toServicesResponse(servicesRepository.save(service));
