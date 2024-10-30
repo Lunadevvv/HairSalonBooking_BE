@@ -36,7 +36,8 @@ public enum ErrorCode {
     SERVICES_NOT_ACTIVE(9999,"Không thể sử dụng service này"),
     BOOKING_INVALID_CANCELLED(9999,"Không thể cancel booking này"),
     STAFF_NOT_ACTIVE(9999,"Không thể sử dụng staff này"),
-    STAFF_INVALID_ACTION(9999,"Staff này đã bị disabled")
+    STAFF_INVALID_ACTION(9999,"Staff này đã bị disabled"),
+    FEEDBACK_IS_DONE(9999,"feedback này đã được hoàn thành")
     ;
 
     private int code;

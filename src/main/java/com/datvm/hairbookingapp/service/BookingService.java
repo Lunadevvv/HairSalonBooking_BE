@@ -5,6 +5,7 @@ import com.datvm.hairbookingapp.dto.request.BookingUpdateRequest;
 import com.datvm.hairbookingapp.dto.response.BookingResponse;
 import com.datvm.hairbookingapp.entity.*;
 import com.datvm.hairbookingapp.entity.enums.BookingStatus;
+import com.datvm.hairbookingapp.entity.enums.FeedbackStatus;
 import com.datvm.hairbookingapp.entity.enums.Role;
 import com.datvm.hairbookingapp.exception.AppException;
 import com.datvm.hairbookingapp.exception.ErrorCode;
@@ -136,6 +137,7 @@ public class BookingService {
         payment.setBooking(booking);
         Feedback feedback = new Feedback();
         feedback.setId(generateFeedbackId());
+        feedback.setStatus(FeedbackStatus.CLOSE);
         feedback.setBooking(booking);
         booking.setFeedback(feedback);
         booking.setPayment(payment);
