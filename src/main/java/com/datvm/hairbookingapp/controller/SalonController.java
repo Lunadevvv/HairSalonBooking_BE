@@ -37,10 +37,17 @@ public class SalonController {
                 .build();
     }
 
-    @PutMapping("/{code}")
-    public ApiResponse<SalonResponse> updateSalon(@Valid @RequestBody SalonUpdateRequest request, @PathVariable String code) {
+    @PutMapping("/{id}")
+    public ApiResponse<SalonResponse> updateSalon(@Valid @RequestBody SalonUpdateRequest request, @PathVariable String id) {
         return  ApiResponse.<SalonResponse>builder()
-                .result(salonService.UpdateSalon(request, code))
+                .result(salonService.UpdateSalon(request, id))
+                .build();
+    }
+
+    @PutMapping("/{id}/status")
+    public ApiResponse<SalonResponse> updateSalonStatus(@PathVariable String id) {
+        return  ApiResponse.<SalonResponse>builder()
+                .result(salonService.UpdateSalonStatus(id))
                 .build();
     }
 

@@ -48,8 +48,15 @@ public class SalonService {
     }
 
     public SalonResponse UpdateSalon(SalonUpdateRequest request, String code) {
-        Salon salon =  salonRepository.findById(code).orElseThrow(() -> new AppException(ErrorCode.SALON_NOT_FOUND));
-        salon = salonMapper.updateSalon(request);
+        Salon salon = salonRepository.findById(code).orElseThrow(() -> new AppException(ErrorCode.SALON_NOT_FOUND));
+        salon.setAddress(request.getAddress());
+        salon.setDistrict(request.getDistrict());
+        return salonMapper.toSalonResponse(salonRepository.save(salon));
+    }
+
+    public SalonResponse UpdateSalonStatus(String code) {
+        Salon salon = salonRepository.findById(code).orElseThrow(() -> new AppException(ErrorCode.SALON_NOT_FOUND));
+        salon.setOpen(!salon.isOpen());
         return salonMapper.toSalonResponse(salonRepository.save(salon));
     }
 
@@ -66,7 +73,7 @@ public class SalonService {
         }
         salon.setOpen(false);
         salonRepository.save(salon);
-        return "Salon has been deleted";
+        return "Salon has been closed";
     }
 
     public String generateSalonCode(){
