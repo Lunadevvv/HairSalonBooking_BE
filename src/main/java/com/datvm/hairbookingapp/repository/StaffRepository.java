@@ -25,9 +25,12 @@ public interface StaffRepository extends JpaRepository<Staff, Long> {
     @Query("Select s From Staff s Where s.account = ?1")
     Staff findStaffByAccount(Account account);
 
+    @Query("Select s From Staff s Where s.salons = ?1 and s.status = true")
+    List<Staff> findBySalon(Salon salon);
+
     Staff findStaffByCode(String code);
 
-    @Query("SELECT s FROM Staff s WHERE s.role = :role AND s.salons = :salon AND s NOT IN " +
+    @Query("SELECT s FROM Staff s WHERE s.role = :role AND s.salons = :salon AND s.status = true AND s NOT IN " +
             "(SELECT b.stylistId FROM Booking b WHERE b.slot.id = :slotId AND b.date = :date)")
     List<Staff> findAvailableStylists(@Param("slotId") Long slotId, @Param("date") LocalDate date, @Param("role") Role role, @Param("salon")Salon salon);
 

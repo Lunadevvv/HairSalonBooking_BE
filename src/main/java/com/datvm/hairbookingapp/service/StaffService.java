@@ -36,6 +36,9 @@ public class StaffService {
     AuthenticationRepository authenticationRepository;
 
     @Autowired
+    AuthenticationService authenticationService;
+
+    @Autowired
     PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -70,6 +73,12 @@ public class StaffService {
 
     public List<Staff> getAllStaff(){
         List<Staff> list = staffRepository.findAllActiveStaffs(true, Role.ADMIN);
+        return list;
+    }
+
+    public List<Staff> getAllStaffByManager(){
+        Account account = authenticationService.getCurrentAccount();
+        List<Staff> list = staffRepository.findBySalon(account.getStaff().getSalons());
         return list;
     }
 
@@ -165,7 +174,6 @@ public class StaffService {
             }
         }
         managerService.createManager(staff, salon);
-
     }
 
     public void demoteManager(Staff staff){

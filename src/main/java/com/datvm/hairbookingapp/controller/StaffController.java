@@ -62,10 +62,18 @@ public class StaffController {
     }
 
     @GetMapping("{code}")
-    public ApiResponse<StaffResponse> getAllStaff(@PathVariable String code){
+    public ApiResponse<StaffResponse> getStaff(@PathVariable String code){
         return ApiResponse.<StaffResponse>builder()
                 .code(200)
                 .result(staffService.getStaffByCode(code))
+                .build();
+    }
+
+    @GetMapping("/manager")
+    public ApiResponse<List<Staff>> getStaffByManager(){
+        return ApiResponse.<List<Staff>>builder()
+                .code(200)
+                .result(staffService.getAllStaffByManager())
                 .build();
     }
 
