@@ -51,8 +51,8 @@ public class ServicesService {
         return servicesMapper.toServicesResponse(servicesRepository.findById(id).orElseThrow(() -> new AppException(SERVICES_NOT_EXISTED)));
     }
 
-    public List<ServicesResponse> findAllActiveServices() {
-        return servicesRepository.findAllActiveServices(true).stream().map(servicesMapper::toServicesResponse).toList();
+    public List<ServicesResponse> findAllService() {
+        return servicesRepository.findAll().stream().map(servicesMapper::toServicesResponse).toList();
     }
 
     public ServicesResponse updateByServiceId(ServicesUpdateRequest request) {

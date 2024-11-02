@@ -32,9 +32,9 @@ public class ServicesController {
     }
 
     @GetMapping()
-    public ApiResponse<List<ServicesResponse>> getAllActiveServices() {
+    public ApiResponse<List<ServicesResponse>> getAllServices() {
         return ApiResponse.<List<ServicesResponse>>builder()
-                .result(servicesService.findAllActiveServices())
+                .result(servicesService.findAllService())
                 .build();
     }
 
