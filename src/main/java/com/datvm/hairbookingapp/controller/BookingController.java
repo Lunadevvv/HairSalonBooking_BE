@@ -4,6 +4,8 @@ import com.datvm.hairbookingapp.dto.request.BookingRequest;
 import com.datvm.hairbookingapp.dto.request.BookingUpdateRequest;
 import com.datvm.hairbookingapp.dto.response.ApiResponse;
 import com.datvm.hairbookingapp.dto.response.BookingResponse;
+import com.datvm.hairbookingapp.dto.response.FeedbackResponse;
+import com.datvm.hairbookingapp.dto.response.PaymentResponse;
 import com.datvm.hairbookingapp.entity.Booking;
 import com.datvm.hairbookingapp.entity.enums.BookingStatus;
 import com.datvm.hairbookingapp.service.BookingService;
@@ -82,7 +84,16 @@ public class BookingController {
                 .result(bookingService.getBookingsBySalon())
                 .build();
     }
-
-
-
+    @GetMapping("/payment/{id}")
+    public ApiResponse<PaymentResponse> findPaymentByBookingId(@PathVariable String id) {
+        return ApiResponse.<PaymentResponse>builder()
+                .result(bookingService.findPaymentByBookingId(id))
+                .build();
+    }
+    @GetMapping("/feedback/{id}")
+    public ApiResponse<FeedbackResponse> findFeedbackByBookingId(@PathVariable String id) {
+        return ApiResponse.<FeedbackResponse>builder()
+                .result(bookingService.findFeedbackByBookingId(id))
+                .build();
+    }
 }

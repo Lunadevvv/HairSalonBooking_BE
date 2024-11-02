@@ -3,6 +3,8 @@ package com.datvm.hairbookingapp.service;
 import com.datvm.hairbookingapp.dto.request.BookingRequest;
 import com.datvm.hairbookingapp.dto.request.BookingUpdateRequest;
 import com.datvm.hairbookingapp.dto.response.BookingResponse;
+import com.datvm.hairbookingapp.dto.response.FeedbackResponse;
+import com.datvm.hairbookingapp.dto.response.PaymentResponse;
 import com.datvm.hairbookingapp.entity.*;
 import com.datvm.hairbookingapp.entity.enums.BookingStatus;
 import com.datvm.hairbookingapp.entity.enums.FeedbackStatus;
@@ -10,6 +12,8 @@ import com.datvm.hairbookingapp.entity.enums.Role;
 import com.datvm.hairbookingapp.exception.AppException;
 import com.datvm.hairbookingapp.exception.ErrorCode;
 import com.datvm.hairbookingapp.mapper.BookingMapper;
+import com.datvm.hairbookingapp.mapper.FeedbackMapper;
+import com.datvm.hairbookingapp.mapper.PaymentMapper;
 import com.datvm.hairbookingapp.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -58,6 +62,10 @@ public class BookingService {
 
     @Autowired
     SalonRepository salonRepository;
+    @Autowired
+    PaymentMapper paymentMapper;
+    @Autowired
+    FeedbackMapper feedbackMapper;
 
     public void updateBookingStatus(String id, BookingStatus status) {
         Booking booking = bookingRepository.findById(id).orElseThrow(
@@ -273,5 +281,13 @@ public class BookingService {
         }
         Random random = new Random();
         return availableStylists.get(random.nextInt(availableStylists.size()));
+    }
+    public PaymentResponse findPaymentByBookingId(String id) {
+        Booking booking = bookingRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_FOUND));
+        return paymentMapper.toPaymentResponse(booking.getPayment());
+    }
+    public FeedbackResponse findFeedbackByBookingId(String id) {
+        Booking booking = bookingRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_FOUND));
+        return feedbackMapper.toFeedbackResponse(booking.getFeedback());
     }
 }
