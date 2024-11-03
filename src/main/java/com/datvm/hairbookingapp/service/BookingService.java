@@ -5,6 +5,7 @@ import com.datvm.hairbookingapp.dto.request.BookingUpdateRequest;
 import com.datvm.hairbookingapp.dto.response.BookingResponse;
 import com.datvm.hairbookingapp.dto.response.FeedbackResponse;
 import com.datvm.hairbookingapp.dto.response.PaymentResponse;
+import com.datvm.hairbookingapp.dto.response.ServicesResponse;
 import com.datvm.hairbookingapp.entity.*;
 import com.datvm.hairbookingapp.entity.enums.BookingStatus;
 import com.datvm.hairbookingapp.entity.enums.FeedbackStatus;
@@ -14,6 +15,7 @@ import com.datvm.hairbookingapp.exception.ErrorCode;
 import com.datvm.hairbookingapp.mapper.BookingMapper;
 import com.datvm.hairbookingapp.mapper.FeedbackMapper;
 import com.datvm.hairbookingapp.mapper.PaymentMapper;
+import com.datvm.hairbookingapp.mapper.ServicesMapper;
 import com.datvm.hairbookingapp.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -59,7 +61,8 @@ public class BookingService {
 
     @Autowired
     private AuthenticationRepository accountRepository;
-
+    @Autowired
+    private ServicesMapper servicesMapper;
     @Autowired
     SalonRepository salonRepository;
     @Autowired
@@ -289,5 +292,8 @@ public class BookingService {
     public FeedbackResponse findFeedbackByBookingId(String id) {
         Booking booking = bookingRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_FOUND));
         return feedbackMapper.toFeedbackResponse(booking.getFeedback());
+    }
+    public List<ServicesResponse> findAllActiveService() {
+        return servicesRepository.findAllActiveServices(true).stream().map(servicesMapper::toServicesResponse).toList();
     }
 }

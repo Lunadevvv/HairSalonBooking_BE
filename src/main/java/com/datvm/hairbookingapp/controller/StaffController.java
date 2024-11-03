@@ -53,6 +53,14 @@ public class StaffController {
                 .build();
     }
 
+    @GetMapping("/active")
+    public ApiResponse<List<Staff>> getAllActiveStaff(){
+        return ApiResponse.<List<Staff>>builder()
+                .code(200)
+                .result(staffService.getAllActiveStaff())
+                .build();
+    }
+
     @GetMapping
     public ApiResponse<List<Staff>> getAllStaff(){
         return ApiResponse.<List<Staff>>builder()

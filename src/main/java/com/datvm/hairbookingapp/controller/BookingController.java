@@ -2,13 +2,11 @@ package com.datvm.hairbookingapp.controller;
 
 import com.datvm.hairbookingapp.dto.request.BookingRequest;
 import com.datvm.hairbookingapp.dto.request.BookingUpdateRequest;
-import com.datvm.hairbookingapp.dto.response.ApiResponse;
-import com.datvm.hairbookingapp.dto.response.BookingResponse;
-import com.datvm.hairbookingapp.dto.response.FeedbackResponse;
-import com.datvm.hairbookingapp.dto.response.PaymentResponse;
+import com.datvm.hairbookingapp.dto.response.*;
 import com.datvm.hairbookingapp.entity.Booking;
 import com.datvm.hairbookingapp.entity.enums.BookingStatus;
 import com.datvm.hairbookingapp.service.BookingService;
+import com.datvm.hairbookingapp.service.ServicesService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,7 +18,7 @@ import java.util.List;
 @RequestMapping("/api/v1/booking")
 public class BookingController {
     @Autowired
-    BookingService bookingService;
+    private BookingService bookingService;
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping
@@ -94,6 +92,12 @@ public class BookingController {
     public ApiResponse<FeedbackResponse> findFeedbackByBookingId(@PathVariable String id) {
         return ApiResponse.<FeedbackResponse>builder()
                 .result(bookingService.findFeedbackByBookingId(id))
+                .build();
+    }
+    @GetMapping("/service")
+    public ApiResponse<List<ServicesResponse>> getAllActiveServices() {
+        return ApiResponse.<List<ServicesResponse>>builder()
+                .result(bookingService.findAllActiveService())
                 .build();
     }
 }

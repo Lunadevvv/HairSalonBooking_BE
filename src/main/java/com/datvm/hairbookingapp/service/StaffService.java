@@ -71,8 +71,12 @@ public class StaffService {
         }
     }
 
-    public List<Staff> getAllStaff(){
+    public List<Staff> getAllActiveStaff(){
         List<Staff> list = staffRepository.findAllActiveStaffs(true, Role.ADMIN);
+        return list;
+    }
+    public List<Staff> getAllStaff(){
+        List<Staff> list = staffRepository.findAll();
         return list;
     }
 
