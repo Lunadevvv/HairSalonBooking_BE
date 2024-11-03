@@ -61,6 +61,9 @@ public class StaffService {
             throw new AppException(ErrorCode.STAFF_INVALID_ACTION);
         Account account = authenticationRepository.findAccountByPhone(staff.getPhone());
         try {
+            if(staff.getRole()==Role.MANAGER){
+                managerService.deleteManager(staff.getManager().getId());
+            }
             staff.setStatus(false);
             staff.setAccount(null);
             account.setStaff(null);
