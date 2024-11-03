@@ -11,6 +11,7 @@ import com.datvm.hairbookingapp.exception.AppException;
 import com.datvm.hairbookingapp.exception.ErrorCode;
 import com.datvm.hairbookingapp.mapper.AccountMapper;
 import com.datvm.hairbookingapp.repository.AuthenticationRepository;
+import com.datvm.hairbookingapp.repository.BookingRepository;
 import com.datvm.hairbookingapp.repository.SalonRepository;
 import com.datvm.hairbookingapp.repository.StaffRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,6 +49,9 @@ public class StaffService {
 
     @Autowired
     ManagerService managerService;
+
+    @Autowired
+    BookingRepository bookingRepository;
 
     public List<StaffResponse> getAvailableStylist(LocalDate date, Long slotId, String salonId){
         Salon salon = salonRepository.findById(salonId).orElseThrow(() -> new AppException(ErrorCode.SALON_NOT_FOUND));
@@ -203,5 +209,13 @@ public class StaffService {
         int fourLastChar = Integer.parseInt(latestCode.substring(1));
         code = String.format("S%04d", ++fourLastChar);
         return code;
+    }
+
+    public void updateOveralRating(double rate, Staff stylist){
+        int bookingCount = bookingRepository.countBookingByStylist(stylist);
+        double ovr = (stylist.getOvrRating() * (bookingCount - 1) + rate) / bookingCount;
+        BigDecimal bdValue = new BigDecimal(ovr).setScale(2, RoundingMode.FLOOR);
+        stylist.setOvrRating(bdValue.doubleValue());
+        staffRepository.save(stylist);
     }
 }

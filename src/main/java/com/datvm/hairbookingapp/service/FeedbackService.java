@@ -3,6 +3,7 @@ package com.datvm.hairbookingapp.service;
 import com.datvm.hairbookingapp.dto.request.FeedbackCreateRequest;
 import com.datvm.hairbookingapp.dto.response.FeedbackResponse;
 import com.datvm.hairbookingapp.entity.Feedback;
+import com.datvm.hairbookingapp.entity.Staff;
 import com.datvm.hairbookingapp.entity.enums.BookingStatus;
 import com.datvm.hairbookingapp.entity.enums.FeedbackStatus;
 import com.datvm.hairbookingapp.exception.AppException;
@@ -22,14 +23,19 @@ public class FeedbackService {
     @Autowired
     private FeedbackMapper feedbackMapper;
 
+    @Autowired
+    StaffService staffService;
+
     public FeedbackResponse submitFeedback(FeedbackCreateRequest request) {
         Feedback feedback = feedbackRepository.findFeedbackWithBookingCompleted(BookingStatus.COMPLETED, request.getId());
+        Staff stylist = feedback.getBooking().getStylistId();
         if(feedback == null)
             throw new AppException(ErrorCode.FEEDBACK_NOT_FOUND);
         if(feedback.getStatus() == FeedbackStatus.OPEN) {
             feedback.setFeedback(request.getFeedback());
             feedback.setRate(request.getRate());
             feedback.setStatus(FeedbackStatus.CLOSE);
+            staffService.updateOveralRating(Double.parseDouble(request.getRate()),stylist);
         }else
             throw new AppException(ErrorCode.FEEDBACK_IS_DONE);
         return feedbackMapper.toFeedbackResponse(feedbackRepository.save(feedback));

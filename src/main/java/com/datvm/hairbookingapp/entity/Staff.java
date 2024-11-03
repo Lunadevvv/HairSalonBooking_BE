@@ -52,6 +52,8 @@ public class Staff {
 
     private String image;
 
+    private double ovrRating;
+
     private boolean status;
 
     @OneToOne(fetch = FetchType.EAGER)

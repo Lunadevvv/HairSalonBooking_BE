@@ -37,4 +37,6 @@ public class StaffResponse {
     private Salon salons;
 
     private boolean status;
+
+    private double ovrRating;
 }
