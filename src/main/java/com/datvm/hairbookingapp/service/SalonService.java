@@ -51,6 +51,8 @@ public class SalonService {
         Salon salon = salonRepository.findById(code).orElseThrow(() -> new AppException(ErrorCode.SALON_NOT_FOUND));
         salon.setAddress(request.getAddress());
         salon.setDistrict(request.getDistrict());
+        salon.setImage(request.getImage());
+        salon.setHotline(request.getHotline());
         return salonMapper.toSalonResponse(salonRepository.save(salon));
     }
 
