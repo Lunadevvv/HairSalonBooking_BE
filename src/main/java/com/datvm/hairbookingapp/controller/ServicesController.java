@@ -47,9 +47,9 @@ public class ServicesController {
 
     @DeleteMapping("/{id}")
     public ApiResponse<ServicesResponse> switchServicesStatus(@PathVariable("id") String id) {
+        servicesService.switchServiceStatus(id);
         return ApiResponse.<ServicesResponse>builder()
                 .message("serviceStatus "+id+" is changed and its combos has been removed")
-                .result(servicesService.switchServiceStatus(id))
                 .build();
     }
 }

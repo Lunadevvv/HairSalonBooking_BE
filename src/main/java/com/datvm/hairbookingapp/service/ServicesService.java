@@ -65,22 +65,29 @@ public class ServicesService {
         return servicesMapper.toServicesResponse(servicesRepository.save(service));
     }
 
-    public ServicesResponse switchServiceStatus(String serviceId) {
+    public void switchServiceStatus(String serviceId) {
+        boolean flag = false;
         Services service = servicesRepository.findById(serviceId).orElseThrow(() -> new AppException(SERVICES_NOT_EXISTED));
-            System.out.println("current serviceIsStatus: "+service.isStatus());
-            boolean newStatus = !service.isStatus();
-            service.setStatus(newStatus);
-            System.out.println("updated service.getStatus: "+service.isStatus());
-            if(!newStatus && service.getCombos()!= null){
-                List<Combo> combos = service.getCombos();
-                for (Combo combo : combos) {
+        System.out.println("current serviceIsStatus: "+service.isStatus());
+        boolean newStatus = !service.isStatus();
+        service.setStatus(newStatus);
+        System.out.println("updated service.getStatus: "+service.isStatus());
+        if(!newStatus && service.getCombos()!= null){
+            List<Combo> combos = service.getCombos();
+            for (Combo combo : combos) {
+                if(combo.getServices().size() == 2){
+                    flag = true;
+                    comboService.deleteCombo(combo.getId());
+                }else{
                     combo.getServices().remove(service);
                     combo.setPrice(comboService.setComboPrice(combo.getServices()));
                     comboRepository.save(combo);
                 }
-                service.setCombos(null);
             }
-        return servicesMapper.toServicesResponse(servicesRepository.save(service));
+//            if(!flag)
+            service.setCombos(null);
+        }
+        servicesRepository.save(service);
     }
 
     public String generateServiceId() {

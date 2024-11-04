@@ -13,10 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class ComboService {
@@ -153,9 +150,14 @@ public class ComboService {
         Combo combo = comboRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.COMBO_NOT_FOUND));
         List<Services> services = combo.getServices();
         //xóa combo trong list combo chứa service
-        for (Services service : services) {
-            service.getCombos().remove(combo);
+        Iterator<Services> iterator = services.iterator();
+        while (iterator.hasNext()) {
+            Services service = iterator.next();
+            services.remove(service);
         }
+//        for (Services service : services) {
+//            service.getCombos().remove(combo);
+//        }
         //set null để tránh xóa hết các service
         combo.setServices(null);
         comboRepository.save(combo);
