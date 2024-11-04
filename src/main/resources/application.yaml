@@ -2,7 +2,7 @@ spring:
   application:
     name: hairbookingapp
   datasource:
-    url: "jdbc:mysql://localhost:3306/hairsalonapp"
+    url: "jdbc:mysql://localhost:3306/hairsalonapp2"
     username: root
     password: root
   jpa:
