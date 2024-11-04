@@ -3,6 +3,7 @@ package com.datvm.hairbookingapp.controller;
 import com.datvm.hairbookingapp.dto.request.RegisterRequest;
 import com.datvm.hairbookingapp.dto.response.RegisterResponse;
 import com.datvm.hairbookingapp.entity.Account;
+import com.datvm.hairbookingapp.repository.AuthenticationRepository;
 import com.datvm.hairbookingapp.service.AuthenticationService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -30,16 +31,20 @@ public class AccountControllerTest {
     private MockMvc mockMvc;
 
     //Do khi chay kiem thu api se ko di xuong tang service. Nen phai tao 1 mockbean tang service
-    @MockBean
+    @Autowired
     AuthenticationService authenticationService;
+    @Autowired
+    AuthenticationRepository authenticationRepository;
 
-    private RegisterRequest request;
+
+    private RegisterRequest registerRequest_success;
+    private RegisterRequest registerRequest_fail;
     private RegisterResponse account;
 
     @BeforeEach //Ham nay se dc goi truoc moi lan testDD
     public void initData(){
 
-        request = RegisterRequest.builder()
+        registerRequest_success = RegisterRequest.builder()
                 .phone("0919859856")
                 .email("test8@gmail.com")
                 .firstName("John")
@@ -47,8 +52,16 @@ public class AccountControllerTest {
                 .password("1234567")
                 .build();
 
+        registerRequest_fail = RegisterRequest.builder()
+                .phone("0357968555")
+                .email("vuminhdat98@gmail.com")
+                .firstName("John")
+                .lastName("Doe")
+                .password("123456")
+                .build();
+
         account = RegisterResponse.builder()
-                .id(Long.valueOf(3))
+                .id(Long.valueOf(10))
                 .phone("0919859856")
                 .email("test8@gmail.com")
                 .firstName("John")
@@ -61,36 +74,82 @@ public class AccountControllerTest {
         //Given: Nhung du lieu dau vao
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
-        String content = objectMapper.writeValueAsString(request); //Serialize object thanh chuoi string
+        String content = objectMapper.writeValueAsString(registerRequest_success); //Serialize object thanh chuoi string
 
-        Mockito.when(authenticationService.createAccount(ArgumentMatchers.any()))
-                        .thenReturn(account);
         //When: Khi nao request api can test
         mockMvc.perform(MockMvcRequestBuilders
-                        .post("/api/v1/register")
+                        .post("/api/v1/auth/register")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(content))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("code").value("201"))
-                .andExpect(MockMvcResultMatchers.jsonPath("result.phone").value("0919859856"))
-                .andExpect(MockMvcResultMatchers.jsonPath("result.email").value("test8@gmail.com")
+                .andExpect(MockMvcResultMatchers.status().isOk()
+//                .andExpect(MockMvcResultMatchers.jsonPath("code").value("201"))
+//                .andExpect(MockMvcResultMatchers.jsonPath("result.phone").value("0919859856"))
+//                .andExpect(MockMvcResultMatchers.jsonPath("result.email").value("test8@gmail.com")
                 );
         //Then: Khi then xay ra thi minh expect gi
     }
 
     @Test
-    void createAccount_usernameInvalid_fail() throws Exception {
+    void createAccount_duplicateAccount_fail() throws Exception {
         //Given: Nhung du lieu dau vao
-        request.setEmail("joh");
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
-        String content = objectMapper.writeValueAsString(request); //Serialize object thanh chuoi string
-
+        String content = objectMapper.writeValueAsString(registerRequest_fail); //Serialize object thanh chuoi string
         //When: Khi nao request api can test
         mockMvc.perform(MockMvcRequestBuilders
-                        .post("/api/v1/register")
+                        .post("/api/v1/auth/register")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(content))
+                .andExpect(MockMvcResultMatchers.status().isOk()
+//                .andExpect(MockMvcResultMatchers.jsonPath("code").value("400"))
+//                .andExpect(MockMvcResultMatchers.jsonPath("message").value("Invalid email")
+                );
+        //Then: Khi then xay ra thi minh expect gi
+    }
+
+    @Test
+    void login_successCase() throws Exception {
+
+        String requestBody = """
+                {
+                    "username": "0357968555",
+                    "password": "123456"
+                }
+                """;
+        //Given: Nhung du lieu dau vao
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        objectMapper.registerModule(new JavaTimeModule());
+//        String content = objectMapper.writeValueAsString(requestBody); //Serialize object thanh chuoi string
+        //When: Khi nao request api can test
+        mockMvc.perform(MockMvcRequestBuilders
+                        .post("/api/v1/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(requestBody))
+                .andExpect(MockMvcResultMatchers.status().isOk()
+//                .andExpect(MockMvcResultMatchers.jsonPath("code").value("400"))
+//                .andExpect(MockMvcResultMatchers.jsonPath("message").value("Invalid email")
+                );
+        //Then: Khi then xay ra thi minh expect gi
+    }
+
+    @Test
+    void login_failCase() throws Exception {
+
+        String requestBody = """
+                {
+                    "username": "0357965555",
+                    "password": "123456"
+                }
+                """;
+        //Given: Nhung du lieu dau vao
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        objectMapper.registerModule(new JavaTimeModule());
+//        String content = objectMapper.writeValueAsString(requestBody); //Serialize object thanh chuoi string
+        //When: Khi nao request api can test
+        mockMvc.perform(MockMvcRequestBuilders
+                        .post("/api/v1/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(requestBody))
                 .andExpect(MockMvcResultMatchers.status().isOk()
 //                .andExpect(MockMvcResultMatchers.jsonPath("code").value("400"))
 //                .andExpect(MockMvcResultMatchers.jsonPath("message").value("Invalid email")

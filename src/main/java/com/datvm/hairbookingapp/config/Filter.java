@@ -34,18 +34,10 @@ public class Filter extends OncePerRequestFilter {
     HandlerExceptionResolver handlerExceptionResolver;
 
     private final List<String> AUTH_PERMISSION = List.of( //những api mà ai cũng truy cập đc
-            "/api/v1/auth/login",
-            "/api/v1/auth/{id}",
-            "/api/v1/auth/register",
-            "/api/v1/auth/forgot-password",
-            "/api/v1/category",
-            "/api/v1/category/*",
-            "/api/v1/service",
-            "/api/v1/service/*",
-            "/api/v1/staff",
-            "/api/v1/staff/*",
-            "/api/v1/combo",
-            "/api/v1/combo/*"
+            "/api/v1/*/*/*/*",
+            "/api/v1/*/*/*",
+            "/api/v1/*/*",
+            "/api/v1/*"
     );
 
     public boolean checkIsPublicAPI(String uri){
