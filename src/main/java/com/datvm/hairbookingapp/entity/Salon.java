@@ -20,6 +20,10 @@ public class Salon {
     @NotNull
     private String district;
 
+    private String hotline;
+
+    private String image;
+
     @OneToMany(mappedBy = "salons", fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JsonIgnore
     private List<Staff> staff;

@@ -1,6 +1,7 @@
 package com.datvm.hairbookingapp.dto.response;
 
 import com.datvm.hairbookingapp.entity.Staff;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,4 +20,8 @@ public class SalonResponse {
     private String address;
 
     private String district;
+
+    private String hotline;
+
+    private String image;
 }
