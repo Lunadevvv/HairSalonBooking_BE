@@ -82,9 +82,6 @@ public class AccountControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(content))
                 .andExpect(MockMvcResultMatchers.status().isOk()
-//                .andExpect(MockMvcResultMatchers.jsonPath("code").value("201"))
-//                .andExpect(MockMvcResultMatchers.jsonPath("result.phone").value("0919859856"))
-//                .andExpect(MockMvcResultMatchers.jsonPath("result.email").value("test8@gmail.com")
                 );
         //Then: Khi then xay ra thi minh expect gi
     }
@@ -101,8 +98,6 @@ public class AccountControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(content))
                 .andExpect(MockMvcResultMatchers.status().isOk()
-//                .andExpect(MockMvcResultMatchers.jsonPath("code").value("400"))
-//                .andExpect(MockMvcResultMatchers.jsonPath("message").value("Invalid email")
                 );
         //Then: Khi then xay ra thi minh expect gi
     }
@@ -116,18 +111,11 @@ public class AccountControllerTest {
                     "password": "123456"
                 }
                 """;
-        //Given: Nhung du lieu dau vao
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        objectMapper.registerModule(new JavaTimeModule());
-//        String content = objectMapper.writeValueAsString(requestBody); //Serialize object thanh chuoi string
-        //When: Khi nao request api can test
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/api/v1/auth/login")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(requestBody))
                 .andExpect(MockMvcResultMatchers.status().isOk()
-//                .andExpect(MockMvcResultMatchers.jsonPath("code").value("400"))
-//                .andExpect(MockMvcResultMatchers.jsonPath("message").value("Invalid email")
                 );
         //Then: Khi then xay ra thi minh expect gi
     }
@@ -141,18 +129,11 @@ public class AccountControllerTest {
                     "password": "123456"
                 }
                 """;
-        //Given: Nhung du lieu dau vao
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        objectMapper.registerModule(new JavaTimeModule());
-//        String content = objectMapper.writeValueAsString(requestBody); //Serialize object thanh chuoi string
-        //When: Khi nao request api can test
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/api/v1/auth/login")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(requestBody))
                 .andExpect(MockMvcResultMatchers.status().isOk()
-//                .andExpect(MockMvcResultMatchers.jsonPath("code").value("400"))
-//                .andExpect(MockMvcResultMatchers.jsonPath("message").value("Invalid email")
                 );
         //Then: Khi then xay ra thi minh expect gi
     }
