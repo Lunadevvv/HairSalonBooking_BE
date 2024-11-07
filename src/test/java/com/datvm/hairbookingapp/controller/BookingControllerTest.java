@@ -100,7 +100,7 @@ public class BookingControllerTest {
         String requestBody = """
                 {
                     "date": "2024-11-06",
-                    "stylistId": "S0003",
+                    "stylistId": "S0002",
                     "slotId": 1,
                     "price": 50000,
                     "serviceId" : ["SV0001"],

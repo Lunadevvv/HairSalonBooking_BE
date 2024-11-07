@@ -45,8 +45,8 @@ public class AccountControllerTest {
     public void initData(){
 
         registerRequest_success = RegisterRequest.builder()
-                .phone("0919859856")
-                .email("test8@gmail.com")
+                .phone("0919859859")
+                .email("test9@gmail.com")
                 .firstName("John")
                 .lastName("Doe")
                 .password("1234567")
@@ -61,9 +61,9 @@ public class AccountControllerTest {
                 .build();
 
         account = RegisterResponse.builder()
-                .id(Long.valueOf(10))
-                .phone("0919859856")
-                .email("test8@gmail.com")
+                .id(Long.valueOf(11))
+                .phone("0919859859")
+                .email("test9@gmail.com")
                 .firstName("John")
                 .lastName("Doe")
                 .build();
