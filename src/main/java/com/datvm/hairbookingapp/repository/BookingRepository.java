@@ -42,9 +42,9 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
     @Query("SELECT COUNT(b) AS booking_count FROM Booking b WHERE b.stylistId = ?1")
     int countBookingByStylist(Staff stylist_id);
 
-    @Query("SELECT sum(b.price) AS total_sales FROM Booking b WHERE b.status = 'COMPLETED'")
+    @Query("SELECT COALESCE(SUM(b.price), 0) AS total_sales FROM Booking b WHERE b.status = 'COMPLETED'")
     int countTotalSales();
 
-    @Query("Select month(b.date), year(b.date), sum(b.price) From Booking b Where b.status = 'COMPLETED' Group by month(b.date), year(b.date)")
+    @Query("Select month(b.date), year(b.date), COALESCE(sum(b.price), 0) From Booking b Where b.status = 'COMPLETED' Group by month(b.date), year(b.date)")
     List<Object[]> revenueSales();
 }
