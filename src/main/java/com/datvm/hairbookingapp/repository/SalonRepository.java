@@ -9,4 +9,7 @@ import org.springframework.stereotype.Repository;
 public interface SalonRepository extends JpaRepository<Salon, String> {
     @Query("SELECT MAX(s.id) FROM Salon s")
     String findLastId();
+
+    @Query("Select Count(s) From Salon s Where s.isOpen = true")
+    int countTotalSalons();
 }
