@@ -24,4 +24,13 @@ public class DashboardController {
                 .result(dashboardService.AdminDashboard())
                 .build();
     }
+
+    @GetMapping("/manager")
+    @PreAuthorize("hasAuthority('MANAGER')")
+    public ApiResponse<AdminDashboardResponse> getManagerStats(){
+        return ApiResponse.<AdminDashboardResponse>builder()
+                .code(200)
+                .result(dashboardService.ManagerDashboard())
+                .build();
+    }
 }

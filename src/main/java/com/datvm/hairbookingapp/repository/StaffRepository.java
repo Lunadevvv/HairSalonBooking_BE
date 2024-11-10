@@ -40,9 +40,15 @@ public interface StaffRepository extends JpaRepository<Staff, Long> {
     @Query("SELECT COUNT(s) AS staff_count FROM Staff s WHERE NOT s.role = 'ADMIN'")
     int countTotalStaff();
 
+    @Query("SELECT COUNT(s) AS staff_count FROM Staff s WHERE s.salons = ?1 AND NOT s.role = 'ADMIN' AND NOT s.role = 'MANAGER'")
+    int countTotalStaffBySalon(Salon salon);
+
     @Query("select s from Staff s where s.status = ?1 and not s.role = ?2")
     List<Staff> findAllActiveStaffs(boolean status, Role role);
 
     @Query("Select s from Staff s Order By s.ovrRating DESC LIMIT 5")
     List<Staff> topFiveStylistByRating();
+
+    @Query("Select s from Staff s WHERE s.salons = ?1 AND NOT s.role = 'MANAGER' Order By s.ovrRating DESC LIMIT 5")
+    List<Staff> topFiveStylistByRatingAndSalon(Salon salon);
 }
