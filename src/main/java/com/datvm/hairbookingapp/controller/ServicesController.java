@@ -4,7 +4,7 @@ import com.datvm.hairbookingapp.dto.request.ServicesCreationRequest;
 import com.datvm.hairbookingapp.dto.request.ServicesUpdateRequest;
 import com.datvm.hairbookingapp.dto.response.ApiResponse;
 import com.datvm.hairbookingapp.dto.response.ServicesResponse;
-import com.datvm.hairbookingapp.service.interfaces.ServicesService;
+import com.datvm.hairbookingapp.service.ServicesService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +34,7 @@ public class ServicesController {
     @GetMapping()
     public ApiResponse<List<ServicesResponse>> getAllServices() {
         return ApiResponse.<List<ServicesResponse>>builder()
-                .result(servicesService.findAllServices())
+                .result(servicesService.findAllService())
                 .build();
     }
 
@@ -46,10 +46,10 @@ public class ServicesController {
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<String> deleteServiceById(@PathVariable("id") String id) {
-        servicesService.deleteByServiceId(id);
-        return ApiResponse.<String>builder()
-                .result("Services has been deleted")
+    public ApiResponse<ServicesResponse> switchServicesStatus(@PathVariable("id") String id) {
+        servicesService.switchServiceStatus(id);
+        return ApiResponse.<ServicesResponse>builder()
+                .message("serviceStatus "+id+" is changed and its combos has been removed")
                 .build();
     }
 }

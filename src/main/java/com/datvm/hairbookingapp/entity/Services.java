@@ -29,8 +29,10 @@ public class Services {
     @Column(nullable = false)
     private String image;
 
-    @ManyToOne(targetEntity = Category.class,fetch = FetchType.EAGER)
-    @JoinColumn(name = "CategoryId", nullable = false)
+    private boolean status;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "CategoryId")
     private Category categories;
 
     @ManyToMany(mappedBy = "services")

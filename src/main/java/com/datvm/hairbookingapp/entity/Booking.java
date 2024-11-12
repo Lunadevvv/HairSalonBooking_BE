@@ -49,6 +49,8 @@ public class Booking {
     )
     private List<Services> services;
 
+    private String salonId;
+
     @Column(nullable = false)
     private int price;
 

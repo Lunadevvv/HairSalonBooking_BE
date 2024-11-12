@@ -3,13 +3,20 @@ package com.datvm.hairbookingapp.service;
 import com.datvm.hairbookingapp.dto.request.BookingRequest;
 import com.datvm.hairbookingapp.dto.request.BookingUpdateRequest;
 import com.datvm.hairbookingapp.dto.response.BookingResponse;
+import com.datvm.hairbookingapp.dto.response.FeedbackResponse;
+import com.datvm.hairbookingapp.dto.response.PaymentResponse;
+import com.datvm.hairbookingapp.dto.response.ServicesResponse;
 import com.datvm.hairbookingapp.dto.response.EmailDetail;
 import com.datvm.hairbookingapp.entity.*;
 import com.datvm.hairbookingapp.entity.enums.BookingStatus;
+import com.datvm.hairbookingapp.entity.enums.FeedbackStatus;
 import com.datvm.hairbookingapp.entity.enums.Role;
 import com.datvm.hairbookingapp.exception.AppException;
 import com.datvm.hairbookingapp.exception.ErrorCode;
 import com.datvm.hairbookingapp.mapper.BookingMapper;
+import com.datvm.hairbookingapp.mapper.FeedbackMapper;
+import com.datvm.hairbookingapp.mapper.PaymentMapper;
+import com.datvm.hairbookingapp.mapper.ServicesMapper;
 import com.datvm.hairbookingapp.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -27,30 +34,42 @@ import java.util.Random;
 @EnableScheduling
 public class BookingService {
     @Autowired
-    BookingRepository bookingRepository;
+    private BookingRepository bookingRepository;
 
     @Autowired
-    AuthenticationService authenticationService;
+    private AuthenticationService authenticationService;
 
     @Autowired
-    SlotRepository slotRepository;
+    private SlotRepository slotRepository;
 
     @Autowired
-    StaffRepository staffRepository;
+    private StaffRepository staffRepository;
 
     @Autowired
-    ServicesRepository servicesRepository;
+    private ServicesRepository servicesRepository;
 
     @Autowired
     BookingMapper bookingMapper;
+
     @Autowired
     private FeedbackRepository feedbackRepository;
+
     @Autowired
     private FeedbackService feedbackService;
+
     @Autowired
     private PaymentRepository paymentRepository;
+
     @Autowired
     private AuthenticationRepository accountRepository;
+    @Autowired
+    private ServicesMapper servicesMapper;
+    @Autowired
+    SalonRepository salonRepository;
+    @Autowired
+    PaymentMapper paymentMapper;
+    @Autowired
+    FeedbackMapper feedbackMapper;
 
     @Autowired
     EmailService emailService;
@@ -90,14 +109,16 @@ public class BookingService {
     public BookingResponse createBooking(BookingRequest request, Account account) {
         String id = generateBookingId();
         Slot slot = slotRepository.findById(request.getSlotId()).orElseThrow(() -> new AppException(ErrorCode.EMPTY_SLOT));
-
+        Salon salon = salonRepository.findById(request.getSalonId()).orElseThrow(() -> new AppException(ErrorCode.SALON_NOT_FOUND));
         Staff staff = null;
 
         // Check if stylistId is "None"
         if ("None".equals(request.getStylistId())) {
-            staff = getRandomAvailableStylist(request.getSlotId(), request.getDate());
+            staff = getRandomAvailableStylist(request.getSlotId(), request.getDate(), salon);
         } else {
             staff = staffRepository.findStaffByCode(request.getStylistId());
+            if(!staff.isStatus())
+                throw new AppException(ErrorCode.STAFF_NOT_ACTIVE);
             Role role = staff.getRole();
             if (role != Role.STYLIST) {
                 throw new AppException(ErrorCode.STYLIST_ONLY);
@@ -107,6 +128,8 @@ public class BookingService {
         List<Services> list = new ArrayList<>();
         for (String serviceId : request.getServiceId()) {
             var service = servicesRepository.findById(serviceId).orElseThrow(() -> new AppException(ErrorCode.SERVICES_NOT_EXISTED));
+            if (!service.isStatus())
+                throw new AppException(ErrorCode.SERVICES_NOT_ACTIVE);
             list.add(service);
         }
 
@@ -120,12 +143,14 @@ public class BookingService {
         booking.setAccount(account);
         booking.setServices(list);
         booking.setPeriod(request.getPeriod());
+        booking.setSalonId(request.getSalonId());
         Payment payment = new Payment();
         payment.setId(generatePaymentId());
         payment.setPrice(request.getPrice());
         payment.setBooking(booking);
         Feedback feedback = new Feedback();
         feedback.setId(generateFeedbackId());
+        feedback.setStatus(FeedbackStatus.CLOSE);
         feedback.setBooking(booking);
         booking.setFeedback(feedback);
         booking.setPayment(payment);
@@ -146,6 +171,7 @@ public class BookingService {
                 .period(booking.getPeriod())
                 .slot(booking.getSlot())
                 .status(booking.getStatus())
+                .salonId(booking.getSalonId())
                 .build();
     }
 
@@ -168,14 +194,32 @@ public class BookingService {
                 .period(booking.getPeriod())
                 .slot(booking.getSlot())
                 .status(booking.getStatus())
+                .salonId(booking.getSalonId())
                 .build();
     }
 
-    public String deleteBooking(String id) {
-        if(!bookingRepository.existsById(id))
-            throw new AppException(ErrorCode.BOOKING_NOT_FOUND);
-        bookingRepository.deleteById(id);
-        return "Booking has been deleted";
+    public String cancelBooking(String id) {
+        Booking booking = bookingRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_FOUND));
+        if(booking.getStatus()==BookingStatus.RECEIVED)
+            booking.setStatus(BookingStatus.CANCELED);
+        else
+            throw new AppException(ErrorCode.BOOKING_INVALID_CANCELLED);
+        bookingRepository.save(booking);
+        return "Booking has been cancelled";
+    }
+
+    public List<Booking> getBookingsBySalon() {
+        Account account = authenticationService.getCurrentAccount();
+        Staff staff = staffRepository.findStaffByAccount(account);
+        List<Booking> bookings = bookingRepository.findBySalon(staff.getSalons().getId());
+        return bookings;
+    }
+
+    public List<Booking> getBookingsBySalonAndStylist() {
+        Account account = authenticationService.getCurrentAccount();
+        Staff staff = staffRepository.findStaffByAccount(account);
+        List<Booking> bookings = bookingRepository.findBySalonAndStylist(staff.getSalons().getId(), staff);
+        return bookings;
     }
 
     public List<Booking> getBookings() {
@@ -190,12 +234,12 @@ public class BookingService {
     }
 
     @Scheduled(cron = "0 30 * * * ?")
-    public void cancelBookings() {
-        System.out.println("THE SYSTEM HAS TRIED TO DO THIS !!!!!!!!!!!!!!!!!!!");
+    public void autoCancelBookings() {
         LocalTime time = LocalTime.of(LocalTime.now().getHour(),0, 0);
         Long slotId = slotRepository.findByTimeStart(time);
         System.out.println(slotId);
         bookingRepository.updateBySpecificTime(BookingStatus.CANCELED,slotId,BookingStatus.RECEIVED);
+        System.out.println("THE SYSTEM HAS CANCELLED RECEIVED BOOKING AT SLOT "+slotId);
     }
 
     public BookingResponse cancelPeriodBooking(String id){
@@ -213,6 +257,7 @@ public class BookingService {
                 .period(booking.getPeriod())
                 .slot(booking.getSlot())
                 .status(booking.getStatus())
+                .salonId(booking.getSalonId())
                 .build();
     }
 
@@ -248,14 +293,26 @@ public class BookingService {
         return id;
     }
 
-    private Staff getRandomAvailableStylist(Long slotId, LocalDate date) {
-        List<Staff> availableStylists = staffRepository.findAvailableStylists(slotId, date, Role.STYLIST);
+    private Staff getRandomAvailableStylist(Long slotId, LocalDate date, Salon salon) {
+        List<Staff> availableStylists = staffRepository.findAvailableStylists(slotId, date, Role.STYLIST, salon);
         if (availableStylists.isEmpty()) {
             throw new AppException(ErrorCode.NO_AVAILABLE_STYLISTS);
         }
         Random random = new Random();
         return availableStylists.get(random.nextInt(availableStylists.size()));
     }
+
+    public PaymentResponse findPaymentByBookingId(String id) {
+        Booking booking = bookingRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_FOUND));
+        return paymentMapper.toPaymentResponse(booking.getPayment());
+    }
+    public FeedbackResponse findFeedbackByBookingId(String id) {
+        Booking booking = bookingRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_FOUND));
+        return feedbackMapper.toFeedbackResponse(booking.getFeedback());
+    }
+    public List<ServicesResponse> findAllActiveService() {
+        return servicesRepository.findAllActiveServices(true).stream().map(servicesMapper::toServicesResponse).toList();
+
 
     public String getFeedbackId(String bookingId){
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_FOUND));
@@ -264,5 +321,6 @@ public class BookingService {
     public String getPaymentId(String bookingId){
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_FOUND));
         return booking.getPayment().getId();
+
     }
 }

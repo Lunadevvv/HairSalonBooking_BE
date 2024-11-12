@@ -16,8 +16,9 @@ public class ServicesResponse {
     String serviceName;
     String description;
     String duration;
-    BigDecimal price;
+    int price;
     String image;
+    boolean status;
     Category categories;
 
 }

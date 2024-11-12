@@ -20,7 +20,7 @@ public class Category {
     @Column(nullable = false)
     private String categoryDescription;
 
-    @OneToMany(mappedBy = "categories", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "categories", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
     @ToString.Exclude
     @JsonIgnore
     private List<Services> service;

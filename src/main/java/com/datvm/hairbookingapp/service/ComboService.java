@@ -13,10 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class ComboService {
@@ -33,22 +30,24 @@ public class ComboService {
     @Value("${app.comboPercent}")
     private double percent;
 
-    public List<Combo> getAllCombos(){
+    public List<Combo> getAllCombos() {
         return comboRepository.findAll();
     }
 
-    public Combo getCombo(Long id){
+    public Combo getCombo(Long id) {
         Combo combo = comboRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.COMBO_NOT_FOUND));
         return combo;
     }
 
-    public ComboInfoResponse submitCreateCombo(ComboCreationRequest request){
+    public ComboInfoResponse submitCreateCombo(ComboCreationRequest request) {
         List<Services> list = new ArrayList<>();
 
         // Retrieve services based on the provided IDs
         for (String serviceId : request.getListServiceId()) {
             var service = servicesRepository.findById(serviceId)
                     .orElseThrow(() -> new AppException(ErrorCode.SERVICES_NOT_EXISTED));
+            if (!service.isStatus())
+                throw new AppException(ErrorCode.SERVICES_NOT_ACTIVE);
             list.add(service);
         }
 
@@ -80,12 +79,13 @@ public class ComboService {
         return createCombo(request, list);
     }
 
-    public ComboInfoResponse createCombo(ComboCreationRequest request, List<Services> list){
+    public ComboInfoResponse createCombo(ComboCreationRequest request, List<Services> list) {
         Combo combo = new Combo();
         combo.setServices(list);
         combo.setName(request.getName());
         combo.setPrice(setComboPrice(list));
         combo.setDescription(request.getDescription());
+
         combo = comboRepository.save(combo);
 
         ComboInfoResponse res = new ComboInfoResponse();
@@ -94,14 +94,17 @@ public class ComboService {
         res.setListServices(combo.getServices());
         res.setPrice(combo.getPrice());
         res.setDescription(combo.getDescription());
+
         return res;
     }
 
-    public Combo updateCombo(Long id, ComboCreationRequest request){
+    public Combo updateCombo(Long id, ComboCreationRequest request) {
         Combo combo = comboRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.COMBO_NOT_FOUND));
         List<Services> list = new ArrayList<>();
         for (String serviceId : request.getListServiceId()) {
             var service = servicesRepository.findById(serviceId).orElseThrow(() -> new AppException(ErrorCode.SERVICES_NOT_EXISTED));
+            if (!service.isStatus())
+                throw new AppException(ErrorCode.SERVICES_NOT_ACTIVE);
             list.add(service);
         }
         // Sort the list of services for consistent comparison
@@ -135,22 +138,29 @@ public class ComboService {
         return comboRepository.save(combo);
     }
 
-    public int setComboPrice(List<Services> services){
+    public int setComboPrice(List<Services> services) {
         int price = 0;
-        for(Services s : services){
+        for (Services s : services) {
             price = price + s.getPrice();
         }
         return (int) Math.floor(price * (100 - percent) / 100);
     }
 
-    public void deleteCombo(Long id){
+    public void deleteCombo(Long id) {
         Combo combo = comboRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.COMBO_NOT_FOUND));
-        // Remove the associations
-        for (Services service : combo.getServices()) {
-            service.getCombos().remove(combo); // Remove this combo from each service's list
+        List<Services> services = combo.getServices();
+        //xóa combo trong list combo chứa service
+        Iterator<Services> iterator = services.iterator();
+        while (iterator.hasNext()) {
+            Services service = iterator.next();
+            services.remove(service);
         }
-        combo.getServices().clear(); // Clear the services list in the combo
-
-        comboRepository.delete(combo);
+//        for (Services service : services) {
+//            service.getCombos().remove(combo);
+//        }
+        //set null để tránh xóa hết các service
+        combo.setServices(null);
+        comboRepository.save(combo);
+        comboRepository.deleteById(id);
     }
 }

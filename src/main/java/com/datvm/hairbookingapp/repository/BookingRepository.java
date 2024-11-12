@@ -1,7 +1,10 @@
 package com.datvm.hairbookingapp.repository;
 
+import com.datvm.hairbookingapp.dto.response.RevenueSalesResponse;
 import com.datvm.hairbookingapp.entity.Account;
 import com.datvm.hairbookingapp.entity.Booking;
+import com.datvm.hairbookingapp.entity.Salon;
+import com.datvm.hairbookingapp.entity.Staff;
 import com.datvm.hairbookingapp.entity.enums.BookingStatus;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -32,4 +35,26 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
 
     @Query("Select b From Booking b Where b.account = ?1")
     List<Booking> findByAccount(Account account);
+
+    @Query("Select b From Booking b Where b.salonId = ?1")
+    List<Booking> findBySalon(String salonId);
+
+    @Query("Select b From Booking b Where b.salonId = ?1 and b.stylistId = ?2")
+    List<Booking> findBySalonAndStylist(String salonId, Staff staff);
+
+    @Query("SELECT COUNT(b) AS booking_count FROM Booking b WHERE b.stylistId = ?1")
+    int countBookingByStylist(Staff stylist_id);
+
+    @Query("SELECT COALESCE(SUM(b.price), 0) AS total_sales FROM Booking b WHERE b.status = 'COMPLETED'")
+    int countTotalSales();
+
+    @Query("SELECT COALESCE(SUM(b.price), 0) AS total_sales FROM Booking b WHERE b.status = 'COMPLETED' AND b.salonId = ?1")
+    int countTotalSalesBySalon(String salonId);
+
+    @Query("Select month(b.date), year(b.date), COALESCE(sum(b.price), 0) From Booking b Where b.status = 'COMPLETED' Group by month(b.date), year(b.date)")
+    List<Object[]> revenueSales();
+
+    @Query("Select month(b.date), year(b.date), COALESCE(sum(b.price), 0) From Booking b Where b.status = 'COMPLETED'" +
+            " And b.salonId = ?1 Group by month(b.date), year(b.date)")
+    List<Object[]> revenueSalesBySalon(String salonId);
 }

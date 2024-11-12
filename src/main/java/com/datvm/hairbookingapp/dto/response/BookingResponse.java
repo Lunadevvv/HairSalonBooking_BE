@@ -28,15 +28,19 @@ public class BookingResponse {
 
     private String stylistId;
 
-    private Slot slot;
-
-//    private Account account;
-
-    private List<Services> services;
-
     private int price;
 
     private BookingStatus status;
 
     private int period;
+
+    private Slot slot;
+
+    private String salonId;
+
+//    private Account account;
+
+    private List<Services> services;
+
+
 }

@@ -1,9 +1,8 @@
 package com.datvm.hairbookingapp.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import com.datvm.hairbookingapp.entity.enums.BookingStatus;
+import com.datvm.hairbookingapp.entity.enums.FeedbackStatus;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
@@ -13,6 +12,9 @@ public class Feedback {
     private String id;
     private String rate;
     private String feedback;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private FeedbackStatus status;
     @OneToOne
     @JoinColumn(name = "bookingId")
     private Booking booking;

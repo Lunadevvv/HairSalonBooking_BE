@@ -2,13 +2,14 @@ package com.datvm.hairbookingapp.controller;
 
 import com.datvm.hairbookingapp.dto.request.BookingRequest;
 import com.datvm.hairbookingapp.dto.request.BookingUpdateRequest;
-import com.datvm.hairbookingapp.dto.response.ApiResponse;
-import com.datvm.hairbookingapp.dto.response.BookingResponse;
+import com.datvm.hairbookingapp.dto.response.*;
 import com.datvm.hairbookingapp.entity.Booking;
 import com.datvm.hairbookingapp.entity.enums.BookingStatus;
 import com.datvm.hairbookingapp.service.BookingService;
+import com.datvm.hairbookingapp.service.ServicesService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +20,7 @@ public class BookingController {
     @Autowired
     private BookingService bookingService;
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping
     public ApiResponse<List<Booking>> getAllBookings() {
         return ApiResponse.<List<Booking>>builder()
@@ -68,9 +70,42 @@ public class BookingController {
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<String> deleteBooking(@PathVariable String id){
+    public ApiResponse<String> cancelBooking(@PathVariable String id){
         return ApiResponse.<String>builder()
-                .result(bookingService.deleteBooking(id))
+                .result(bookingService.cancelBooking(id))
+                .build();
+    }
+
+    @GetMapping("/manager")
+    public ApiResponse<List<Booking>> getAllBookingsBySalon() {
+        return ApiResponse.<List<Booking>>builder()
+                .result(bookingService.getBookingsBySalon())
+                .build();
+    }
+
+    @GetMapping("/stylist")
+    public ApiResponse<List<Booking>> getAllBookingsBySalonAndStylist() {
+        return ApiResponse.<List<Booking>>builder()
+                .result(bookingService.getBookingsBySalonAndStylist())
+                .build();
+    }
+
+    @GetMapping("/payment/{id}")
+    public ApiResponse<PaymentResponse> findPaymentByBookingId(@PathVariable String id) {
+        return ApiResponse.<PaymentResponse>builder()
+                .result(bookingService.findPaymentByBookingId(id))
+                .build();
+    }
+    @GetMapping("/feedback/{id}")
+    public ApiResponse<FeedbackResponse> findFeedbackByBookingId(@PathVariable String id) {
+        return ApiResponse.<FeedbackResponse>builder()
+                .result(bookingService.findFeedbackByBookingId(id))
+                .build();
+    }
+    @GetMapping("/service")
+    public ApiResponse<List<ServicesResponse>> getAllActiveServices() {
+        return ApiResponse.<List<ServicesResponse>>builder()
+                .result(bookingService.findAllActiveService())
                 .build();
     }
     @GetMapping("/feedback/{id}")
