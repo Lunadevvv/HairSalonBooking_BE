@@ -17,6 +17,8 @@ public class SalonResponse {
 
     private boolean open;
 
+    private String name;
+
     private String address;
 
     private String district;
