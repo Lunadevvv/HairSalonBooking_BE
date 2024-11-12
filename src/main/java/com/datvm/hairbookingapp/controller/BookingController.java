@@ -82,6 +82,14 @@ public class BookingController {
                 .result(bookingService.getBookingsBySalon())
                 .build();
     }
+
+    @GetMapping("/stylist")
+    public ApiResponse<List<Booking>> getAllBookingsBySalonAndStylist() {
+        return ApiResponse.<List<Booking>>builder()
+                .result(bookingService.getBookingsBySalonAndStylist())
+                .build();
+    }
+
     @GetMapping("/payment/{id}")
     public ApiResponse<PaymentResponse> findPaymentByBookingId(@PathVariable String id) {
         return ApiResponse.<PaymentResponse>builder()

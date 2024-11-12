@@ -206,6 +206,13 @@ public class BookingService {
         return bookings;
     }
 
+    public List<Booking> getBookingsBySalonAndStylist() {
+        Account account = authenticationService.getCurrentAccount();
+        Staff staff = staffRepository.findStaffByAccount(account);
+        List<Booking> bookings = bookingRepository.findBySalonAndStylist(staff.getSalons().getId(), staff);
+        return bookings;
+    }
+
     public List<Booking> getBookings() {
         List<Booking> bookings = bookingRepository.findAll();
         return bookings;
