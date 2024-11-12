@@ -6,6 +6,7 @@ import com.datvm.hairbookingapp.dto.response.BookingResponse;
 import com.datvm.hairbookingapp.dto.response.FeedbackResponse;
 import com.datvm.hairbookingapp.dto.response.PaymentResponse;
 import com.datvm.hairbookingapp.dto.response.ServicesResponse;
+import com.datvm.hairbookingapp.dto.response.EmailDetail;
 import com.datvm.hairbookingapp.entity.*;
 import com.datvm.hairbookingapp.entity.enums.BookingStatus;
 import com.datvm.hairbookingapp.entity.enums.FeedbackStatus;
@@ -70,6 +71,9 @@ public class BookingService {
     @Autowired
     FeedbackMapper feedbackMapper;
 
+    @Autowired
+    EmailService emailService;
+
     public void updateBookingStatus(String id, BookingStatus status) {
         Booking booking = bookingRepository.findById(id).orElseThrow(
                 () -> new AppException(ErrorCode.BOOKING_NOT_FOUND)
@@ -77,11 +81,6 @@ public class BookingService {
         if(booking.getStatus()==BookingStatus.SUCCESS){
             LocalDateTime date = LocalDateTime.now();
             booking.getPayment().setDate(date);
-            Account account = booking.getAccount();
-            int shinePoint = account.getShinePoint();
-            int pointAdd = booking.getPrice()/1000;
-            account.setShinePoint(shinePoint+pointAdd);
-            accountRepository.save(account);
         }
         booking.setStatus(status);
         bookingRepository.save(booking);
@@ -90,6 +89,9 @@ public class BookingService {
     public BookingResponse submitBooking(BookingRequest request) {
         Account account = authenticationService.getCurrentAccount();
         BookingResponse res = new BookingResponse();
+        if (bookingRepository.countBookingInSlot(request.getDate(), request.getSlotId()) == staffRepository.countStylist(Role.STYLIST)) {
+            throw new AppException(ErrorCode.BOOKING_FULL);
+        }
         //check the latest booking status is CANCELED or COMPLETED
         var lastBooking = bookingRepository.findLastBooking(account);
         if (lastBooking != null) {
@@ -153,6 +155,13 @@ public class BookingService {
         booking.setFeedback(feedback);
         booking.setPayment(payment);
         booking = bookingRepository.save(booking);
+
+        EmailDetail emailDetail = new EmailDetail();
+        emailDetail.setAccount(account);//set receiver
+        emailDetail.setSubject("Đặt lịch thành công!");
+        emailDetail.setContent("Đặt lịch thành công vào lúc " + slot.getTimeStart() + " - " + booking.getDate().toString() + ". Cảm ơn bạn đã lựa chọn và tin tưởng 360Shine!");
+        emailDetail.setLink("http://localhost:3000/");
+        emailService.sendEmail(emailDetail);
         return BookingResponse.builder()
                 .stylistId(staff.getCode())
                 .services(list)
@@ -292,6 +301,7 @@ public class BookingService {
         Random random = new Random();
         return availableStylists.get(random.nextInt(availableStylists.size()));
     }
+
     public PaymentResponse findPaymentByBookingId(String id) {
         Booking booking = bookingRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_FOUND));
         return paymentMapper.toPaymentResponse(booking.getPayment());
@@ -302,5 +312,15 @@ public class BookingService {
     }
     public List<ServicesResponse> findAllActiveService() {
         return servicesRepository.findAllActiveServices(true).stream().map(servicesMapper::toServicesResponse).toList();
+
+
+    public String getFeedbackId(String bookingId){
+        Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_FOUND));
+        return booking.getFeedback().getId();
+    }
+    public String getPaymentId(String bookingId){
+        Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_FOUND));
+        return booking.getPayment().getId();
+
     }
 }

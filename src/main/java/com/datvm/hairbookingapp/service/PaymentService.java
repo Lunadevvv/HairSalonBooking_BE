@@ -8,7 +8,11 @@ import com.datvm.hairbookingapp.entity.enums.FeedbackStatus;
 import com.datvm.hairbookingapp.exception.AppException;
 import com.datvm.hairbookingapp.exception.ErrorCode;
 import com.datvm.hairbookingapp.mapper.PaymentMapper;
+
 import com.datvm.hairbookingapp.repository.FeedbackRepository;
+
+import com.datvm.hairbookingapp.repository.AuthenticationRepository;
+
 import com.datvm.hairbookingapp.repository.PaymentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,11 +30,18 @@ public class PaymentService {
     private BookingService bookingService;
     @Autowired
     private FeedbackRepository feedbackRepository;
+    @Autowired
+    private AuthenticationRepository accountRepository;
 
     public PaymentResponse submitPayment(String id) {
         Payment payment = paymentRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PAYMENT_NOT_FOUND));
         Booking booking = payment.getBooking();
         if (booking.getStatus() == BookingStatus.SUCCESS) {
+            Account account = booking.getAccount();
+            int shinePoint = account.getShinePoint();
+            int pointAdd = booking.getPrice()/1000;
+            account.setShinePoint(shinePoint+pointAdd);
+            accountRepository.save(account);
             bookingService.updateBookingStatus(booking.getId(), BookingStatus.COMPLETED);
             Feedback feedback = booking.getFeedback();
             feedback.setStatus(FeedbackStatus.OPEN);
