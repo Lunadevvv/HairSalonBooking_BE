@@ -14,7 +14,8 @@ public class Salon {
     private String id;
 
     private boolean isOpen;
-
+    @NotNull
+    private String name;
     @NotNull
     private String address;
     @NotNull

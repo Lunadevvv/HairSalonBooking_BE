@@ -8,6 +8,8 @@ import lombok.Data;
 
 @Data
 public class SalonUpdateRequest {
+    @NotBlank(message = "Name can't be blank")
+    private String name;
     @NotBlank(message = "address can't be blank")
     private String address;
     @NotBlank(message = "district can't be blank")

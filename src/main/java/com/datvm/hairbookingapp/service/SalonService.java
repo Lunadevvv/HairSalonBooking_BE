@@ -53,6 +53,7 @@ public class SalonService {
         salon.setDistrict(request.getDistrict());
         salon.setImage(request.getImage());
         salon.setHotline(request.getHotline());
+        salon.setName(request.getName());
         return salonMapper.toSalonResponse(salonRepository.save(salon));
     }
 
