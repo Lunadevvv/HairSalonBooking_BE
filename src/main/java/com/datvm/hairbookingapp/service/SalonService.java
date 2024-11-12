@@ -34,8 +34,11 @@ public class SalonService {
     public SalonResponse CreateSalon(SalonCreationRequest request) {
         Salon salon = salonMapper.toSalon(request);
         salon.setId(generateSalonCode());
+        salon.setName(request.getName());
         salon.setOpen(true);
-        return salonMapper.toSalonResponse(salonRepository.save(salon));
+        SalonResponse res = salonMapper.toSalonResponse(salonRepository.save(salon));
+        res.setName(request.getName());
+        return res;
     }
 
     public SalonResponse findById(String id) {
