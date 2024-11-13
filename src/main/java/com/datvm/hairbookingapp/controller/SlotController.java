@@ -52,11 +52,11 @@ public class SlotController {
                 .build();
     }
 
-    @GetMapping("/{date}")
-    public ApiResponse<List<Slot>> getUnavailableSlot(@PathVariable LocalDate date){
+    @GetMapping("/{date}/{salonId}")
+    public ApiResponse<List<Slot>> getUnavailableSlot(@PathVariable LocalDate date, @PathVariable String salonId){
         return ApiResponse.<List<Slot>>builder()
                 .code(200)
-                .result(slotService.getUnavailableSlot(date))
+                .result(slotService.getUnavailableSlot(date, salonId))
                 .build();
     }
 }

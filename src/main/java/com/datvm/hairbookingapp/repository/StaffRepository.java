@@ -34,8 +34,8 @@ public interface StaffRepository extends JpaRepository<Staff, Long> {
             "(SELECT b.stylistId FROM Booking b WHERE b.slot.id = :slotId AND b.date = :date)")
     List<Staff> findAvailableStylists(@Param("slotId") Long slotId, @Param("date") LocalDate date, @Param("role") Role role, @Param("salon")Salon salon);
 
-    @Query("SELECT COUNT(s) AS stylist_count FROM Staff s WHERE s.role = ?1")
-    int countStylist(Role role);
+    @Query("SELECT COUNT(s) AS stylist_count FROM Staff s WHERE s.role = ?1 AND s.salons = ?2")
+    int countStylist(Role role, Salon salon);
 
     @Query("SELECT COUNT(s) AS staff_count FROM Staff s WHERE NOT s.role = 'ADMIN'")
     int countTotalStaff();

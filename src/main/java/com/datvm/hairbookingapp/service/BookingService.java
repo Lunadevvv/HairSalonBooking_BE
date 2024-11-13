@@ -90,7 +90,8 @@ public class BookingService {
     public BookingResponse submitBooking(BookingRequest request) {
         Account account = authenticationService.getCurrentAccount();
         BookingResponse res = new BookingResponse();
-        if (bookingRepository.countBookingInSlot(request.getDate(), request.getSlotId()) == staffRepository.countStylist(Role.STYLIST)) {
+        Salon salon = salonRepository.findById(request.getSalonId()).orElseThrow(() -> new AppException(ErrorCode.SALON_NOT_FOUND));
+        if (bookingRepository.countBookingInSlot(request.getDate(), request.getSlotId(), request.getSalonId()) == staffRepository.countStylist(Role.STYLIST, salon)) {
             throw new AppException(ErrorCode.BOOKING_FULL);
         }
         //check the latest booking status is CANCELED or COMPLETED
@@ -180,7 +181,7 @@ public class BookingService {
         Booking booking = bookingRepository.findById(request.getBookingId())
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_FOUND));
         Slot slot = slotRepository.findById(request.getSlotId()).orElseThrow(() -> new AppException(ErrorCode.EMPTY_SLOT));
-        if (bookingRepository.countBookingInSlot(request.getDate(), request.getSlotId()) < staffRepository.countStylist(Role.STYLIST)) {
+        if (bookingRepository.getBookingByStylistAndSlotDate(request.getDate(), request.getSlotId(), booking.getSalonId(), booking.getStylistId()) == null) {
             booking.setSlot(slot);
             booking.setDate(request.getDate());
             booking = bookingRepository.save(booking);

@@ -25,8 +25,8 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
     @Query("SELECT b FROM Booking b WHERE b.account = :account ORDER BY b.id DESC LIMIT 1 ")
     Booking findLastBooking(@Param("account")Account account);
 
-    @Query("SELECT COUNT(b) FROM Booking b WHERE b.date = ?1 AND b.slot.id = ?2")
-    int countBookingInSlot(LocalDate date, Long slotId);
+    @Query("SELECT COUNT(b) FROM Booking b WHERE b.date = ?1 AND b.slot.id = ?2 AND b.salonId = ?3")
+    int countBookingInSlot(LocalDate date, Long slotId, String salonId);
 
     @Query("UPDATE Booking b SET b.status = ?1 WHERE b.slot.id = ?2 AND b.status = ?3" )
     @Modifying
@@ -57,4 +57,7 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
     @Query("Select month(b.date), year(b.date), COALESCE(sum(b.price), 0) From Booking b Where b.status = 'COMPLETED'" +
             " And b.salonId = ?1 Group by month(b.date), year(b.date)")
     List<Object[]> revenueSalesBySalon(String salonId);
+
+    @Query("Select b from Booking b WHERE b.date = ?1 AND b.slot.id = ?2 AND b.salonId = ?3 and s.stylistId = ?4 ")
+    Booking getBookingByStylistAndSlotDate(LocalDate date, Long slotId, String salonId, Staff staff);
 }
