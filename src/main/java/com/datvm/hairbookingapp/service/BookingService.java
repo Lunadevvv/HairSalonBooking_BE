@@ -23,6 +23,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.awt.print.Book;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -181,7 +182,8 @@ public class BookingService {
         Booking booking = bookingRepository.findById(request.getBookingId())
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_FOUND));
         Slot slot = slotRepository.findById(request.getSlotId()).orElseThrow(() -> new AppException(ErrorCode.EMPTY_SLOT));
-        if (bookingRepository.getBookingByStylistAndSlotDate(request.getDate(), request.getSlotId(), booking.getSalonId(), booking.getStylistId()) == null) {
+        Booking booked = bookingRepository.getBookingByStylistAndSlotDate(request.getDate(), request.getSlotId(), booking.getStylistId());
+        if (booked == null) {
             booking.setSlot(slot);
             booking.setDate(request.getDate());
             booking = bookingRepository.save(booking);

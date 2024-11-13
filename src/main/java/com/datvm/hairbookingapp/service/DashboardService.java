@@ -37,6 +37,7 @@ public class DashboardService {
         int countTotalStaff = staffRepository.countTotalStaff();
         int countTotalSales = bookingRepository.countTotalSales();
         int countTotalSalons = salonRepository.countTotalSalons();
+        int countTotalBooking = bookingRepository.countTotalBooking();
         List<StaffResponse> topFiveStylistByRating = staffRepository.topFiveStylistByRating()
                 .stream().map(accountMapper::toStaffRes).toList();
         List<RevenueSalesResponse> monthlyRevenue = new ArrayList<>();
@@ -54,6 +55,7 @@ public class DashboardService {
                 .totalSalons(countTotalSalons)
                 .totalStaffs(countTotalStaff)
                 .totalSales(countTotalSales)
+                .totalBookings(countTotalBooking)
                 .topFiveStaffByRating(topFiveStylistByRating)
                 .revenueSalesResponses(monthlyRevenue)
                 .build();
@@ -65,6 +67,7 @@ public class DashboardService {
         int countTotalStaff = staffRepository.countTotalStaffBySalon(salon);
         int countTotalSales = bookingRepository.countTotalSalesBySalon(salon.getId());
         int countTotalSalons = 0;
+        int countTotalBooking = bookingRepository.countTotalBookingBySalon(account.getStaff().getSalons().getId());
         List<StaffResponse> topFiveStylistByRating = staffRepository.topFiveStylistByRatingAndSalon(salon)
                 .stream().map(accountMapper::toStaffRes).toList();
         List<RevenueSalesResponse> monthlyRevenue = new ArrayList<>();
@@ -82,6 +85,7 @@ public class DashboardService {
                 .totalSalons(countTotalSalons)
                 .totalStaffs(countTotalStaff)
                 .totalSales(countTotalSales)
+                .totalBookings(countTotalBooking)
                 .topFiveStaffByRating(topFiveStylistByRating)
                 .revenueSalesResponses(monthlyRevenue)
                 .build();

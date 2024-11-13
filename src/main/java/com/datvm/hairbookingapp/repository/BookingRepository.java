@@ -42,8 +42,11 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
     @Query("Select b From Booking b Where b.salonId = ?1 and b.stylistId = ?2")
     List<Booking> findBySalonAndStylist(String salonId, Staff staff);
 
-    @Query("SELECT COUNT(b) AS booking_count FROM Booking b WHERE b.stylistId = ?1")
-    int countBookingByStylist(Staff stylist_id);
+    @Query("SELECT COUNT(b) AS booking_count FROM Booking b WHERE b.salonId = ?1")
+    int countTotalBookingBySalon(String salonId);
+
+    @Query("SELECT COUNT(b) AS booking_count FROM Booking b")
+    int countTotalBooking();
 
     @Query("SELECT COALESCE(SUM(b.price), 0) AS total_sales FROM Booking b WHERE b.status = 'COMPLETED'")
     int countTotalSales();
@@ -58,6 +61,6 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
             " And b.salonId = ?1 Group by month(b.date), year(b.date)")
     List<Object[]> revenueSalesBySalon(String salonId);
 
-    @Query("Select b from Booking b WHERE b.date = ?1 AND b.slot.id = ?2 AND b.salonId = ?3 and b.stylistId = ?4 ")
-    Booking getBookingByStylistAndSlotDate(LocalDate date, Long slotId, String salonId, Staff staff);
+    @Query("Select b from Booking b WHERE b.date = ?1 AND b.slot.id = ?2 and b.stylistId = ?3 ")
+    Booking getBookingByStylistAndSlotDate(LocalDate date, Long slotId, Staff staff);
 }

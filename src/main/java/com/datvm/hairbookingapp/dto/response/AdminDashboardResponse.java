@@ -15,6 +15,7 @@ public class AdminDashboardResponse {
     private int totalSales;
     private int totalStaffs;
     private int totalSalons;
+    private int totalBookings;
     private List<StaffResponse> topFiveStaffByRating;
     private List<RevenueSalesResponse> revenueSalesResponses;
 }
