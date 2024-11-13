@@ -1,10 +1,7 @@
 package com.datvm.hairbookingapp.repository;
 
 import com.datvm.hairbookingapp.dto.response.RevenueSalesResponse;
-import com.datvm.hairbookingapp.entity.Account;
-import com.datvm.hairbookingapp.entity.Booking;
-import com.datvm.hairbookingapp.entity.Salon;
-import com.datvm.hairbookingapp.entity.Staff;
+import com.datvm.hairbookingapp.entity.*;
 import com.datvm.hairbookingapp.entity.enums.BookingStatus;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -62,5 +59,5 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
     List<Object[]> revenueSalesBySalon(String salonId);
 
     @Query("Select b from Booking b WHERE b.date = ?1 AND b.slot.id = ?2 and b.stylistId = ?3 ")
-    Booking getBookingByStylistAndSlotDate(LocalDate date, Long slotId, Staff staff);
+    Booking getBookingByStylistAndSlotDate(LocalDate date, Slot slotId, Staff staff);
 }
