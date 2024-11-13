@@ -46,7 +46,10 @@ public class PaymentService {
             Feedback feedback = booking.getFeedback();
             feedback.setStatus(FeedbackStatus.OPEN);
             feedbackRepository.save(feedback);
-            createNewBooking(booking);
+
+            if(booking.getPeriod() != 0){
+                createNewBooking(booking);
+            }
         } else if (booking.getStatus() == BookingStatus.COMPLETED)
             throw new AppException(ErrorCode.PAYMENT_ALREADY_DONE);
         else throw new AppException(ErrorCode.PAYMENT_INVALID_SUBMIT);
