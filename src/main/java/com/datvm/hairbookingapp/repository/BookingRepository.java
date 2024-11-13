@@ -39,6 +39,9 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
     @Query("Select b From Booking b Where b.salonId = ?1 and b.stylistId = ?2")
     List<Booking> findBySalonAndStylist(String salonId, Staff staff);
 
+    @Query("SELECT COUNT(b) AS booking_count FROM Booking b WHERE b.stylistId = ?1")
+    int countBookingByStylist(Staff staff_id);
+
     @Query("SELECT COUNT(b) AS booking_count FROM Booking b WHERE b.salonId = ?1")
     int countTotalBookingBySalon(String salonId);
 
