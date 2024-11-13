@@ -58,6 +58,6 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
             " And b.salonId = ?1 Group by month(b.date), year(b.date)")
     List<Object[]> revenueSalesBySalon(String salonId);
 
-    @Query("Select b from Booking b WHERE b.date = ?1 AND b.slot.id = ?2 AND b.salonId = ?3 and s.stylistId = ?4 ")
+    @Query("Select b from Booking b WHERE b.date = ?1 AND b.slot.id = ?2 AND b.salonId = ?3 and b.stylistId = ?4 ")
     Booking getBookingByStylistAndSlotDate(LocalDate date, Long slotId, String salonId, Staff staff);
 }
