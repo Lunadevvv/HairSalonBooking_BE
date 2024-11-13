@@ -108,16 +108,4 @@ public class BookingController {
                 .result(bookingService.findAllActiveService())
                 .build();
     }
-    @GetMapping("/feedback/{id}")
-    public ApiResponse<String> getFeedbackById(@PathVariable String id){
-        return  ApiResponse.<String>builder()
-                .result(bookingService.getFeedbackId(id))
-                .build();
-    }
-    @GetMapping("/payment/{id}")
-    public ApiResponse<String> getPaymentById(@PathVariable String id){
-        return  ApiResponse.<String>builder()
-                .result(bookingService.getPaymentId(id))
-                .build();
-    }
 }

@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.chrono.ChronoLocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -312,15 +313,5 @@ public class BookingService {
     }
     public List<ServicesResponse> findAllActiveService() {
         return servicesRepository.findAllActiveServices(true).stream().map(servicesMapper::toServicesResponse).toList();
-
-
-    public String getFeedbackId(String bookingId){
-        Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_FOUND));
-        return booking.getFeedback().getId();
-    }
-    public String getPaymentId(String bookingId){
-        Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_FOUND));
-        return booking.getPayment().getId();
-
     }
 }
