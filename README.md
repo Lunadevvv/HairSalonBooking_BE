@@ -1,4 +1,4 @@
-**Hair Salon Booking App**
+# Hair Salon Booking App
 
 A web app from subject SWP391 at FPT university for booking hair salon services
       with the following main features: book,  cancle
