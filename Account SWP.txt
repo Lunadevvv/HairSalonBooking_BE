@@ -1,0 +1,21 @@
+Account: (Staff password: staff123 || password default: 123456)
+ - 0357968555 - Admin
+ - 0357968556 - Customer - 1 booking received
+
+ - 0356442322 - Stylist - SA0001 - Minh Duong
+ - 0357968552 - Stylist - SA0001 - Hoang Meo
+ - 0357968553 - Stylist - SA0001 - Hoang Ly
+ - 0357968550 - Manager - SA0001 - Hoang Nhat
+ - 0357968551 - Staff - SA0001 - Hoang Sa
+
+ - 0357968554 - Staff - SA0002 - Minh Nhua
+ - 0357968557 - Manager - SA0002 - Minh Hoang
+ - 0357968558 - Stylist - SA0002 - Minh Khai
+ - 0357968559 - Stylist - SA0002 - Minh Anh
+ - 0357968560 - Stylist - SA0002 - Minh Dang
+
+ - 0357968561 - Manager - SA0003 - Anh Khoa
+ - 0357968562 - Staff - SA0003 - Anh Linh
+ - 0357968563 - Stylist - SA0003 - Anh Tu
+ - 0357968564 - Stylist - SA0003 - Anh Duong
+ - 0357968565 - Stylist - SA0003 - Anh Tinh
